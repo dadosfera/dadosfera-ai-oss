@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    "isolatedModules": false,
+    "types": [
+      "node",
+      "cypress",
+      "cypress-localstorage-commands",
+      "cypress-pipe",
+      "@testing-library/cypress"
+    ]
+  },
+  "include": ["**/*.ts"]
+}

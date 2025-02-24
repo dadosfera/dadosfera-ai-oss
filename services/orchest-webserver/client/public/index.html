@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="/" />
+    <link rel="icon" type="image/png" href="/image/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dadosfera</title>
+  </head>
+  <body>
+    {{CSS_BLOCK}}
+    <div id="root" data-test-id="root"></div>
+    <!-- main bundle -->
+    <script>
+      global = window;
+      window.JS_HASH = "{{JS_HASH}}";
+      const host = window.location.host;
+      if (host.includes("app-intelligence")) {
+        window.document.title = "Dadosfera Intelligence";
+      } else if (host.includes("192.168.49.2")) {
+        window.document.title = "Dadosfera Intelligence"
+      }
+      else {
+        window.document.title = "Dadosfera Process";
+      }
+    </script>
+    <script src="{{JS_PATH}}"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>

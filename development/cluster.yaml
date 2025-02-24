@@ -1,0 +1,52 @@
+apiVersion: orchest.io/v1alpha1
+kind: OrchestCluster
+metadata:
+  name: cluster-1
+  namespace: orchest
+  annotations:
+    controller.orchest.io/deploy-ingress: "false"
+spec:
+  singleNode: true
+  orchest:
+    version: v2023.04.2
+    resources:
+      userDirVolumeSize: 50Gi
+    orchestApi:
+      env:
+        - name: FLASK_ENV
+          value: development
+        - name: NODE_ENV
+          value: development
+        - name: ORCHEST_LOG_LEVEL
+          value: DEBUG
+    orchestWebServer:
+      env:
+        - name: FLASK_ENV
+          value: development
+        - name: NODE_ENV
+          value: development
+        - name: ORCHEST_LOG_LEVEL
+          value: DEBUG
+    authServer:
+      env:
+        - name: FLASK_ENV
+          value: development
+        - name: NODE_ENV
+          value: development
+        - name: ORCHEST_LOG_LEVEL
+          value: DEBUG
+    celeryWorker:
+      env:
+        - name: FLASK_ENV
+          value: development
+        - name: NODE_ENV
+          value: development
+    nodeAgent:
+      env:
+        - name: ORCHEST_LOG_LEVEL
+          value: DEBUG
+    env:
+      - name: CLOUD_ENVIRONMENT
+        value: "azure"
+      - name: ORCHEST_LOG_LEVEL
+        value: DEBUG

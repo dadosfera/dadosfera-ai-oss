@@ -1,0 +1,17 @@
+html[data-theme="light"] {
+  --pst-color-primary: #4381ff;
+  --pst-color-warning: #777777;
+}
+
+html[data-theme="dark"] {
+  --pst-color-primary: white;
+  --pst-color-warning: #777777;
+}
+
+.DocSearch-Modal {
+  margin: 115px auto auto;
+}
+
+.DocSearch-Container {
+  z-index: 2000;
+}

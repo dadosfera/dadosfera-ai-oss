@@ -1,0 +1,32 @@
+{
+    "name": "my-pipeline",
+    "uuid": "pipeline-uuid",
+    "settings": {},
+    "steps": {
+        "uuid-1______________": {
+            "title": "step-1",
+            "uuid": "uuid-1______________",
+            "incoming_connections": [],
+            "outgoing_connections": [
+                "uuid-2______________"
+            ]
+        },
+        "uuid-2______________": {
+            "title": "step-2",
+            "uuid": "uuid-2______________",
+            "incoming_connections": [
+                "uuid-1______________",
+                "uuid-3______________"
+            ],
+            "outgoing_connections": []
+        },
+        "uuid-3______________": {
+            "title": "step-3",
+            "uuid": "uuid-3______________",
+            "incoming_connections": [],
+            "outgoing_connections": [
+                "uuid-2______________"
+            ]
+        }
+    }
+}

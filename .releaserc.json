@@ -1,0 +1,32 @@
+{
+  "tagFormat": "v2023.04.2-${version}",
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "eslint",
+        "releaseRules": [
+          { "tag": "FIX", "release": "patch" },
+          { "tag": "FEAT", "release": "minor" },
+          { "tag": "UPDATE", "release": "minor" },
+          { "tag": "UPGRADE", "release": "minor" },
+          { "tag": "BREAKING", "release": "major" },
+          { "tag": "DOCS", "release": "patch" },
+          { "tag": "CHORE", "release": "minor" },
+          { "tag": "BUILD", "release": "patch" },
+          { "tag": "REFACTOR", "release": "minor" },
+          { "tag": "TEST", "release": "patch" },
+          { "tag": "CI", "release": "patch" },
+          { "tag": "PERF", "release": "minor" }
+        ]
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "eslint"
+      }
+    ],
+    "@semantic-release/github"
+  ]
+}
