@@ -1,0 +1,14 @@
+
+service:
+  port: 80
+
+image:
+  pullPolicy: IfNotPresent
+  registry: docker.io
+  name: orchest/orchest-controller
+
+controller:
+  nodeSelector: {}
+
+clusterLevelAddons:
+  enableArgo: false

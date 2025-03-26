@@ -1,0 +1,7 @@
+packages:
+  - "cypress"
+  - "lib/design-system/*"
+  - "lib/javascript/*"
+  - "services/*/client"
+  - "!**/test/**"
+enable-pre-post-scripts: true

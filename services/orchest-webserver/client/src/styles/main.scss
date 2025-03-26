@@ -1,0 +1,933 @@
+@use "sass:math";
+
+// TODO:
+//  Migrate fully to a CSS-in-JS solution.
+//  If you need to add anything to this file,
+//  please migrating the feature to CSS-in-JS
+//  For global styles add it in theme.ts or in main.tsx.
+
+@import "fonts";
+@import "codemirror/lib/codemirror";
+
+@import "codemirror/theme/dracula";
+@import "codemirror/theme/midnight";
+// TODO: remove jupyter
+@import "themes/jupyter";
+
+@import "scrollbar";
+@import "ansi";
+
+@import "./utils.scss";
+
+@import "./pages/example-page.scss";
+
+$secondary: #0a6df7 !default;
+$mdcComponentPadding: 16px;
+$codeSize: 14px;
+$defaultFontSize: 15px;
+$borderColor: rgba(0, 0, 0, 0.12);
+$mdcBorderRadius: 4px;
+$dialogBackground: rgba(0, 0, 0, 0.32);
+
+$pipelineStepHeight: 105px;
+$pipelineStepWidth: 190px;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*:focus {
+  outline: none;
+}
+
+p {
+  &.padding-top {
+    padding-top: var(--space-5);
+  }
+  &.padding-bottom {
+    padding-bottom: var(--space-5);
+  }
+}
+
+.float-right {
+  float: right;
+}
+
+h1,
+h3 {
+  font-weight: 400;
+}
+
+h2 {
+  font-weight: 500;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header-bar {
+  height: 80px;
+  padding: calc(var(--space-5) / 2);
+  border-bottom: 1px solid $borderColor;
+  position: relative;
+
+  .header-bar-left,
+  .header-bar-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-bar-actions {
+    button {
+      margin-left: calc(var(--space-5) / 2);
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  img.logo {
+    height: auto;
+    box-sizing: content-box;
+    width: 50px;
+    padding-right: var(--space-5);
+    padding-left: 10px;
+    display: inline-block;
+  }
+
+  display: flex;
+  justify-content: space-between;
+
+  .pipeline-header-component {
+    > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .pipelineStatusIndicator {
+      float: left;
+      margin-right: 10px;
+      height: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    button {
+      position: absolute;
+      right: var(--space-5);
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .pipeline-name {
+      font-size: 21px;
+    }
+  }
+}
+
+.app-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+
+  > main {
+    overflow: hidden;
+    flex: 1;
+  }
+}
+
+.checkbox-tooltip-holder {
+  position: relative;
+  display: inline-block;
+
+  .inline-icon {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    right: calc(-1 * var(--space-5) / 2);
+    top: 0;
+    transform: translateX(100%);
+  }
+}
+
+.custom-icon {
+  &.pipeline {
+    background: url("/image/pipeline.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 43px;
+    height: 24px;
+    font-size: 0;
+    color: transparent;
+  }
+}
+
+.material-icons.inline-icon {
+  position: absolute;
+  &.push-left {
+    margin-left: calc(var(--space-5) / 2);
+  }
+}
+
+a.button {
+  text-decoration: none;
+  color: #000;
+}
+
+.view-page {
+  &.fullheight {
+    height: 100%;
+  }
+
+  &:not(.job-view) {
+    p {
+      line-height: 1.5;
+    }
+  }
+
+  &.orchest-settings {
+    h3 {
+      margin-top: var(--space-10);
+      margin-bottom: calc(var(--space-5) / 2);
+    }
+    .CodeMirror {
+      height: min-content;
+    }
+    .columns {
+      .column {
+        margin-bottom: var(--space-5);
+        &:nth-child(2n) {
+          padding-left: 2.5%;
+        }
+        &:nth-child(2n + 1) {
+          padding-right: 2.5%;
+        }
+        .disk-size-info {
+          width: 70%;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  &.jupyter {
+    .hiddenSession {
+      display: none;
+    }
+  }
+
+  .jobs-page {
+    .job-actions {
+      margin-bottom: var(--space-5);
+    }
+  }
+}
+
+.project-settings-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .project-settings {
+    flex: 1;
+    overflow-y: auto;
+  }
+}
+
+.pipeline-settings {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .configuration {
+    .columns {
+      .column:nth-child(1) {
+        width: 30%;
+      }
+      margin-bottom: var(--space-5);
+    }
+  }
+  .service-form {
+    h3 {
+      .inline-icon {
+        font-size: 22px;
+      }
+    }
+
+    white-space: initial;
+    .columns {
+      margin-bottom: var(--space-5);
+    }
+  }
+
+  .tab-view {
+    flex: 1;
+  }
+}
+
+.notice {
+  p {
+    color: #555;
+    font-size: $codeSize;
+  }
+}
+
+p > i.material-icons.float-left {
+  float: left;
+  margin-right: 10px;
+}
+
+.datetime-input {
+  > div {
+    margin-bottom: var(--space-5);
+  }
+}
+
+.select-button-columns {
+  display: flex;
+}
+
+.largeText {
+  font-size: var(--fontSizes-xl);
+  line-height: var(--lineHeights-xl);
+}
+
+.form-helper-text {
+  font-size: $codeSize;
+  margin-top: 10px;
+}
+
+.CodeMirror {
+  font-size: $codeSize;
+  border-radius: 4px;
+  height: auto;
+}
+
+.xterm-holder {
+  background: #000;
+  padding: 0.5rem 0 0.5rem 0.5rem;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.build-notice {
+  font-size: $codeSize;
+  display: inline-block;
+  &.subtle {
+    color: #555;
+  }
+
+  span.build-label {
+    display: inline-block;
+    min-width: 130px;
+  }
+}
+
+.edit-environment {
+  .xterm-holder {
+    &.initializing {
+      position: absolute;
+      opacity: 0.01;
+    }
+  }
+}
+
+.jupyterlab-config-page,
+.edit-environment {
+  .xterm {
+    height: 400px;
+    width: 100%;
+  }
+}
+
+.separated {
+  > :last-child {
+    margin-right: 0;
+  }
+  > * {
+    margin-right: var(--space-5);
+  }
+}
+
+.push-down {
+  margin-bottom: var(--space-5);
+}
+
+.push-down-7 {
+  margin-bottom: var(--space-7);
+}
+
+.push-up {
+  margin-top: var(--space-5);
+}
+.push-left {
+  margin-left: var(--space-5);
+}
+.push-right {
+  margin-right: var(--space-5);
+}
+
+.push-up-half {
+  margin-top: var(--space-3);
+}
+
+.persistent-view {
+  flex: 1;
+  display: flex;
+  position: absolute;
+  padding-top: 56px; // TODO: remove this hard-coded HeaderBar height
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  &.hidden {
+    display: none;
+  }
+
+  &.jupyter {
+    iframe {
+      border: 0;
+      display: block;
+    }
+  }
+}
+
+iframe.borderless {
+  border: 0;
+  display: block;
+}
+iframe.fullsize {
+  width: 100%;
+  height: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+a.text-button,
+button.text-button {
+  border: 0;
+  color: #000;
+  text-decoration: none;
+  border-bottom: 1px dotted #c6cbd1;
+  background: none;
+  &:hover {
+    border-bottom: 1px solid black;
+  }
+  cursor: pointer;
+}
+
+.bottom-buttons {
+  background: #fff;
+  width: 100%;
+  margin-left: calc(-1 * var(--space-5));
+  padding-left: var(--space-5);
+  padding-right: var(--space-5);
+  box-sizing: content-box;
+
+  button {
+    margin-right: var(--space-5);
+    margin-top: var(--space-5);
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+}
+
+.view-project-settings {
+  ul {
+    list-style-type: none;
+  }
+
+  .top-labels {
+    font-size: 14px;
+
+    a.text-button,
+    button.text-button {
+      font-size: 16px;
+    }
+
+    h3 {
+      font-size: 21px;
+    }
+  }
+
+  .project-settings {
+    flex: 1;
+    overflow: auto;
+  }
+}
+
+.environment-properties {
+  max-width: 800px;
+}
+
+.environment-variables-list {
+  ul {
+    list-style-type: none;
+  }
+}
+
+h2.header {
+  padding: var(--space-5);
+  background: #f5f5f5;
+  font-weight: normal;
+}
+
+.new-job {
+  b {
+    display: inline-block;
+  }
+
+  .steps {
+    padding: var(--space-5);
+  }
+
+  .step {
+    margin-bottom: var(--space-5);
+  }
+
+  .argument-set {
+    margin-bottom: 5px;
+  }
+
+  .argument-label {
+    display: inline-block;
+  }
+
+  .argument-values {
+    display: inline-block;
+
+    span {
+      display: inline-block;
+      padding: 5px;
+      background: $borderColor;
+      margin-left: 10px;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.3s ease all;
+
+      &.selected {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+span.floating-button {
+  float: left;
+  display: block;
+  i {
+    font-size: 30px;
+    padding-top: 3px;
+  }
+
+  &.pipeline-save-status {
+    i {
+      color: #999;
+    }
+  }
+}
+
+.job-view {
+  display: flex;
+  flex-direction: column;
+
+  .pipeline-tab-view {
+    .search {
+      margin-bottom: var(--space-5);
+    }
+  }
+
+  .buttons {
+    background: #fff;
+
+    button {
+      margin-right: var(--space-5);
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .pipeline-runs {
+    .pipeline-run-detail {
+      padding: $mdcComponentPadding;
+    }
+  }
+
+  .existing-pipeline-runs {
+    button {
+      margin-top: var(--space-5);
+    }
+  }
+
+  .tab-view {
+    padding: var(--space-5) 0;
+    flex: 1;
+    overflow: auto;
+  }
+
+  .top-labels {
+    padding-bottom: var(--space-5);
+    font-size: 14px;
+
+    h3 {
+      font-size: 21px;
+    }
+  }
+}
+
+.warning {
+  padding: calc(var(--space-5) / 2);
+  border-radius: 3px;
+  color: #000;
+  background: var(--colors-gray200);
+  font-size: 15px;
+
+  .material-icons {
+    float: left;
+    margin-right: 10px;
+    margin-top: -4px;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+b,
+strong {
+  font-weight: 500;
+}
+
+.parameter-tree {
+  b {
+    font-weight: 500;
+    display: inline-block;
+    margin: 10px 0;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  .param-block {
+    margin-bottom: 20px;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  .step-params {
+    .parameter-key {
+      margin-left: 20px;
+    }
+  }
+
+  .parameter-key,
+  .parameter-value {
+    display: inline-block;
+  }
+
+  .parameter-row {
+    margin-bottom: 5px;
+  }
+
+  .parameter-value {
+    &.editable {
+      color: $secondary;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    padding-left: 5px;
+  }
+}
+
+.columns {
+  .column {
+    width: 50%;
+    float: left;
+    min-height: 1px;
+  }
+  &.three {
+    .column {
+      width: 33.33%;
+    }
+  }
+  &.four {
+    .column {
+      width: 25%;
+    }
+  }
+}
+
+.command-palette-hint {
+  border: 1px solid $borderColor;
+  border-radius: 4px;
+  padding: 5px;
+  text-align: center;
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+  font-size: 0.875em;
+  font-weight: 500;
+
+  .material-icons {
+    position: absolute;
+    left: 5px;
+    font-size: 1.4em;
+    margin-top: -1px;
+  }
+
+  color: #666;
+}
+
+.command-palette-holder {
+  background-color: $dialogBackground;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .command-pallette {
+    margin-top: 20vh;
+    width: 100%;
+    max-width: 400px;
+
+    .command-list {
+      background: #fff;
+      border-radius: $mdcBorderRadius;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+  }
+}
+
+button.themed-secondary {
+  &:not(:disabled) {
+    background-color: $secondary;
+  }
+
+  &:disabled {
+    background: rgba(0, 0, 0, 0.12);
+  }
+}
+
+.disabled-text {
+  color: rgba(0, 0, 0, 0.37);
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+.multi-button {
+  button {
+    margin-left: $mdcComponentPadding;
+  }
+
+  button:first-child {
+    margin-left: 0;
+  }
+}
+
+.docs-notice {
+  background: whitesmoke;
+  border-radius: 3px;
+  padding: 10px;
+  color: #333;
+  font-size: $defaultFontSize;
+
+  a {
+    color: $secondary;
+  }
+}
+
+.pipeline-view {
+  .pipeline-viewport {
+    &.ready-to-pan {
+      cursor: grabbing; // as a fallback
+      cursor: grab;
+    }
+
+    &.panning {
+      cursor: grabbing;
+    }
+  }
+
+  .pipeline-steps-holder {
+    position: absolute;
+    user-select: none;
+    -webkit-user-select: none;
+
+    .step-selector {
+      position: absolute;
+      z-index: 0;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .pipeline-step {
+      .connection-point {
+        display: block;
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: -16px;
+        transition: left 0.3s ease;
+
+        &.outgoing-connections {
+          right: -16px;
+          left: auto;
+        }
+      }
+    }
+  }
+
+  .col-drag-resize {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 10px;
+    margin-left: -5px;
+    user-select: none;
+    cursor: col-resize;
+  }
+
+  .pane {
+    position: relative;
+
+    &.pipeline-view-pane {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+  }
+}
+
+.multi-field-input {
+  > div {
+    float: left;
+    width: 50%;
+
+    &:nth-child(2) {
+      width: 50%;
+    }
+  }
+}
+
+.clear {
+  clear: both;
+  display: block;
+}
+
+.commit-form {
+  width: 50%;
+
+  > div {
+    width: 100%;
+  }
+}
+
+.connection-form {
+  width: 50%;
+
+  > div {
+    width: 100%;
+  }
+}
+
+.main-content {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media only screen and (min-width: 1201px) {
+  .columns {
+    &.inner-padded {
+      .column:nth-child(1) {
+        padding-right: var(--space-5);
+      }
+      .column:nth-child(2) {
+        padding-left: var(--space-5);
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .view-page {
+    &.orchest-settings {
+      .columns {
+        .column {
+          &:nth-child(2n) {
+            padding-left: 0;
+          }
+          &:nth-child(2n + 1) {
+            padding-right: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .columns {
+    .column {
+      width: 100%;
+      padding: 0;
+      margin-bottom: var(--space-5);
+    }
+    margin-bottom: 0;
+  }
+  .pipeline-settings .columns {
+    margin-bottom: 0;
+  }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
