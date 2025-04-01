@@ -1,17 +1,17 @@
 <p align="center">
 
-<a href="https://orchest.io">
-  <img src="docs/source/img/logo.png" width="350px" />
+<a href="https://docs.dadosfera.ai">
+  <img src="https://files.readme.io/2b7adf2-Logo_Dadosfera_V3_Logo_without_slogan.png" width="350px" />
 </a>
 </p>
 
 <p align="center">
-<a href=https://orchest.io><img src="https://img.shields.io/badge/Website-violet?style=flat&logo=webflow&labelColor=5c5c5c"></a>
-<a href=https://docs.orchest.io/en/stable><img src="https://readthedocs.org/projects/orchest/badge/?version=stable&style=flat"></a>
-<a href=https://www.orchest.io/video-tutorials><img src="https://img.shields.io/badge/Video tutorials-blue?style=flat&logo=airplayvideo&labelColor=5c5c5c"></a>
-<a href=https://docs.orchest.io/en/stable/getting_started/quickstart.html><img src="https://img.shields.io/badge/Quickstart-blue?style=flat&logo=readthedocs&labelColor=5c5c5c&color=fc0373"></a>
-<a href=https://www.orchest.io/#orchest-cloud><img src="https://img.shields.io/badge/Orchest%20Cloud-blue?style=flat&logo=iCloud&labelColor=5c5c5c&logoColor=white"></a>
-<a href=https://join.slack.com/t/orchest/shared_invite/zt-g6wooj3r-6XI8TCWJrXvUnXKdIKU_8w><img src="https://img.shields.io/badge/Slack-violet?style=flat&logo=slack&labelColor=5c5c5c"></a>
+<a href=https://docs.dadosfera.ai><img src="https://img.shields.io/badge/Website-blue?style=flat&logo=webflow&labelColor=5c5c5c"></a>
+<a href=https://docs.dadosfera.ai><img src="https://img.shields.io/badge/Dadosfera SaaS-blue?style=flat&logo=aws&labelColor=5c5c5c"></a>
+<a href=https://docs.dadosfera.ai><img src="https://readthedocs.org/projects/orchest/badge/?version=stable&style=flat"></a>
+<a href=https://docs.dadosfera.ai><img src="https://img.shields.io/badge/Video%20tutorials-blue?style=flat&logo=airplayvideo&labelColor=5c5c5c"></a>
+<a href=https://docs.dadosfera.ai><img src="https://img.shields.io/badge/Quickstart-blue?style=flat&logo=readthedocs&labelColor=5c5c5c&color=fc0373"></a>
+<a href=https://discord.gg/CHpc6K3vZp><img src="https://img.shields.io/badge/Discord-violet?style=flat&logo=discord&labelColor=5c5c5c"></a>
 </p>
 
 ## Dadosfera Fork
@@ -106,20 +106,55 @@ Get started with an example project:
 Want to skip [the installation](https://docs.orchest.io/en/stable/getting_started/installation.html)
 and jump right in? Then try out our managed service: [Orchest Cloud](https://cloud.orchest.io/signup).
 
-## Slack Community
+## Development
 
-Join our Slack to chat about Orchest, ask questions, and share tips.
+To run Orchest locally for development, follow our detailed [development workflow guide](docs/source/development/development_workflow.md). This guide includes:
 
-[![Join us on Slack](https://img.shields.io/badge/%20-Join%20us%20on%20Slack-blue?style=for-the-badge&logo=slack&labelColor=5c5c5c)](https://join.slack.com/t/orchest/shared_invite/zt-g6wooj3r-6XI8TCWJrXvUnXKdIKU_8w)
+- Required prerequisites
+- Development environment setup
+- How to run Orchest locally
+- How to make changes and test
+- How to contribute to the project
+
+### Notes for Intel Mac Users
+
+If you are using a Mac with an Intel processor, some additional configurations may be required:
+
+1. Make sure Docker Desktop is configured to use the "hyperkit" driver instead of "qemu"
+2. For minikube, use the "hyperkit" driver:
+```bash
+minikube start --driver=hyperkit
+```
+3. If you encounter MySQL issues, install via Homebrew:
+```bash
+brew install mysql
+```
+
+For more details about Intel Mac specific configuration, check the [prerequisites section](docs/source/development/development_workflow.md#prerequisites) in the development guide.
+
+## Discord Community
+
+Join our Discord to chat about Orchest, ask questions, and share tips.
+
+[![Join us on Discord](https://img.shields.io/badge/%20-Join%20us%20on%20Discord-blue?style=for-the-badge&logo=discord&labelColor=5c5c5c)](https://discord.gg/CHpc6K3vZp)
 
 ## License
 
-The software in this repository is licensed as follows:
+This software is licensed under the Elastic License 2.0 (ELv2). See the [LICENSE](LICENSE) file for details.
 
-- All content residing under the ` orchest-sdk/` and `orchest-cli/` directories of this repository
-  are licensed under the `Apache-2.0` license as defined in `orchest-sdk/LICENSE` and
-  `orchest-cli/LICENSE` respectively.
-- Content outside of the above mentioned directories is available under the `AGPL-3.0` license.
+The Elastic License 2.0 (ELv2) is a permissive license that allows you to:
+- Use the software for any purpose
+- Modify the software
+- Distribute the software
+- Use the software commercially
+
+However, you must:
+- Include the original copyright notice
+- Include the license text
+- State significant changes made to the software
+- Include the Elastic License 2.0 (ELv2) license
+
+For more information about the Elastic License 2.0, please visit: https://www.elastic.co/licensing/elastic-license
 
 ## Contributing
 
@@ -133,7 +168,8 @@ Orchest deployment! 🔥
 ## Contributors
 
 <!-- To get src for img: https://api.github.com/users/username -->
-
+<a href="https://github.com/allansene"><img src="https://avatars.githubusercontent.com/allansene?v=4" title="Allan Sene" width="50" height="50"></a>
+<a href="https://github.com/rafaelsantanaep"><img src="https://avatars.githubusercontent.com/rafaelsantanaep?v=4" title="Rafael Santana" width="50" height="50"></a>
 <a href="https://github.com/ricklamers"><img src="https://avatars2.githubusercontent.com/u/1309307?v=4" title="ricklamers" width="50" height="50"></a>
 <a href="https://github.com/yannickperrenet"><img src="https://avatars0.githubusercontent.com/u/26223174?v=4" title="yannickperrenet" width="50" height="50"></a>
 <a href="https://github.com/fruttasecca"><img src="https://avatars3.githubusercontent.com/u/19429509?v=4" title="fruttasecca" width="50" height="50"></a>
