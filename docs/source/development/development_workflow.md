@@ -1,8 +1,4 @@
-(development-workflow)=
-
 # Development workflow
-
-(development-prerequisites)=
 
 ## Prerequisites
 
@@ -29,10 +25,7 @@ Optional, but highly recommended:
 - [jq](https://stedolan.github.io/jq/): Useful when working with JSON in your terminal.
 - [gron](https://github.com/tomnomnom/gron): Make JSON greppable.
 
-````{dropdown} 🎉 In case you dare to run a script to install all of the above
-**Requires to be on Linux**
-```sh
-cd ~/Downloads
+### Intel Mac Specific Configuration
 
 # go
 curl -L https://go.dev/dl/go1.18.3.linux-amd64.tar.gz -o go.tar.gz
@@ -101,26 +94,21 @@ python3 -m pip install -r docs/requirements.txt
 
 Orchest's integration tests require a MySQL client to be installed:
 
-`````{tab-set}
-````{tab-item} Linux
+For Linux:
 ```bash
 sudo apt install -y default-libmysqlclient-dev
 ```
-````
-````{tab-item} macOS
+
+For macOS:
 ```bash
 brew install mysql
 ```
-````
-`````
-
-(cluster-mount)=
 
 ### Cluster for development
 
 Currently, the development tools assume that you have Orchest installed on a local minikube cluster.
 To get the best development experience, it is recommended to mount the Orchest repository in minikube
-which allows for {ref}`incremental development <incremental-development>`.
+which allows for incremental development.
 
 ```{note}
 Make sure you are inside the root of the `orchest` repository.
@@ -164,7 +152,7 @@ is that the images you build are given a specific _tag_. This tag is used by the
 (`orchest-controller`) to manage the Orchest Cluster, thus if you build images with tag `X` but
 deploy the `orchest-controller` with tag `Y`, then the `orchest-controller` will start pulling the
 images with tag `Y` from DockerHub (instead of using the locally built images with tag `X`). This
-will become important when {ref}`rebuilding images after making code changes <dev-rebuilding-images>`.
+will become important when rebuilding images after making code changes.
 
 ```bash
 # Verify whether you are using minikube's Docker daemon
@@ -181,7 +169,7 @@ export TAG="$(orchest version --latest)"
 scripts/build_container.sh -M -t $TAG -o $TAG
 ```
 
-```{dropdown} 💡 Additional notes on the "scripts/build_container.sh" script
+💡 Additional notes on the "scripts/build_container.sh" script
 In this section we will quickly go over the most important options that can be passed to the
 `scripts/build_container.sh` script. Note that, because Orchest is a fully containerized
 application, the new images (the ones with your code changes) need to be build and used by the
@@ -204,7 +192,7 @@ cluster in order to reflect your changes.
 Any number of these options can be passed to the script.
 
 Of course, all details about the script can be found by checking out its source code.
-```
+
 
 And finally, install Orchest:
 
@@ -221,24 +209,21 @@ Take a look in [k9s](https://github.com/derailed/k9s) and see how Orchest is get
 Once the installation is completed you can reach Orchest using one of the following approaches,
 depending on your operating system:
 
-`````{tab-set}
-````{tab-item} Linux
+For Linux:
 Simply access the Orchest UI by browsing to the IP returned by:
 ```bash
 minikube ip
 ```
-````
-````{tab-item} macOS
+
+For macOS:
 Run the tunnel daemon and browse to [localhost](http://localhost).
 ```bash
 sudo minikube tunnel
 ```
-````
-`````
 
 Does everything look good? _Awesome!_ You're all set up and ready to start coding now! 🎉
 
-Have a look at our {ref}`best practices <best practices>` and our [GitHub](https://github.com/orchest/orchest/issues)
+Have a look at our best practices and our [GitHub](https://github.com/orchest/orchest/issues)
 to find interesting issues to work on.
 
 ## Redeploying Orchest after code changes
@@ -253,28 +238,23 @@ In this section we will go over the three ways to "redeploy" Orchest to reflect 
 Note that each approach is best used in specific circumstances.
 
 - _Using development mode to automatically reflect code changes._
-  ({ref}`link <incremental-development>`)
   Best used when working on a PR and you would like to see your code changes immediately, especially
   useful when developing the front-end (e.g. `orchest-webserver`).
 - _Rebuilding and redeploying only the service's image that you made changes to._
-  ({ref}`link <dev-rebuilding-images>`)
   Best used when you know the code changes affect only one service and you don't want to fully
   re-install Orchest. For example, you want to test a PR that only changed the front-end and want to
   run in production mode instead of development mode.
 - _Completely uninstalling and installing Orchest again._
-  ({ref}`link <dev-reinstalling-orchest>`)
   When making larger changes that touch different parts of Orchest, it is a good idea to fully
   re-install Orchest. Do note that this should be rather fast because the Docker cache is used when
   rebuilding images.
-
-(incremental-development)=
 
 ### Development mode (incremental development)
 
 For the next steps, we assume you already installed Orchest.
 
 To get "hot reloading", you need to make sure your minikube cluster was created using the above
-{ref}`mount command <cluster-mount>` and have Orchest serve files from your local filesystem (that
+mount command and have Orchest serve files from your local filesystem (that
 contains code changes) instead of the files baked into the Docker images. To achieve the latter,
 simply run:
 
@@ -307,7 +287,7 @@ next section.
 
 ```{note}
 Even if you do incremental development, it is good practice to rebuild the containers and run in
-production mode before opening a PR (see {ref}`before committing <before-committing>`).
+production mode before opening a PR.
 ```
 
 #### Teardown
@@ -329,10 +309,7 @@ To stop the cluster, it's enough to call `minikube stop`, which will stop all th
 If you have a running development installation with hot reloading, every time you make a change to
 the code it will be automatically reloaded. However, when switching git branches that are very
 different, or if changes to certain core components were made, this procedure might produce
-inconsistent results. A safer way to proceed is to uninstall Orchest before making the switch, see
-{ref}`re-installing Orchest <dev-reinstalling-orchest>`.
-
-(dev-rebuilding-images)=
+inconsistent results. A safer way to proceed is to uninstall Orchest before making the switch.
 
 ### Rebuilding images
 
@@ -348,8 +325,7 @@ created in the previous steps).
 For the sake of simplicity (without loss of generality), let's assume you made changes to the
 `orchest-api`.
 
-`````{tab-set}
-````{tab-item} Single node
+#### Single node
 
 Generally, single node deployments make it far easier to test changes. First of all, configure your
 environment to use minikube's Docker daemon if you haven't already:
@@ -389,9 +365,7 @@ kubectl delete pods -n orchest -l "app.kubernetes.io/name=orchest-api"
 Check out [k9s](https://github.com/derailed/k9s) if you want to use a visual interface instead
 (highly recommended!).
 
-````
-
-````{tab-item} Multi node
+#### Multi node
 
 The procedure for single-node is not possible in multi node deployments though. Since this is
 slightly more involved, we provide the following scripts:
@@ -416,14 +390,10 @@ bash scripts/run_in_minikube.sh echo "hello"
 
 ```{warning}
 The redeploy and build_image scripts require the Orchest repository
-{ref}`to be mounted in minikube <cluster-mount>`.
+to be mounted in minikube.
 However, note that multi node mounting might not be supported by all minikube drivers.
 We have tested with docker, the default driver.
 ```
-````
-`````
-
-(dev-reinstalling-orchest)=
 
 ### Re-installing Orchest
 
@@ -448,19 +418,14 @@ orchest install --dev
 
 ## Making changes
 
-(before-committing)=
-
 ### Before committing
 
 Make sure your development environment is set up correctly
-(see {ref}`prerequisites <development-prerequisites>`)
 so that pre-commit can automatically take care of running the appropriate
 formatters and linters when running `git commit`.
 
-In our CI we also run a bunch of checks, such as unit tests and {ref}`integration tests <integration-tests>` to make sure the codebase remains stable. To read more about testing, check out
-the {ref}`testing <tests>` section.
-
-(opening-a-pr)=
+In our CI we also run a bunch of checks, such as unit tests and integration tests to make sure the codebase remains stable. To read more about testing, check out
+the testing section.
 
 ### Opening a PR
 
@@ -498,7 +463,7 @@ unless there are known incompatibilities.
 In addition, avoid manually editing `requirements.txt` files,
 since they will be automatically generated.
 
-````{warning}
+```{warning}
 A [bug in pip-tools](https://github.com/jazzband/pip-tools/issues/1505) affects local
 dependencies. Older versions are not affected, but they are not compatible with modern pip.
 At the time of writing, the best way forward is to install this fork
@@ -507,7 +472,7 @@ At the time of writing, the best way forward is to install this fork
 ```
 pip install -U "pip-tools @ git+https://github.com/richafrank/pip-tools.git@combine-without-copy"
 ```
-````
+```
 
 ### Database schema migrations
 
@@ -524,8 +489,6 @@ scripts/migration_manager.sh orchest-webserver migrate
 scripts/migration_manager.sh --help
 ```
 
-(building-the-docs)=
-
 ### Building the docs
 
 Our docs are built using [Read the Docs](https://docs.readthedocs.io/) with Sphinx and written
@@ -538,14 +501,14 @@ cd docs
 make html
 ```
 
-````{tip}
-👉 If you didn't follow the {ref}`prerequisites <development-prerequisites>`, then make sure
+```{tip}
+👉 If you didn't follow the prerequisites, then make sure
 you've installed the needed requirements to builds the docs:
 
 ```sh
 python3 -m pip install -r docs/requirements.txt
 ```
-````
+```
 
 ## Example VS Code monorepo set-up
 
@@ -594,11 +557,7 @@ note that this won't include all the files defined in the Orchest repo), e.g.:
 }
 ```
 
-(tests)=
-
 ## Automated tests
-
-(unit-tests)=
 
 ### Unit tests
 
@@ -622,7 +581,7 @@ Unit tests are being ported to k8s, stay tuned :)!
 % For isolation dependencies for the different services are installed within their respective
 % virtual environments inside the `.venvs` folder.
 
-(integration-tests)=
+
 
 ### Integration tests
 
@@ -652,8 +611,6 @@ Integration tests are being ported to k8s, stay tuned :)!
 
 ## Manual testing
 
-(environment-base-images-changes)=
-
 ### Test Environment or custom Jupyter base image changes
 
 When building environment or custom Jupyter images the image builder mounts
@@ -674,8 +631,7 @@ Currently, this has only been tested with docker as the container runtime.
 ### Test running Orchest on `containerd`
 
 To test running Orchest on `containerd`, we recommend [installing MicroK8s](https://microk8s.io/).
-Alternatively, you can also set up Orchest on GKE (see {ref}`installation <regular-installation>`)
-or install MicroK8s in a VM (e.g. using [VirtualBox](https://www.virtualbox.org/)).
+Alternatively, you can also set up Orchest on GKE or install MicroK8s in a VM (e.g. using [VirtualBox](https://www.virtualbox.org/)).
 
 Next, enable the following addons:
 
@@ -696,8 +652,7 @@ docker save \
     -o orchest-images.tar
 ```
 
-````{dropdown} 👉 I didn't install MicroK8s on my host
-In case you didn't install MicroK8s on your host directly, you need to ship the images to the
+If you didn't install MicroK8s on your host directly, you need to ship the images to the
 MicroK8s node:
 ```bash
 scp ./orchest-images.tar {your_user}@${microk8s node ip}:~/
@@ -707,7 +662,6 @@ And set up the kubeconfig on your host so that you can use the `orchest-cli` lik
 ```bash
 KUBECONFIG=/path/to/kubeconfig orchest install --dev
 ```
-````
 
 Next, inside the MicroK8s node (which can be your host), you can import the images using:
 
@@ -795,8 +749,7 @@ orchest update --dev --version=v2022.04.6
 
 #### Through the UI
 
-For this to work you need to be running in dev mode and have the `orchest-dev-repo` mounted (as
-per {ref}`setting up minikube for development <cluster-mount>`).
+For this to work you need to be running in dev mode and have the `orchest-dev-repo` mounted.
 
 ```bash
 # Start from a clean slate so that we know what version we are on
