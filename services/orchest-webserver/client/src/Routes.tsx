@@ -11,6 +11,7 @@ import { getOrderedRoutes, siteMap } from "./routingConfig";
 import { SettingsView } from "./settings-view/SettingsView";
 import HelpView from "./views/HelpView";
 import JupyterLabView from "./views/JupyterLabView";
+import AnalyticsView from "./views/AnalyticsView";
 import ManageUsersView from "./views/ManageUsersView";
 import ProjectSettingsView from "./views/ProjectSettingsView";
 import UpdateView from "./views/UpdateView";
@@ -35,6 +36,7 @@ const pathComponentMapping = {
   "/update": UpdateView,
   "/manage-users": ManageUsersView,
   "/help": HelpView,
+  "/analytics": AnalyticsView,
   "/": HomeView,
   //  "*": NotFound,
 };

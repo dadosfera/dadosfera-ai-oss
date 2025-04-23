@@ -1,3 +1,12 @@
+import {
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -16,6 +25,23 @@ const Login: React.FC<{
   const [loginFailure, setLoginFailure] = React.useState<string>("");
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const redirectToHelpPage = () => {
+    window.open(
+      "https://ajuda.dadosfera.ai/_hcms/mem/login?redirect_url=https%3A%2F%2Fajuda.dadosfera.ai%2Fportal"
+    );
+    handleClose();
+  };
 
   const submitLogin = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -100,10 +126,17 @@ const Login: React.FC<{
                   type="submit"
                   variant="contained"
                   color="primary"
-                  sx={{ marginTop: 4 }}
+                  sx={{ marginY: 4 }}
                 >
                   Login
                 </Button>
+
+                <Divider />
+                <Box marginTop={4}>
+                  <Button variant="text" onClick={handleClickOpen}>
+                    Forgot your password?
+                  </Button>
+                </Box>
                 {loginFailure && (
                   <div className="error push-up">
                     {JSON.stringify(loginFailure)}
@@ -151,6 +184,34 @@ const Login: React.FC<{
           </Box> */}
         </div>
       </div>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Forgot your password?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            To recover your password, contact your system administrator. Request
+            a new password or help accessing your account.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleClose}
+            autoFocus
+            variant="contained"
+            color="error"
+          >
+            close
+          </Button>
+          <Button onClick={redirectToHelpPage} variant="contained">
+            contact admin
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

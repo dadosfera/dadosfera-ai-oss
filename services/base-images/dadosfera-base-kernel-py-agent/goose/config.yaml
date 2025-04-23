@@ -1,0 +1,53 @@
+GOOSE_PROVIDER: openai
+extensions:
+  computercontroller:
+    enabled: true
+    name: computercontroller
+    timeout: 300
+    type: builtin
+  crawler:
+    args:
+    - -y
+    - '@modelcontextprotocol/server-puppeteer'
+    cmd: npx
+    enabled: true
+    envs: {}
+    name: crawler
+    timeout: 300
+    type: stdio
+  developer:
+    enabled: true
+    name: developer
+    timeout: 300
+    type: builtin
+  fetch:
+    args:
+    - mcp-server-fetch
+    cmd: uvx
+    enabled: true
+    envs: {}
+    name: fetch
+    timeout: 300
+    type: stdio
+  git:
+    args:
+    - mcp-server-git
+    cmd: uvx
+    enabled: false
+    envs: {}
+    name: git
+    timeout: 300
+    type: stdio
+  google_drive:
+    enabled: false
+    name: google_drive
+    timeout: 300
+    type: builtin
+  memory:
+    enabled: true
+    name: memory
+    timeout: 300
+    type: builtin
+OPENAI_BASE_PATH: v1/chat/completions
+GOOSE_MODEL: gpt-4o
+OPENAI_HOST: https://api.openai.com

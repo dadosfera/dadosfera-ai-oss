@@ -60,7 +60,9 @@ def _step_to_workflow_manifest_task(
     ]
     # Note that the order of concatenation matters, so that there is no
     # risk that the user overwrites internal variables accidentally.
-    env_variables = user_env_variables + orchest_env_variables + _utils.get_aws_env_vars()
+    env_variables = (
+        user_env_variables + orchest_env_variables + _utils.get_aws_env_vars()
+    )
 
     # Need to reference the ip because the local docker engine will run
     # the container, and if the image is missing it will prompt a pull
@@ -99,7 +101,12 @@ def _step_to_workflow_manifest_task(
                 working_dir,
                 project_relative_file_path,
             ],
-            "resources": {"requests": {"cpu": _config.USER_CONTAINERS_CPU_SHARES}},
+            "resources": {
+                "requests": {
+                    "cpu": _config.USER_CONTAINERS_CPU_SHARES,
+                    "memory": _config.USER_CONTAINERS_MEMORY_SHARES,
+                }
+            },
         }
     else:
         # This allows us to edit the container that argo runs for us.
@@ -115,7 +122,6 @@ def _step_to_workflow_manifest_task(
         }
         if utils.should_use_priority_class():
             pod_spec_dict["priorityClassName"] = CONFIG_CLASS.PRIORITY_CLASS_NAME
-            
         pod_spec_patch = json.dumps(pod_spec_dict)
 
         task = {
@@ -259,7 +265,10 @@ def _get_pipeline_argo_templates(
                     ],
                     "volumeMounts": volume_mounts,
                     "resources": {
-                        "requests": {"cpu": _config.USER_CONTAINERS_CPU_SHARES}
+                        "requests": {
+                            "cpu": _config.USER_CONTAINERS_CPU_SHARES,
+                            "memory": _config.USER_CONTAINERS_MEMORY_SHARES,
+                        }
                     },
                 },
                 "podSpecPatch": "{{inputs.parameters.pod_spec_patch}}",
@@ -414,7 +423,6 @@ def run_pipeline_workflow(
                 api_exception.status == 409 and "AlreadyExists" in api_exception.body
             ):
                 raise api_exception
-
 
         while steps_to_finish:
             resp = k8s_custom_obj_api.get_namespaced_custom_object(

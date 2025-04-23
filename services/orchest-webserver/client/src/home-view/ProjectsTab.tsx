@@ -10,7 +10,6 @@ import { ProjectTable } from "./components/ProjectTable";
 
 export const ProjectsTab = () => {
   const { isLoaded, isLoading, isEmpty, error, reload } = useFetchProjects();
-
   useOnBrowserTabFocus(reload);
 
   return (

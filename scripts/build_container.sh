@@ -8,7 +8,7 @@ NO_CACHE=false
 VERBOSE=false
 ENABLE_SSL=false
 BUILD_TAG="latest"
-ORCHEST_VERSION=$(git describe --tags)
+ORCHEST_VERSION=v2023.04.2
 
 # Read flags.
 while getopts "s:i:t:no:vemM" opt; do

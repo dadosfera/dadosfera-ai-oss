@@ -19,9 +19,8 @@ from config import CONFIG_CLASS
 
 logger = utils.get_logger()
 
-AUTH_URL = (
-    f"http://auth-server.{_config.ORCHEST_NAMESPACE}.svc.cluster.local/auth"
-)
+AUTH_URL = f"http://auth-server.{_config.ORCHEST_NAMESPACE}.svc.cluster.local/auth"
+
 
 def _get_common_volumes_and_volume_mounts(
     userdir_pvc: str,
@@ -263,7 +262,10 @@ def _get_session_sidecar_deployment_manifest(
                             # which could lead to:
                             #   `total requests > available requests`
                             "resources": {
-                                "requests": {"cpu": _config.USER_CONTAINERS_CPU_SHARES}
+                                "requests": {
+                                    "cpu": _config.USER_CONTAINERS_CPU_SHARES,
+                                    "memory": _config.USER_CONTAINERS_MEMORY_SHARES,
+                                }
                             },
                             "imagePullPolicy": "IfNotPresent",
                             "env": _get_orchest_sdk_vars(
@@ -310,13 +312,10 @@ def _get_orchest_sdk_vars(
         "ORCHEST_PIPELINE_UUID": pipeline_uuid,
         "ORCHEST_PIPELINE_PATH": pipeline_file,
         "ORCHEST_SESSION_UUID": session_uuid,
-        "ORCHEST_SESSION_TYPE": session_type.value
+        "ORCHEST_SESSION_TYPE": session_type.value,
     }
 
-    env_vars = [
-        {"name": k, "value": v}
-        for k, v in BASE_ENV_VARS.items()
-    ]
+    env_vars = [{"name": k, "value": v} for k, v in BASE_ENV_VARS.items()]
     env_vars.extend(_utils.get_aws_env_vars())
     return env_vars
 
@@ -416,7 +415,10 @@ def _get_environment_shell_deployment_service_manifest(
                             "args": [args],
                             "env": env,
                             "resources": {
-                                "requests": {"cpu": _config.USER_CONTAINERS_CPU_SHARES}
+                                "requests": {
+                                    "cpu": _config.USER_CONTAINERS_CPU_SHARES,
+                                    "memory": _config.USER_CONTAINERS_MEMORY_SHARES,
+                                }
                             },
                             "startupProbe": {
                                 "exec": {
@@ -485,10 +487,7 @@ def _get_jupyter_server_deployment_service_manifest(
     ]
 
     env = [
-        {
-            "name": "ORCHEST_PROJECT_UUID",
-            "value": project_uuid
-        },
+        {"name": "ORCHEST_PROJECT_UUID", "value": project_uuid},
         {
             "name": "ORCHEST_PIPELINE_UUID",
             "value": session_config["pipeline_uuid"],
@@ -563,7 +562,10 @@ def _get_jupyter_server_deployment_service_manifest(
                             "command": ["/bin/sh", "-c"],
                             "args": [args],
                             "resources": {
-                                "requests": {"cpu": _config.USER_CONTAINERS_CPU_SHARES}
+                                "requests": {
+                                    "cpu": _config.USER_CONTAINERS_CPU_SHARES,
+                                    "memory": _config.USER_CONTAINERS_MEMORY_SHARES,
+                                }
                             },
                             "startupProbe": {
                                 "httpGet": {
@@ -616,7 +618,7 @@ def _get_jupyter_server_deployment_service_manifest(
     ingress_metadata["annotations"] = {
         "nginx.ingress.kubernetes.io/auth-url": AUTH_URL,
         "nginx.ingress.kubernetes.io/auth-signin": "/login",
-        "nginx.ingress.kubernetes.io/proxy-body-size": "0"
+        "nginx.ingress.kubernetes.io/proxy-body-size": "0",
     }
     ingress_manifest = {
         "apiVersion": "networking.k8s.io/v1",
@@ -809,7 +811,10 @@ def _get_jupyter_enterprise_gateway_deployment_service_manifest(
                                 + CONFIG_CLASS.ORCHEST_VERSION
                             ),
                             "resources": {
-                                "requests": {"cpu": _config.USER_CONTAINERS_CPU_SHARES}
+                                "requests": {
+                                    "cpu": _config.USER_CONTAINERS_CPU_SHARES,
+                                    "memory": _config.USER_CONTAINERS_MEMORY_SHARES,
+                                }
                             },
                             "imagePullPolicy": "IfNotPresent",
                             "env": environment,
@@ -993,7 +998,10 @@ def _get_user_service_deployment_service_manifest(
                             "imagePullPolicy": "IfNotPresent",
                             "env": env,
                             "resources": {
-                                "requests": {"cpu": _config.USER_CONTAINERS_CPU_SHARES}
+                                "requests": {
+                                    "cpu": _config.USER_CONTAINERS_CPU_SHARES,
+                                    "memory": _config.USER_CONTAINERS_MEMORY_SHARES,
+                                }
                             },
                             "volumeMounts": volume_mounts,
                             "ports": [
@@ -1017,9 +1025,9 @@ def _get_user_service_deployment_service_manifest(
         ]
 
     if "args" in service_config:
-        deployment_manifest["spec"]["template"]["spec"]["containers"][0][
-            "args"
-        ] = shlex.split(service_config["args"])
+        deployment_manifest["spec"]["template"]["spec"]["containers"][0]["args"] = (
+            shlex.split(service_config["args"])
+        )
 
     service_manifest = {
         "apiVersion": "v1",
@@ -1050,9 +1058,11 @@ def _get_user_service_deployment_service_manifest(
                             "port": {"number": port},
                         }
                     },
-                    "path": f"/({ingress_url}_{port}.*)"
-                    if is_pbp_enabled
-                    else f"/{ingress_url}_{port}(/|$)(.*)",
+                    "path": (
+                        f"/({ingress_url}_{port}.*)"
+                        if is_pbp_enabled
+                        else f"/{ingress_url}_{port}(/|$)(.*)"
+                    ),
                     "pathType": "Prefix",
                 }
             )
@@ -1061,9 +1071,9 @@ def _get_user_service_deployment_service_manifest(
 
         # Decide rewrite target based on pbp
         ingress_metadata["annotations"] = {
-            "nginx.ingress.kubernetes.io/rewrite-target": "/$1"
-            if is_pbp_enabled
-            else "/$2",
+            "nginx.ingress.kubernetes.io/rewrite-target": (
+                "/$1" if is_pbp_enabled else "/$2"
+            ),
         }
 
         if service_config.get("requires_authentication", True):

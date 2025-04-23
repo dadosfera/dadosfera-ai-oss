@@ -1,0 +1,323 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+      - beta
+
+jobs:
+  extract_environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.extract_environment.outputs.environment }}
+    steps:
+      - name: Extract Environment
+        run: |
+          if [ ${GITHUB_REF} == "refs/heads/master" ]; then
+            echo "environment=prd" >> $GITHUB_OUTPUT
+          elif [ ${GITHUB_REF} == "refs/heads/beta" ]; then
+            echo "environment=stg" >> $GITHUB_OUTPUT
+          fi
+        id: extract_environment
+
+  semantic_release:
+    runs-on: ubuntu-latest
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        id: semantic
+        with:
+          semantic_version: 19
+          extra_plugins: |
+            @saithodev/semantic-release-backmerge@2
+            conventional-changelog-eslint@4.0.0
+          branches: |
+            [
+              'master',
+              {
+                name: 'alpha',
+                prerelease: true
+              },
+              {
+                name: 'beta',
+                prerelease: true
+              }
+            ]
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy_webserver:
+    needs: [semantic_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: needs.semantic_release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: orchest-webserver
+          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          BUILD_CTX: services/orchest-webserver
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          mkdir -p $BUILD_CTX/pnpm_files/
+          cp pnpm-lock.yaml $BUILD_CTX/pnpm_files/
+          cp pnpm-workspace.yaml $BUILD_CTX/pnpm_files/
+          cp package.json $BUILD_CTX/pnpm_files/
+          cp tsconfig.json $BUILD_CTX/pnpm_files/
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_auth_server:
+    needs: [semantic_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: needs.semantic_release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: auth-server
+          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          BUILD_CTX: services/auth-server/
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          mkdir -p $BUILD_CTX/pnpm_files/
+          cp pnpm-lock.yaml $BUILD_CTX/pnpm_files/
+          cp pnpm-workspace.yaml $BUILD_CTX/pnpm_files/
+          cp package.json $BUILD_CTX/pnpm_files/
+          cp tsconfig.json $BUILD_CTX/pnpm_files/
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+
+  deploy_api:
+    needs: [semantic_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: needs.semantic_release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: orchest-api
+          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          BUILD_CTX: services/orchest-api
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          cp -r orchest-cli/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_celery:
+    needs: [semantic_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: needs.semantic_release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: celery-worker
+          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          BUILD_CTX: services/orchest-api
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          cp -r orchest-cli/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile_celery $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  deploy_node_agent:
+    needs: [semantic_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: needs.semantic_release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: node-agent
+          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          BUILD_CTX: services/node-agent
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          cp -r orchest-cli/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_orchest_controller:
+    needs: [semantic_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: needs.semantic_release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: orchest-controller
+          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          BUILD_CTX: services/orchest-controller
+        run: |
+          cp .dockerignore $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_jupyter_server:
+    needs: [semantic_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: needs.semantic_release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: jupyter-server
+          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          BUILD_CTX: services/jupyter-server
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df

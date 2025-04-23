@@ -14,7 +14,6 @@ import { useCanvasScaling } from "./contexts/CanvasScalingContext";
 import { usePipelineDataContext } from "./contexts/PipelineDataContext";
 import { usePipelineRefs } from "./contexts/PipelineRefsContext";
 import { usePipelineUiStateContext } from "./contexts/PipelineUiStateContext";
-import { useAutoStartSession } from "./hooks/useAutoStartSession";
 import { useOpenFile } from "./hooks/useOpenFile";
 import { useSavePipelineJson } from "./hooks/useSavePipelineJson";
 import { PipelineCanvasHeaderBar } from "./pipeline-canvas-header-bar/PipelineCanvasHeaderBar";
@@ -54,7 +53,6 @@ const elementCenter = (
 
 export const PipelineEditor = () => {
   const { pipelineCwd, isReadOnly, pipelineJson } = usePipelineDataContext();
-  useAutoStartSession();
 
   const { openNotebook, previewFile } = useOpenFile();
 

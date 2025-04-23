@@ -32,6 +32,8 @@ COPY celery_daemon_configs/worker_builds.conf \
 WORKDIR /orchest/services/orchest-api/app/
 
 COPY ./start_celery_daemon.sh /
+COPY ./celery_worker_healthcheck.py /
+RUN chmod +x /celery_worker_healthcheck.py
 
 ARG ORCHEST_VERSION
 ENV ORCHEST_VERSION=${ORCHEST_VERSION}

@@ -47,6 +47,6 @@ spec:
           value: DEBUG
     env:
       - name: CLOUD_ENVIRONMENT
-        value: "azure"
+        value: "local"
       - name: ORCHEST_LOG_LEVEL
         value: DEBUG
