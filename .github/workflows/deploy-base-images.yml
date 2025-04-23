@@ -78,15 +78,3 @@ jobs:
       dockerhub-username: dadosfera
       image-name: base-kernel-py-agent
     secrets: inherit
-
-  build_orchest_controller:
-    needs: [semantic_release]
-    if: ${{ needs.semantic_release.outputs.new_release_published == 'true' }}
-    uses: ./.github/workflows/build-push-image.yml
-    with:
-      image-directory: services/base-images/dadosfera-base-kernel-py-agent
-      dockerhub-username: dadosfera
-      image-name: orchest-controller
-      image-tag: ${{ needs.semantic_release.outputs.new_release_published }}
-    secrets: inherit
-  
