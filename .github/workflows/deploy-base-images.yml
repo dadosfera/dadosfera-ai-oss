@@ -3,7 +3,7 @@ name: Deploy to Docker Hub
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   semantic_release:
@@ -25,7 +25,7 @@ jobs:
             conventional-changelog-eslint@4.0.0
           branches: |
             [
-              'master',
+              'main',
               {
                 name: 'alpha',
                 prerelease: true

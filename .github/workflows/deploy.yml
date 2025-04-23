@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - main
       - beta
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Extract Environment
         run: |
-          if [ ${GITHUB_REF} == "refs/heads/master" ]; then
+          if [ ${GITHUB_REF} == "refs/heads/main" ]; then
             echo "environment=prd" >> $GITHUB_OUTPUT
           elif [ ${GITHUB_REF} == "refs/heads/beta" ]; then
             echo "environment=stg" >> $GITHUB_OUTPUT
