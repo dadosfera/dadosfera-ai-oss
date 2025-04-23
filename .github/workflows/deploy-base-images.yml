@@ -49,7 +49,7 @@ jobs:
 
       - name: Check for changes in paths
         id: check-changes-in-paths
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         with:
           filters: |
             dadosfera-base-kernel-py:
