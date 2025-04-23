@@ -55,35 +55,25 @@ jobs:
   deploy_webserver:
     needs: [semantic_release, extract_environment]
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     environment: prd
     if: needs.semantic_release.outputs.new_release_published == 'true'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Region
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-region: us-east-1
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install AWS CLI
-        run: |
-          python3 -m pip install awscli
-
-      - name: Login to AWS ECR
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
-      - name: Build, Tag, and Push Image to AWS ECR (Orchest Webserver)
+      - name: Build, Tag, and Push Image to Dockerhub
         env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: u5k1d2l0
-          ECR_REPOSITORY: orchest-webserver
+          REGISTRY: dadosfera
+          REPOSITORY: orchest-webserver
           IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-webserver
         run: |
@@ -95,8 +85,8 @@ jobs:
           cp pnpm-workspace.yaml $BUILD_CTX/pnpm_files/
           cp package.json $BUILD_CTX/pnpm_files/
           cp tsconfig.json $BUILD_CTX/pnpm_files/
-          docker build -t $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
         if: always()
@@ -108,35 +98,25 @@ jobs:
   deploy_auth_server:
     needs: [semantic_release, extract_environment]
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     environment: prd
     if: needs.semantic_release.outputs.new_release_published == 'true'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Region
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-region: us-east-1
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install AWS CLI
-        run: |
-          python3 -m pip install awscli
-
-      - name: Login to AWS ECR
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
-      - name: Build, Tag, and Push Image to AWS ECR (Orchest Auth Server)
+      - name: Build, Tag, and Push Image to Dockerhub
         env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: u5k1d2l0
-          ECR_REPOSITORY: orchest-auth-server
+          REGISTRY: dadosfera
+          REPOSITORY: auth-server
           IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
           BUILD_CTX: services/auth-server/
         run: |
@@ -148,8 +128,8 @@ jobs:
           cp pnpm-workspace.yaml $BUILD_CTX/pnpm_files/
           cp package.json $BUILD_CTX/pnpm_files/
           cp tsconfig.json $BUILD_CTX/pnpm_files/
-          docker build -t $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
         if: always()
@@ -162,35 +142,25 @@ jobs:
   deploy_api:
     needs: [semantic_release, extract_environment]
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     environment: prd
     if: needs.semantic_release.outputs.new_release_published == 'true'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Region
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-region: us-east-1
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install AWS CLI
-        run: |
-          python3 -m pip install awscli
-
-      - name: Login to AWS ECR
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
-      - name: Build, Tag, and Push Image to AWS ECR (Orchest API)
+      - name: Build, Tag, and Push Image to Dockerhub
         env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: u5k1d2l0
-          ECR_REPOSITORY: orchest-api
+          REGISTRY: dadosfera
+          REPOSITORY: orchest-api
           IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-api
         run: |
@@ -198,8 +168,8 @@ jobs:
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           cp -r orchest-cli/ $BUILD_CTX
-          docker build -t $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
         if: always()
@@ -211,35 +181,25 @@ jobs:
   deploy_celery:
     needs: [semantic_release, extract_environment]
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     environment: prd
     if: needs.semantic_release.outputs.new_release_published == 'true'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Region
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-region: us-east-1
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install AWS CLI
-        run: |
-          python3 -m pip install awscli
-
-      - name: Login to AWS ECR
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
-      - name: Build, Tag, and Push Image to AWS ECR (Orchest Celery)
+      - name: Build, Tag, and Push Image to Dockerhub
         env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: u5k1d2l0
-          ECR_REPOSITORY: orchest-celery
+          REGISTRY: dadosfera
+          REPOSITORY: celery-worker
           IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-api
         run: |
@@ -247,41 +207,31 @@ jobs:
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           cp -r orchest-cli/ $BUILD_CTX
-          docker build -t $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile_celery $BUILD_CTX
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile_celery $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   deploy_node_agent:
     needs: [semantic_release, extract_environment]
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     environment: prd
     if: needs.semantic_release.outputs.new_release_published == 'true'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Region
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-region: us-east-1
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install AWS CLI
-        run: |
-          python3 -m pip install awscli
-
-      - name: Login to AWS ECR
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
-      - name: Build, Tag, and Push Image to AWS ECR (Orchest Celery)
+      - name: Build, Tag, and Push Image to Dockerhub
         env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: u5k1d2l0
-          ECR_REPOSITORY: orchest-node-agent
+          REGISTRY: dadosfera
+          REPOSITORY: node-agent
           IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
           BUILD_CTX: services/node-agent
         run: |
@@ -289,8 +239,8 @@ jobs:
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           cp -r orchest-cli/ $BUILD_CTX
-          docker build -t $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
         if: always()
@@ -302,41 +252,31 @@ jobs:
   deploy_orchest_controller:
     needs: [semantic_release, extract_environment]
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     environment: prd
     if: needs.semantic_release.outputs.new_release_published == 'true'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Region
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-region: us-east-1
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install AWS CLI
-        run: |
-          python3 -m pip install awscli
-
-      - name: Login to AWS ECR
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
-      - name: Build, Tag, and Push Image to AWS ECR (Orchest Celery)
+      - name: Build, Tag, and Push Image to Dockerhub
         env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: u5k1d2l0
-          ECR_REPOSITORY: orchest-controller
+          REGISTRY: dadosfera
+          REPOSITORY: orchest-controller
           IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-controller
         run: |
           cp .dockerignore $BUILD_CTX
-          docker build -t $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
         if: always()
@@ -348,42 +288,32 @@ jobs:
   deploy_jupyter_server:
     needs: [semantic_release, extract_environment]
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     environment: prd
     if: needs.semantic_release.outputs.new_release_published == 'true'
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Region
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          aws-region: us-east-1
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Install AWS CLI
-        run: |
-          python3 -m pip install awscli
-
-      - name: Login to AWS ECR
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
-      - name: Build, Tag, and Push Image to AWS ECR (Orchest Celery)
+      - name: Build, Tag, and Push Image to Dockerhub
         env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REGISTRY_ALIAS: u5k1d2l0
-          ECR_REPOSITORY: orchest-jupyter-server
+          REGISTRY: dadosfera
+          REPOSITORY: jupyter-server
           IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
           BUILD_CTX: services/jupyter-server
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
-          docker build -t $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
         if: always()

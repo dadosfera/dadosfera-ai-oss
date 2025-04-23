@@ -11,6 +11,9 @@ on:
       image-name:
         required: true
         type: string
+      image-tag:
+        required: false
+        type: string
     secrets:
       DOCKERHUB_PASSWORD:
         required: true
@@ -39,8 +42,14 @@ jobs:
 
       - name: Get image version
         id: image_version
-        run: echo "version=$(cat ${{inputs.image-directory}}/VERSION)" >> $GITHUB_OUTPUT
-
+        shell: bash
+        run: |
+          if [[ -n "${{ inputs.image-tag }}" ]]; then
+            echo "version=${{ inputs.image-tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=$(cat ${{ inputs.image-directory }}/VERSION)" >> $GITHUB_OUTPUT
+          fi
+  
       - name: Build and push image
         env:
           TAG: ${{ steps.image_version.outputs.version }}
@@ -53,7 +62,7 @@ jobs:
           cp orchest-sdk services/base-images -r
           DOCKER_BUILDKIT=1 docker build -t ${IMAGE_NAME} \
             -f ${BUILD_DIRECTORY}/Dockerfile services/base-images \
-            --build-arg ORCHEST_VERSION=v2023.01.0 \
+            --build-arg ORCHEST_VERSION=v2023.04.2 \
             --secret id=aws_access_key_id,env=AWS_ACCESS_KEY_ID \
             --secret id=aws_secret_access_key,env=AWS_SECRET_ACCESS_KEY
           docker tag ${IMAGE_NAME} dadosfera/${IMAGE_NAME}:${TAG}
