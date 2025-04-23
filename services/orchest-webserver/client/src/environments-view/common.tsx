@@ -157,6 +157,20 @@ export const DEFAULT_BASE_IMAGES: (CustomImage & {
     gpu_support: false,
     label: "JavaScript",
   },
+  {
+    base_image: "dadosfera/base-kernel-py:1.0.3",
+    img_src: "/image/df-icon-logo.svg",
+    language: "python",
+    gpu_support: false,
+    label: "python",
+  },
+  {
+    base_image: "dadosfera/base-kernel-py-agent:1.0.0",
+    img_src: "/image/ai-logo.svg",
+    language: "python",
+    gpu_support: false,
+    label: "python",
+  }
 ];
 
 export const BASE_IMAGE_LANGUAGES = new Set<string>(

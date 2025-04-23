@@ -26,7 +26,7 @@ Optional, but highly recommended:
 - [gron](https://github.com/tomnomnom/gron): Make JSON greppable.
 
 ### Intel Mac Specific Configuration
-
+```
 # go
 curl -L https://go.dev/dl/go1.18.3.linux-amd64.tar.gz -o go.tar.gz
 sudo tar -C /usr/local -xzf go.tar.gz
@@ -70,7 +70,6 @@ sudo npm install -g pnpm
 curl -L https://github.com/derailed/k9s/releases/download/v0.25.21/k9s_Linux_x86_64.tar.gz -o k9s.tar.gz
 tar -C ~/.local/bin -xzf k9s.tar.gz
 ```
-````
 
 ### Dependencies
 
@@ -110,9 +109,8 @@ Currently, the development tools assume that you have Orchest installed on a loc
 To get the best development experience, it is recommended to mount the Orchest repository in minikube
 which allows for incremental development.
 
-```{note}
-Make sure you are inside the root of the `orchest` repository.
-```
+
+>Make sure you are inside the root of the `orchest` repository.
 
 ```bash
 # Delete any existing cluster
@@ -138,9 +136,7 @@ DockerHub only contains images of Orchest releases and not active code changes f
 Therefore it is important to configure your environment to use minikube's Docker daemon before
 building images.
 
-```{note}
-The command below needs to be run in every terminal window you open!
-```
+> The command below needs to be run in every terminal window you open!
 
 ```bash
 # Use minikube's Docker daemon:
@@ -285,10 +281,8 @@ The services that support incremental development are:
 For changes to all other services, you need to redeploy the respective image as described in the
 next section.
 
-```{note}
-Even if you do incremental development, it is good practice to rebuild the containers and run in
+>Even if you do incremental development, it is good practice to rebuild the containers and run in
 production mode before opening a PR.
-```
 
 #### Teardown
 
@@ -429,11 +423,11 @@ the testing section.
 
 ### Opening a PR
 
-```{note}
+
 When opening a PR please change the base in which you want to merge from `master` to `dev`.
 The [GitHub docs](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-base-branch-of-a-pull-request)
 describe how this can be done.
-```
+
 
 We use [gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) as
 our branching model with `master` and `dev` being the described `master` and `develop`
@@ -463,7 +457,6 @@ unless there are known incompatibilities.
 In addition, avoid manually editing `requirements.txt` files,
 since they will be automatically generated.
 
-```{warning}
 A [bug in pip-tools](https://github.com/jazzband/pip-tools/issues/1505) affects local
 dependencies. Older versions are not affected, but they are not compatible with modern pip.
 At the time of writing, the best way forward is to install this fork
@@ -472,7 +465,7 @@ At the time of writing, the best way forward is to install this fork
 ```
 pip install -U "pip-tools @ git+https://github.com/richafrank/pip-tools.git@combine-without-copy"
 ```
-```
+
 
 ### Database schema migrations
 
@@ -501,20 +494,19 @@ cd docs
 make html
 ```
 
-```{tip}
-👉 If you didn't follow the prerequisites, then make sure
+>👉 If you didn't follow the prerequisites, then make sure
 you've installed the needed requirements to builds the docs:
 
 ```sh
 python3 -m pip install -r docs/requirements.txt
 ```
-```
+
 
 ## Example VS Code monorepo set-up
 
-```{note}
-👉 This section is for VS Code and [pyright](https://github.com/microsoft/pyright) users.
-```
+
+>👉 This section is for VS Code and [pyright](https://github.com/microsoft/pyright) users.
+
 
 If you use VS Code (or the [pyright](https://github.com/microsoft/pyright) language server to be
 more precise) then this section is for you. The different services contain their own

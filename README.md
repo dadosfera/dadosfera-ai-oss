@@ -104,7 +104,7 @@ Get started with an example project:
 ## Installation
 
 Want to skip [the installation](https://docs.orchest.io/en/stable/getting_started/installation.html)
-and jump right in? Then try out our managed service: [Orchest Cloud](https://cloud.orchest.io/signup).
+and jump right in? Then try out our managed service: [Dadosfera AI Cloud](https://dadosfera.ai).
 
 ## Development
 
