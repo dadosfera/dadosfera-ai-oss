@@ -1,0 +1,48 @@
+name: Deploy to Docker Hub
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  check-changes-in-paths:
+    runs-on: ubuntu-latest
+    outputs:
+      dadosfera-base-kernel-py: ${{ steps.check-changes-in-paths.outputs.dadosfera-base-kernel-py }}
+      dadosfera-base-kernel-py-agent: ${{ steps.check-changes-in-paths.outputs.dadosfera-base-kernel-py-agent }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for changes in paths
+        id: check-changes-in-paths
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            dadosfera-base-kernel-py:
+              - 'services/base-images/dadosfera-base-kernel-py/**'
+              - '.github/workflows/build-push-image.yml'
+            dadosfera-base-kernel-py-agent:
+              - 'services/base-images/dadosfera-base-kernel-py-agent/**'
+              - '.github/workflows/build-push-image.yml'
+
+  build_dadosfera_base_kernel_py:
+    needs: [check-changes-in-paths]
+    if: needs.check-changes-in-paths.outputs.dadosfera-base-kernel-py == 'true'
+    uses: ./.github/workflows/build-push-image.yml
+    with:
+      image-directory: services/base-images/dadosfera-base-kernel-py
+      dockerhub-username: dadosfera
+      image-name: base-kernel-py
+    secrets: inherit
+
+  build_dadosfera_base_kernel_py_agent:
+    needs: [check-changes-in-paths]
+    if: needs.check-changes-in-paths.outputs.dadosfera-base-kernel-py-agent == 'true'
+    uses: ./.github/workflows/build-push-image.yml
+    with:
+      image-directory: services/base-images/dadosfera-base-kernel-py-agent
+      dockerhub-username: dadosfera
+      image-name: base-kernel-py-agent
+    secrets: inherit

@@ -44,6 +44,7 @@ export const SessionsPanel = () => {
             "") as SessionStatus;
 
           const onClick = (event: React.MouseEvent) => {
+            event.preventDefault();
             navigateTo(
               siteMap.pipeline.path,
               {

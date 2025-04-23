@@ -19,7 +19,10 @@ export const SESSIONS_ENDPOINT = "/catch/api-proxy/api/sessions";
 const isStoppable = (status: TSessionStatus) =>
   ["RUNNING", "LAUNCHING"].includes(status || "");
 
-const launchSession = ({ projectUuid, pipelineUuid }: SessionIdentifier) => {
+export const launchSession = ({
+  projectUuid,
+  pipelineUuid,
+}: SessionIdentifier) => {
   return fetcher<OrchestSession>(SESSIONS_ENDPOINT, {
     method: "POST",
     headers: HEADER.JSON,
@@ -30,7 +33,10 @@ const launchSession = ({ projectUuid, pipelineUuid }: SessionIdentifier) => {
   });
 };
 
-const killSession = ({ projectUuid, pipelineUuid }: SessionIdentifier) => {
+export const killSession = ({
+  projectUuid,
+  pipelineUuid,
+}: SessionIdentifier) => {
   return fetcher(`${SESSIONS_ENDPOINT}/${projectUuid}/${pipelineUuid}`, {
     method: "DELETE",
   });

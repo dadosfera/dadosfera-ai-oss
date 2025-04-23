@@ -23,6 +23,7 @@
     "@mui/lab": "5.0.0-alpha.93",
     "@mui/material": "^5.9.3",
     "@mui/utils": "^5.9.3",
+    "@mui/x-data-grid": "^7.27.0",
     "@openreplay/tracker": "^3.5.16",
     "@orchest/design-system": "workspace:*",
     "@orchest/lib-utils": "workspace:*",
