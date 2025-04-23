@@ -137,10 +137,7 @@ func getCeleryWorkerDeployment(metadata metav1.ObjectMeta,
 					Resources: corev1.ResourceRequirements{
 						Requests: corev1.ResourceList{corev1.ResourceCPU: resource.MustParse("250m")},
 					},
-<<<<<<< HEAD
-=======
 					LivenessProbe: livenessProbe,
->>>>>>> parent/beta
 					ImagePullPolicy: corev1.PullIfNotPresent,
 					VolumeMounts: []corev1.VolumeMount{
 						{
