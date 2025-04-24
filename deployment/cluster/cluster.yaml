@@ -12,15 +12,15 @@ spec:
   singleNode: true
   corePriorityClassName: high-priority
 
-  # This property defines whether the Dadosfera AI OSS **core components** 
-  # (e.g., orchest-api, celery-worker, etc.) should be scheduled only on nodes 
+  # This property defines whether the Dadosfera AI OSS **core components**
+  # (e.g., orchest-api, celery-worker, etc.) should be scheduled only on nodes
   # with a specific label.
   # Example:
   # controlNodeSelector:
   #   application: orchest-control-plane
-  
-  # This property defines whether **user-created workloads** 
-  # (e.g., dataapps, jupyter-server, jupyter-eg, pipeline-run-tasks, image-build-tasks) 
+
+  # This property defines whether **user-created workloads**
+  # (e.g., dataapps, jupyter-server, jupyter-eg, pipeline-run-tasks, image-build-tasks)
   # should be scheduled only on nodes with a specific label.
   # Example:
   # workerNodeSelector:
@@ -33,11 +33,11 @@ spec:
     # this will force all pods created by dadosfera AI OSS
     # to have ingress[0].host = dadosfera-ai-oss.acme.com
     # orchestHost: dadosfera-ai-oss.acme.com
-    
+
     # version parameter
     # Latest orchestVersion. Some features currently depends
     # on this to work properly
-    version: v2023.04.2 
+    version: v2023.04.2
     authServer:
       image: dadosfera/auth-server:v2023.04.2-1.0.3
     orchestWebServer:
@@ -77,4 +77,3 @@ spec:
     env:
       - name: CLOUD_ENVIRONMENT
         value: local
-

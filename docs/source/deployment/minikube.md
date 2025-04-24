@@ -14,7 +14,7 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
 Create a Minikube cluster with the required resources and add-ons:
 ```bash
 minikube start \
-  --cpus 2 \               
+  --cpus 2 \
   --memory 8196 \
   --addons ingress metrics-server
 ```

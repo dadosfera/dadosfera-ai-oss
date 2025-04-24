@@ -6,7 +6,7 @@ an image on all minikube nodes, so that a pod will use that regardless
 on which node it lands on. Requires the orchest repository to be mounted
 in all nodes at /orchest-dev-repo.
 Usage: ${0##*/} <name of orchest service> <desired tag>
-${0##*/} orchest-api v2022.03.8. 
+${0##*/} orchest-api v2022.03.8.
 EOT
 }
 

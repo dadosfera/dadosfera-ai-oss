@@ -49,7 +49,7 @@ jobs:
           else
             echo "version=$(cat ${{ inputs.image-directory }}/VERSION)" >> $GITHUB_OUTPUT
           fi
-  
+
       - name: Build and push image
         env:
           TAG: ${{ steps.image_version.outputs.version }}
