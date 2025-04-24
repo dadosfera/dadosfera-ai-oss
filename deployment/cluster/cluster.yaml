@@ -1,0 +1,80 @@
+apiVersion: orchest.io/v1alpha1
+kind: OrchestCluster
+metadata:
+  name: cluster-1
+  namespace: orchest
+  annotations:
+    # Comment the annotation below if you want orchest-controller
+    # to deploy an ingress-controller for your cluster.
+    # An ingress controller is required for orchest to work properly.
+    controller.orchest.io/deploy-ingress: "false"
+spec:
+  singleNode: true
+  corePriorityClassName: high-priority
+
+  # This property defines whether the Dadosfera AI OSS **core components** 
+  # (e.g., orchest-api, celery-worker, etc.) should be scheduled only on nodes 
+  # with a specific label.
+  # Example:
+  # controlNodeSelector:
+  #   application: orchest-control-plane
+  
+  # This property defines whether **user-created workloads** 
+  # (e.g., dataapps, jupyter-server, jupyter-eg, pipeline-run-tasks, image-build-tasks) 
+  # should be scheduled only on nodes with a specific label.
+  # Example:
+  # workerNodeSelector:
+  #   application: orchest-workers
+
+
+  orchest:
+
+    # orchestHost
+    # this will force all pods created by dadosfera AI OSS
+    # to have ingress[0].host = dadosfera-ai-oss.acme.com
+    # orchestHost: dadosfera-ai-oss.acme.com
+    
+    # version parameter
+    # Latest orchestVersion. Some features currently depends
+    # on this to work properly
+    version: v2023.04.2 
+    authServer:
+      image: dadosfera/auth-server:v2023.04.2-1.0.3
+    orchestWebServer:
+      image: dadosfera/orchest-webserver:v2023.04.2-1.0.3
+    orchestApi:
+      image: dadosfera/orchest-api:v2023.04.2-1.0.3
+      env:
+        - name:  JUPYTER_SERVER_IMAGE
+          value: dadosfera/jupyter-server
+    celeryWorker:
+      image: dadosfera/celery-worker:v2023.04.2-1.0.3
+    resources:
+      # Defines the size of the PVC created by the userdir-pvc,
+      # which stores user projects, jobs, and data.
+      userDirVolumeSize: 50Gi
+
+      # The settings below allow you to **separate Orchest's internal state data**
+      # (e.g., PostgreSQL, RabbitMQ) from the user directory. By default, this data
+      # is stored in `/userdir-pvc/.orchest`.
+      #
+      # This separation is useful when:
+      # - You want to use **different storage classes** (e.g., NFS for user data and SSD for stateful apps).
+      # - You want to **distribute user workloads across multiple nodes**, which requires ReadWriteMany (e.g., NFS).
+      #
+      # If the section below is uncommented, make sure to comment out `userDirVolumeSize`.
+
+      # separateOrchestStateFromUserDir: true
+      # userDirVolume:
+      #   storageClass: azurefile-csi-custom
+      #   volumeSize: 150Gi
+      #   mountPath: "/"
+      # orchestStateVolume:
+      #   storageClass: default
+      #   volumeSize: 50Gi
+      #   mountPath: "/"
+
+    env:
+      - name: CLOUD_ENVIRONMENT
+        value: local
+
