@@ -1,0 +1,52 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API Dadosfera",
+    "description": "API de integração com a plataforma Dadosfera",
+    "version": "1.0",
+    "termsOfService": "https://dadosfera.ai/termos-de-uso/",
+    "contact": {
+      "email": "contato@dadosfera.ai",
+      "name": "Suporte Dadosfera",
+      "url": "https://dadosfera.ai"
+    },
+    "license": {
+      "name": "Todos os direitos reservados",
+      "url": "https://dadosfera.ai"
+    }
+  },
+  "externalDocs": {
+    "description": "Saiba mais sobre a Dadosfera",
+    "url": "https://dadosfera.ai"
+  },
+  "uiConfig": {
+    "docExpansion": "list",
+    "defaultModelRendering": "model",
+    "displayRequestDuration": true,
+    "defaultModelsExpandDepth": 3,
+    "defaultModelExpandDepth": 3
+  },
+  "defaultOptions": {
+    "tryItOutEnabled": true
+  },
+  "tagTranslations": {
+    "jobs": "Tarefas",
+    "runs": "Execuções",
+    "pipelines": "Pipelines",
+    "projects": "Projetos",
+    "environments": "Ambientes",
+    "sessions": "Sessões",
+    "services": "Serviços",
+    "notifications": "Notificações",
+    "info": "Informações",
+    "snapshots": "Snapshots",
+    "auth_users": "Autenticação de Usuários"
+  },
+  "commonErrorMessages": {
+    "404": "Recurso não encontrado",
+    "400": "Requisição inválida",
+    "401": "Não autorizado",
+    "403": "Acesso proibido",
+    "500": "Erro interno do servidor"
+  }
+} 

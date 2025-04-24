@@ -1,0 +1,143 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <title>Documentação API Dadosfera</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css" >
+    <link rel="icon" type="image/png" href="https://dadosfera.ai/wp-content/uploads/2023/05/cropped-favicon-32x32.jpg" sizes="32x32" />
+    <style>
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
+
+      body
+      {
+        margin:0;
+        background: #fafafa;
+      }
+      
+      .topbar {
+        padding: 10px 0;
+        background-color: #4F0074;
+      }
+      
+      .topbar-wrapper img {
+        height: 50px;
+      }
+      
+      .swagger-ui .info .title {
+        color: #4F0074;
+      }
+      
+      .swagger-ui .btn.execute {
+        background-color: #4F0074;
+        color: white;
+        border-color: #4F0074;
+      }
+      
+      .swagger-ui .btn.execute:hover {
+        background-color: #6a009c;
+      }
+      
+      .swagger-ui .opblock.opblock-get .opblock-summary-method {
+        background-color: #2196f3;
+      }
+      
+      .swagger-ui .opblock.opblock-post .opblock-summary-method {
+        background-color: #4caf50;
+      }
+      
+      .swagger-ui .opblock.opblock-put .opblock-summary-method {
+        background-color: #ff9800;
+      }
+      
+      .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+        background-color: #f44336;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="swagger-ui"></div>
+
+    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"> </script>
+    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js"> </script>
+    <script>
+    window.onload = function() {
+      // Begin Swagger UI call region
+      const ui = SwaggerUI({
+        url: "{{ url_for('api.specs') }}",
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUI.presets.apis,
+          SwaggerUI.SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUI.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        docExpansion: 'none',
+        tagsSorter: 'alpha',
+        operationsSorter: 'alpha',
+        defaultModelsExpandDepth: 1,
+        defaultModelExpandDepth: 1,
+        defaultModelRendering: 'model',
+        showExtensions: true,
+        showCommonExtensions: true,
+        displayRequestDuration: true,
+        requestInterceptor: function(request) {
+          request.headers['Accept-Language'] = 'pt-BR';
+          return request;
+        },
+        responseInterceptor: function(response) {
+          return response;
+        },
+        onComplete: function() {
+          // Traduzir alguns elementos da UI após o carregamento
+          setTimeout(function() {
+            document.querySelectorAll('.try-out__btn').forEach(function(el) {
+              el.textContent = 'Experimente';
+            });
+            
+            document.querySelectorAll('.opblock-summary-description').forEach(function(el) {
+              el.style.fontWeight = 'bold';
+            });
+            
+            document.querySelectorAll('.auth-wrapper .authorize').forEach(function(el) {
+              el.textContent = 'Autorizar';
+            });
+            
+            document.querySelectorAll('.btn.authorize').forEach(function(el) {
+              el.textContent = 'Autorizar';
+            });
+            
+            document.querySelectorAll('.auth-btn-wrapper .btn-done').forEach(function(el) {
+              el.textContent = 'Concluído';
+            });
+            
+            document.querySelectorAll('.auth-btn-wrapper .btn-cancel').forEach(function(el) {
+              el.textContent = 'Cancelar';
+            });
+          }, 100);
+        }
+      });
+      // End Swagger UI call region
+
+      window.ui = ui;
+    };
+  </script>
+  </body>
+</html> 

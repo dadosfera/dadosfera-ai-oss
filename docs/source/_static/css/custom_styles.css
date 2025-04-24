@@ -1,17 +1,155 @@
-html[data-theme="light"] {
-  --pst-color-primary: #4381ff;
-  --pst-color-warning: #777777;
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+:root {
+  --background: 240 100% 98%;
+  --foreground: 240 50% 10%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 50% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 50% 10%;
+
+  --primary: 262 100% 32%;
+  --primary-foreground: 240 100% 98%;
+
+  --secondary: 200 72% 44%;
+  --secondary-foreground: 240 100% 98%;
+
+  --muted: 240 33% 95%;
+  --muted-foreground: 240 33% 40%;
+
+  --accent: 262 100% 16%;
+  --accent-foreground: 240 100% 98%;
+
+  --destructive: 12 76% 46%;
+  --destructive-foreground: 240 100% 98%;
+
+  --border: 240 33% 90%;
+  --input: 240 33% 90%;
+  --ring: 262 100% 32%;
+
+  --radius: 0.5rem;
+
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
-html[data-theme="dark"] {
-  --pst-color-primary: white;
-  --pst-color-warning: #777777;
+.dark {
+  --background: 262 100% 6%;
+  --foreground: 240 100% 98%;
+
+  --card: 262 100% 6%;
+  --card-foreground: 240 100% 98%;
+
+  --popover: 262 100% 6%;
+  --popover-foreground: 240 100% 98%;
+
+  --primary: 262 100% 32%;
+  --primary-foreground: 240 100% 98%;
+
+  --secondary: 200 72% 44%;
+  --secondary-foreground: 240 100% 98%;
+
+  --muted: 240 15% 15%;
+  --muted-foreground: 240 5% 65%;
+
+  --accent: 262 100% 16%;
+  --accent-foreground: 240 100% 98%;
+
+  --destructive: 12 62% 22%;
+  --destructive-foreground: 240 100% 98%;
+
+  --border: 240 15% 15%;
+  --input: 240 15% 15%;
+  --ring: 240 100% 90%;
+
+  --sidebar-background: 240 5.9% 10%;
+  --sidebar-foreground: 240 4.8% 95.9%;
+  --sidebar-primary: 224.3 76.3% 48%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 240 4.8% 95.9%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
 }
 
-.DocSearch-Modal {
-  margin: 115px auto auto;
+* {
+  border-color: hsl(var(--border));
 }
 
-.DocSearch-Container {
-  z-index: 2000;
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', 'Open Sans', 'Quicksand', sans-serif;
+}
+
+.text-gradient {
+  background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-primary {
+  background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+}
+
+.hero-pattern {
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes appear-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-appear {
+  animation: appear 0.5s ease-out forwards;
+}
+
+.animate-appear-zoom {
+  animation: appear-zoom 0.5s ease-out forwards;
+}
+
+@keyframes aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+.animate-aurora {
+  animation: aurora 15s linear infinite;
 }

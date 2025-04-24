@@ -15,12 +15,12 @@ from pprint import pformat
 
 import werkzeug
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
 from flask_cors import CORS
 from flask_migrate import Migrate
 from kubernetes import client
 from sqlalchemy import or_
-from sqlalchemy.orm import attributes
+from sqlalchemy.orm import attributes, joinedload, load_only, noload, undefer
 from sqlalchemy_utils import create_database, database_exists
 
 from _orchest.internals import compat as _compat
@@ -79,6 +79,11 @@ def create_app(
     # Cross-origin resource sharing. Allow API to be requested from the
     # different microservices such as the webserver.
     CORS(app, resources={r"/*": {"origins": "*"}})
+
+    # Adicionar rota para a raiz que redireciona para o Swagger
+    @app.route('/')
+    def index():
+        return redirect('/api/swagger')
 
     if use_db:
         # Create the database if it does not exist yet. Roughly equal to

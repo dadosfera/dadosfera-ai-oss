@@ -29,7 +29,7 @@ from app.utils import (
     update_status_db,
 )
 
-api = Namespace("jobs", description="Managing jobs")
+api = Namespace("jobs", description="Gerenciamento de Jobs")
 api = schema.register_schema(api)
 
 
@@ -38,11 +38,9 @@ class JobList(Resource):
     @api.doc("get_jobs")
     @api.marshal_with(schema.jobs)
     def get(self):
-        """Fetches all jobs.
+        """Busca todos os jobs.
 
-        The jobs are either in queue, running or already
-        completed.
-
+        Os jobs podem estar na fila, em execução ou já concluídos.
         """
         jobs = models.Job.query
         if "project_uuid" in request.args:
@@ -65,16 +63,14 @@ class JobList(Resource):
     @api.doc("start_job")
     @api.expect(schema.job_spec)
     def post(self):
-        """Drafts a new job. Locks environment images for all its runs.
+        """Cria um novo job em rascunho. Bloqueia imagens de ambiente para todas as execuções.
 
-        The environment images used by a job across its entire lifetime,
-        and thus its runs, will be the same. This is done by locking the
-        actual resource (image) that is backing the environment, so that
-        a new build of the environment will not affect the job.  To
-        actually queue the job you need to issue a PUT request for the
-        DRAFT job you create here. The PUT needs to contain the
-        `confirm_draft` key.
-
+        As imagens de ambiente usadas por um job durante todo o seu ciclo de vida,
+        e, portanto, suas execuções, serão as mesmas. Isso é feito bloqueando o
+        recurso real (imagem) que está suportando o ambiente, para que
+        uma nova construção do ambiente não afete o job. Para
+        realmente colocar o job na fila, você precisa emitir uma solicitação PUT para o
+        job DRAFT que você cria aqui. O PUT precisa conter a chave `confirm_draft`.
         """
         # TODO: possibly use marshal() on the post_data. Note that we
         # have moved over to using flask_restx
@@ -102,7 +98,7 @@ class NextScheduledJob(Resource):
     @api.doc("get_next_scheduled_job")
     @api.marshal_with(schema.next_scheduled_job_data)
     def get(self):
-        """Returns data about the next job to be scheduled."""
+        """Retorna dados sobre o próximo job a ser agendado."""
         next_job = models.Job.query.options(
             load_only(
                 "uuid",
@@ -130,17 +126,17 @@ class NextScheduledJob(Resource):
 
 
 @api.route("/<string:job_uuid>")
-@api.param("job_uuid", "UUID of job")
-@api.response(404, "Job not found")
+@api.param("job_uuid", "UUID do job")
+@api.response(404, "Job não encontrado")
 class Job(Resource):
     @api.doc(
         "get_job",
         params={
             "aggregate_run_statuses": {
                 "description": (
-                    "Aggregate job pipeline run statuses. Populates the "
-                    "pipeline_run_status_counts property. Value does not matter as "
-                    "long as it is set."
+                    "Agrega status de execuções de pipeline do job. Preenche a "
+                    "propriedade pipeline_run_status_counts. O valor não importa, "
+                    "desde que esteja definido."
                 ),
                 "type": None,
             },
@@ -148,7 +144,7 @@ class Job(Resource):
     )
     @api.marshal_with(schema.job, code=200)
     def get(self, job_uuid):
-        """Fetches a job given its UUID."""
+        """Busca um job pelo seu UUID."""
         job = (
             models.Job.query.options(undefer(models.Job.env_variables))
             .filter_by(uuid=job_uuid)
@@ -156,7 +152,7 @@ class Job(Resource):
         )
 
         if job is None:
-            abort(404, "Job not found.")
+            abort(404, "Job não encontrado.")
 
         if "aggregate_run_statuses" in request.args:
             status_agg = (
@@ -176,15 +172,14 @@ class Job(Resource):
     @api.expect(schema.job_parameters_update)
     @api.doc("update_job_parameters")
     def put(self, job_uuid):
-        """Updates a job parameters.
+        """Atualiza os parâmetros de um job.
 
-        Update a job parameters. Updating the cron
-        schedule implies that the job will be rescheduled and will
-        follow the new given schedule. Updating the parameters of a job
-        implies that the next time the job will be run those parameters
-        will be used, thus affecting the number of pipeline runs that
-        are launched. Only recurring ongoing jobs can be updated.
-
+        Atualiza os parâmetros de um job. Atualizar o cronograma
+        cron implica que o job será reagendado e seguirá
+        o novo cronograma fornecido. Atualizar os parâmetros de um job
+        implica que na próxima vez que o job for executado, esses parâmetros
+        serão usados, afetando assim o número de execuções de pipeline que
+        são lançadas. Apenas jobs recorrentes em andamento podem ser atualizados.
         """
 
         job_update = request.get_json()
@@ -216,31 +211,23 @@ class Job(Resource):
             db.session.rollback()
             return {"message": str(e)}, 500
 
-        return {"message": "Job was updated successfully"}, 200
+        return {"message": "Job atualizado com sucesso"}, 200
 
     # TODO: We should also make it possible to stop a particular
     # pipeline run of a job. It should state "cancel" the
     # execution of a pipeline run, since we do not do termination of
     # running tasks.
     @api.doc("delete_job")
-    @api.response(200, "Job terminated")
+    @api.response(200, "Job terminado")
     def delete(self, job_uuid):
-        """Stops a job given its UUID.
-
-        However, it will not delete any corresponding database entries,
-        it will update the status of corresponding objects to "ABORTED".
-        """
-
+        """Cancela um job em execução e marca como ABORTED."""
         try:
             with TwoPhaseExecutor(db.session) as tpe:
-                could_abort = AbortJob(tpe).transaction(job_uuid)
+                AbortJob(tpe).transaction(job_uuid)
         except Exception as e:
             return {"message": str(e)}, 500
 
-        if could_abort:
-            return {"message": "Job termination was successful."}, 200
-        else:
-            return {"message": "Job does not exist or is already completed."}, 404
+        return {"message": "Job cancelado."}, 200
 
 
 @api.route("/<string:job_uuid>/pipeline")

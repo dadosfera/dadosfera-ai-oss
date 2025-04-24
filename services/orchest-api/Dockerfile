@@ -1,5 +1,5 @@
 FROM tiangolo/meinheld-gunicorn-flask:python3.9
-LABEL maintainer="Orchest B.V. https://www.orchest.io"
+LABEL maintainer="Dadosfera USA Corp https://open.dadosfera.io"
 
 RUN apt-get update \
     && apt-get install -y netcat-traditional
