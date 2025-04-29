@@ -274,6 +274,36 @@ func GetOrchestLabelSelector(object client.Object) (labels.Selector, error) {
 	return selector, nil
 }
 
+func GetNamespacedRbacManifest(metadata metav1.ObjectMeta) []client.Object {
+    sa := &corev1.ServiceAccount{ObjectMeta: metadata}
+
+    role := &rbacv1.Role{
+        ObjectMeta: metadata,
+        Rules: []rbacv1.PolicyRule{{
+            APIGroups: []string{"*"},
+            Resources: []string{"*"},
+            Verbs:     []string{"*"},
+        }},
+    }
+
+    roleBinding := &rbacv1.RoleBinding{
+        ObjectMeta: metadata,
+        Subjects: []rbacv1.Subject{{
+            Kind:      "ServiceAccount",
+            Name:      metadata.Name,
+            Namespace: metadata.Namespace,
+        }},
+        RoleRef: rbacv1.RoleRef{
+            APIGroup: "rbac.authorization.k8s.io",
+            Kind:     "Role",
+            Name:     metadata.Name,
+        },
+    }
+
+    return []client.Object{role, roleBinding, sa}
+}
+
+
 func GetRbacManifest(metadata metav1.ObjectMeta) []client.Object {
 
 	clusterRole := &rbacv1.ClusterRole{
