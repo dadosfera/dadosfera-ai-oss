@@ -1,4 +1,4 @@
-"""Remove SSHKey.key 
+"""Remove SSHKey.key
 
 Revision ID: 61b726593fb3
 Revises: 0482abd84ff2

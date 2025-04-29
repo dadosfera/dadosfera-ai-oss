@@ -33,7 +33,7 @@ const AnalyticsView: React.FC = () => {
               title="Data App Analytics"
               style={{ border: "none", width: "100%", height: "100%" }}
               allowFullScreen
-              onError={() => setIframeError(true)} 
+              onError={() => setIframeError(true)}
             />
           )}
         </Box>
