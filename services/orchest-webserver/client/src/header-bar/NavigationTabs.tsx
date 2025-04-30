@@ -62,9 +62,6 @@ export const NavigationTabsBase = ({
   const onClickTab = (event: React.MouseEvent, itemIndex: number) => {
     navigateTo(navItems[itemIndex].path, undefined, event);
   };
-  const redirectDadosfera = () => {
-    window.open("https://app.dadosfera.ai");
-  };
 
   const theme = useTheme();
 
@@ -114,40 +111,29 @@ export const NavigationTabsBase = ({
       </Tabs>
     </Stack>
   ) : (
-    <>
-      <CustomTab
-        key={"Dadosfera"}
-        data-test-id={join("top-menu", "Dadosfera")}
-        label={"Dadosfera"}
-        aria-label={"Dadosfera"}
-        onClick={() => redirectDadosfera()}
-        onAuxClick={() => redirectDadosfera()}
-      />
-
-      <Tabs
-        value={navTabIndex}
-        aria-label="Navigation items"
-        TabIndicatorProps={{
-          style: { backgroundColor: theme.palette.common.black },
-        }}
-      >
-        {navItems.map((menuItem, index) => {
-          return (
-            <CustomTab
-              key={menuItem.path}
-              data-test-id={join("top-menu", menuItem.path.split("?")[0])}
-              tabIndex={0}
-              disabled={!menuItem.icon && disabled}
-              label={menuItem.label}
-              icon={menuItem.icon}
-              aria-label={menuItem.label}
-              onClick={(event) => onClickTab(event, index)}
-              onAuxClick={(event) => onClickTab(event, index)}
-            />
-          );
-        })}
-      </Tabs>
-    </>
+    <Tabs
+      value={navTabIndex}
+      aria-label="Navigation items"
+      TabIndicatorProps={{
+        style: { backgroundColor: theme.palette.common.black },
+      }}
+    >
+      {navItems.map((menuItem, index) => {
+        return (
+          <CustomTab
+            key={menuItem.path}
+            data-test-id={join("top-menu", menuItem.path.split("?")[0])}
+            tabIndex={0}
+            disabled={!menuItem.icon && disabled}
+            label={menuItem.label}
+            icon={menuItem.icon}
+            aria-label={menuItem.label}
+            onClick={(event) => onClickTab(event, index)}
+            onAuxClick={(event) => onClickTab(event, index)}
+          />
+        );
+      })}
+    </Tabs>
   );
 };
 
