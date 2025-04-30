@@ -2,6 +2,7 @@ import { useOrchestConfigsApi } from "@/api/system-config/useOrchestConfigsApi";
 import { IconButton } from "@/components/common/IconButton";
 import { useNavigate } from "@/hooks/useCustomRoute";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Button } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Stack from "@mui/material/Stack";
 import Tabs from "@mui/material/Tabs";
@@ -22,6 +23,14 @@ export const HeaderBar = () => {
 
   const logoutHandler = () => {
     window.location.href = "/login/clear";
+  };
+
+  const logoPath = window.location.hostname.includes("process")
+    ? "image/logo-process.svg"
+    : "image/logo.svg";
+
+  const redirectDadosfera = () => {
+    window.open("https://app.dadosfera.ai");
   };
 
   return (
@@ -53,7 +62,7 @@ export const HeaderBar = () => {
               onClick={navigateHome}
               icon={
                 <img
-                  src="image/logo.svg"
+                  src={logoPath}
                   alt="Dadosfera AI Logo"
                   width={28}
                   height={28}
@@ -68,6 +77,25 @@ export const HeaderBar = () => {
 
         <Stack direction="row" justifyContent="flex-end">
           <NavigationTabs />
+
+          <Button
+            title="Dadosfera"
+            onClick={redirectDadosfera}
+            sx={{
+              color: (theme) => theme.palette.action.active,
+              width: (theme) => theme.spacing(7),
+              hover: {
+                backgroundColor: "none",
+              },
+            }}
+          >
+            <img
+              src="image/dadosfera.svg"
+              alt="Dadosfera Logo"
+              width={24}
+              height={24}
+            />
+          </Button>
 
           {userConfig?.AUTH_ENABLED && (
             <IconButton
