@@ -49,7 +49,7 @@
 * Add node.serviceAccount values for creating and/or specifying daemonset service account
 
 # v2.1.3
-* Bump app/driver version to `v1.3.2` 
+* Bump app/driver version to `v1.3.2`
 
 # v2.1.2
 * Add extra-create-metadata

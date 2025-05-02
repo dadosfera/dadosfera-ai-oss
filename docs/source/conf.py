@@ -19,16 +19,16 @@ sys.path.insert(0, os.path.abspath("../../orchest-sdk/python"))
 
 # -- Project information ----------------------------------------------
 
-project = "Orchest"
-copyright = "2022, Orchest Software B.V."
-author = "Orchest team"
+project = "Dadosfera AI OSS"
+copyright = "2025, Dadosfera AI OSS Software B.V."
+author = "Dadosfera AI OSS team"
 
 # The full version, including alpha/beta/rc tags
 # We exclude the exact release because that is error prone when having
 # to update it on every release.
 # release = "0.3.0"
 version = "beta"
-html_title = "Orchest documentation"
+html_title = "Dadosfera AI OSS documentation"
 
 
 # -- General configuration --------------------------------------------
@@ -83,15 +83,14 @@ autodoc_docstring_signature = True
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "external_links": [
-        {"url": "https://orchest.io", "name": "Website"},
+        {"url": "https://app.dadosfera.ai", "name": "Website"},
     ],
     "navbar_align": "left",
     "page_sidebar_items": ["page-toc", "edit-this-page", "sourcelink"],
     "navbar_center": ["navbar-nav"],
     "navbar_end": ["theme-switcher", "navbar-icon-links.html", "search-field.html"],
     "show_toc_level": 1,
-    "github_url": "https://github.com/orchest/orchest",
-    "twitter_url": "https://twitter.com/orchestofficial",
+    "github_url": "https://github.com/dadosfera/dadosfera-ai-oss",
     "logo": {
         "image_light": "img/logo-light.png",
         "image_dark": "img/logo-dark.png",

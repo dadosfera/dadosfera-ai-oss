@@ -33,7 +33,7 @@ echo "Checking out branch ${1}..."
 
 if [ "${1}" != "dev" ] && git show-ref --quiet refs/heads/$1 ; then
     git checkout dev
-    git branch -D $1    
+    git branch -D $1
 fi
 
 git fetch --all

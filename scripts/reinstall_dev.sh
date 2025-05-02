@@ -5,7 +5,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 cd "$SCRIPT_DIR/.." || exit 1
 
-TAG="$(orchest version --latest)" 
+TAG="$(orchest version --latest)"
 export TAG
 
 orchest uninstall
