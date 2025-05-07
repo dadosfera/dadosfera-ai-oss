@@ -25,6 +25,13 @@ _RUNTIME_TO_IMAGE_BUILDER_CMD = {
         # See https://github.com/awslabs/amazon-eks-ami/issues/183.
         "--progress=plain --network=host"
     ),
+    "cri-o": (
+        "buildctl build --frontend=dockerfile.v0 --local context=. "
+        "--local dockerfile=. --opt filename=./{dockerfile_path} "
+        "--progress=plain "
+        "--output type=docker,name={full_image_name},dest=/tmp/output.tar "
+        "&& podman load -i /tmp/output.tar"
+    ),
     "containerd": (
         "buildctl build --frontend=dockerfile.v0 --local context=. "
         "--local dockerfile=. --opt filename=./{dockerfile_path} "
@@ -39,6 +46,10 @@ _RUNTIME_TO_IMAGE_BUILDER_VOLUME_MOUNTS = {
     "containerd": [
         {"name": "buildkitd-socket", "mountPath": "/run/buildkit/buildkitd.sock"},
     ],
+    "cri-o": [
+        {"name": "buildkitd-socket", "mountPath": "/run/buildkit/buildkitd.sock"},
+        {"name": "containers-storage", "mountPath": "/var/lib/containers/storage"}
+    ]
 }
 
 _RUNTIME_TO_IMAGE_BUILDER_VOLUMES = {
@@ -57,6 +68,21 @@ _RUNTIME_TO_IMAGE_BUILDER_VOLUMES = {
                 "type": "Socket",
             },
         },
+    ],
+    "cri-o": [
+        {
+            "name": "buildkitd-socket",
+            "hostPath": {
+                "path": "/run/orchest_buildkit/buildkitd.sock",
+                "type": "Socket",
+            },
+        },
+        {
+            "name": "containers-storage",
+            "hostPath": {
+                "path": "/var/lib/containers/storage",
+            },
+        }
     ],
 }
 
@@ -166,10 +192,11 @@ def _get_image_builder_manifest(
         container = manifest["spec"]["containers"][0]
         args = container["args"][0]
 
-        if _config.CONTAINER_RUNTIME == "containerd":
+        if _config.CONTAINER_RUNTIME in ["containerd", "cri-o"]:
             args = f"{args} --opt build-arg:AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
             args = f"{args} --opt build-arg:AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
             args = f"{args} --opt build-arg:AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN"
+        
         elif _config.CONTAINER_RUNTIME == "docker":
             args = f"{args} --secret id=aws_secrets,src=/tmp/.aws/credentials --secret id=aws_config,src=/tmp/.aws/config --no-cache"
         container["args"] = [args]
@@ -205,8 +232,9 @@ def _get_image_builder_manifest(
         # Start the ssh server so that the build container can rsync.
         args = f"/usr/sbin/sshd && {args}"
         # Need to distinguish between buildkit and buildx args passing.
-        if _config.CONTAINER_RUNTIME == "containerd":
+        if _config.CONTAINER_RUNTIME in ["containerd", "cri-o"]:
             args = f"{args} --opt build-arg:BUILDER_POD_IP=$BUILDER_POD_IP"
+        
         elif _config.CONTAINER_RUNTIME == "docker":
             args = f"{args} --build-arg=BUILDER_POD_IP=$BUILDER_POD_IP"
         else:

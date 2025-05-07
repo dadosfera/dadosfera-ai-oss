@@ -41,4 +41,3 @@ while ! kubectl wait --for=condition=ready pod -n orchest -l ${target_label} 2> 
 do
     sleep 1
 done
-

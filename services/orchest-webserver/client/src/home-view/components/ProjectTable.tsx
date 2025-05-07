@@ -43,13 +43,13 @@ export const ProjectTable = () => {
   const [projectIds, setProjectIds] = React.useState<string[]>([]);
 
   const renderCell = useCallback(
-    (params: GridRenderCellParams<any, Project>) => (
+    (params: GridRenderCellParams<any, ProjectRow>) => (
       <IconButton
         aria-label="project options"
         onClick={(event) => {
           event.stopPropagation();
 
-          setSelectedProject(params.row);
+          setSelectedProject(projects[params.row.index]);
           setMenuAnchorEl(event.target as HTMLElement);
         }}
       >
@@ -99,13 +99,14 @@ export const ProjectTable = () => {
     [renderCell]
   );
 
-  const rows: GridRowsProp<ProjectRow> = projects.map((proj) => ({
+  const rows: GridRowsProp<ProjectRow> = projects.map((proj, index) => ({
     id: proj.uuid,
     project: proj.path,
     sessions: proj.session_count,
     jobs: proj.active_job_count,
     environments: proj.environment_count,
     actions: "",
+    index: index,
   }));
 
   const shutdownSessionsSelected = useConfirm(

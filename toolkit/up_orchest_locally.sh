@@ -2,12 +2,12 @@ minikube start --cpus 2 --memory 4800 --addons ingress metrics-server --mount-st
 
 sleep 30
 
-eval $(minikube -p minikube docker-env)      
+eval $(minikube -p minikube docker-env)
 
-echo "$MINIKUBE_ACTIVE_DOCKERD"  
+echo "$MINIKUBE_ACTIVE_DOCKERD"
 
-export TAG="v2023.01.0" 
-# export TAG="$(orchest version --latest)" 
+export TAG="v2023.01.0"
+# export TAG="$(orchest version --latest)"
 
 echo "TAG"
 echo $TAG
@@ -17,4 +17,4 @@ scripts/build_container.sh -M -t $TAG -o $TAG
 
 sleep 30
 
-orchest install --dev  
+orchest install --dev

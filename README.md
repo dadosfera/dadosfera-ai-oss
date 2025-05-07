@@ -1,5 +1,6 @@
 <p align="center">
 
+
 <a href="https://docs.dadosfera.ai">
   <img src="https://files.readme.io/2b7adf2-Logo_Dadosfera_V3_Logo_without_slogan.png" width="350px" />
 </a>
