@@ -37,6 +37,9 @@ GPU_ENABLED_INSTANCE = os.environ.get("ORCHEST_GPU_ENABLED_INSTANCE") == "True"
 # cycles are constrained. For more information, see the k8s docs about
 # CPU SHARES.
 USER_CONTAINERS_CPU_SHARES = "1m"
+SINGLE_NODE = os.environ.get("SINGLE_NODE", True)
+USER_CONTAINERS_MEMORY_SHARES = None if SINGLE_NODE == "TRUE" else "100Mi"
+
 REGISTRY = "docker-registry"
 # NOTE: The DNS resolver will not treat this as an FQDN perse (depending
 # on the value of `ndots` in `/etc/resolv.conf` which by default is 5).

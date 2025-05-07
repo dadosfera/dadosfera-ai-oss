@@ -32,5 +32,9 @@ export const getProjectMenuItems = (
       label: "Environments",
       path: `${siteMap.environments.path}${queryString}`,
     },
+    {
+      label: "Monitoring",
+      path: `${siteMap.analytics.path}${queryString}`,
+    },
   ];
 };

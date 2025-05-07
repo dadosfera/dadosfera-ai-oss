@@ -21,6 +21,7 @@ export type RouteName =
   | "update"
   | "manageUsers"
   | "help"
+  | "analytics"
   | "notFound";
 
 export type RouteData = {
@@ -167,6 +168,12 @@ export const getOrderedRoutes = (getTitle = _getTitle) => {
       name: "help",
       path: "/help",
       title: getTitle("Help"),
+      scope: [],
+    },
+    {
+      name: "analytics",
+      path: "/analytics",
+      title: getTitle("Analytics"),
       scope: [],
     },
     // TODO: we need a proper PageNotFound page, atm we redirect back to home view

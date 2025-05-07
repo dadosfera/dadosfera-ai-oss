@@ -113,6 +113,16 @@ const HelpView: React.FC = () => {
               Website
             </HelpItem>
           )} */}
+
+          <HelpItem
+            link={
+              "https://ajuda.dadosfera.ai/_hcms/mem/login?redirect_url=https%3A%2F%2Fajuda.dadosfera.ai%2Fportal"
+            }
+            image="/image/logo.svg"
+            imageStyle={{ minWidth: "28px", marginLeft: "-2px" }}
+          >
+            Support
+          </HelpItem>
         </Stack>
         <PageTitle sx={{ marginTop: (theme) => theme.spacing(3) }}>
           Introduction

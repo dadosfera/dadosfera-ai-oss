@@ -1,0 +1,78 @@
+name: "Build and push Dadosfera's images to dockerhub"
+on:
+  workflow_call:
+    inputs:
+      image-directory:
+        required: true
+        type: string
+      dockerhub-username:
+        required: true
+        type: string
+      image-name:
+        required: true
+        type: string
+      image-tag:
+        required: false
+        type: string
+    secrets:
+      DOCKERHUB_PASSWORD:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+
+jobs:
+  build-push:
+    environment: "prd"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Get image version
+        id: image_version
+        shell: bash
+        run: |
+          if [[ -n "${{ inputs.image-tag }}" ]]; then
+            echo "version=${{ inputs.image-tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=$(cat ${{ inputs.image-directory }}/VERSION)" >> $GITHUB_OUTPUT
+          fi
+  
+      - name: Build and push image
+        env:
+          TAG: ${{ steps.image_version.outputs.version }}
+          BUILD_DIRECTORY: ./${{ inputs.image-directory }}
+          IMAGE_NAME: ${{ inputs.image-name }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          cp lib services/base-images -r
+          cp orchest-sdk services/base-images -r
+          DOCKER_BUILDKIT=1 docker build -t ${IMAGE_NAME} \
+            -f ${BUILD_DIRECTORY}/Dockerfile services/base-images \
+            --build-arg ORCHEST_VERSION=v2023.04.2 \
+            --secret id=aws_access_key_id,env=AWS_ACCESS_KEY_ID \
+            --secret id=aws_secret_access_key,env=AWS_SECRET_ACCESS_KEY
+          docker tag ${IMAGE_NAME} dadosfera/${IMAGE_NAME}:${TAG}
+          docker push dadosfera/${IMAGE_NAME}:${TAG}
+
+      - name: Push README files to DockerHub
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ inputs.dockerhub-username }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        env:
+          DOCKERHUB_REPOSITORY: dadosfera/${{ inputs.image-name }}
+          README_FILEPATH: ${{ inputs.image-directory }}/README.md

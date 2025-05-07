@@ -80,6 +80,17 @@ func getCeleryWorkerDeployment(metadata metav1.ObjectMeta,
 	dnsResolverTimeout := "10"
 	dnsResolverAttempts := "5"
 
+	livenessProbe := &corev1.Probe{
+		ProbeHandler	: corev1.ProbeHandler{
+			Exec: &corev1.ExecAction{
+				Command: []string{"python3", "/celery_worker_healthcheck.py"},
+			},
+		},
+		InitialDelaySeconds: 30,
+		PeriodSeconds:       60,
+		TimeoutSeconds:      10,
+		FailureThreshold:    5,
+	}
 	template := corev1.PodTemplateSpec{
 		ObjectMeta: metav1.ObjectMeta{
 			Labels: matchLabels,
@@ -126,6 +137,7 @@ func getCeleryWorkerDeployment(metadata metav1.ObjectMeta,
 					Resources: corev1.ResourceRequirements{
 						Requests: corev1.ResourceList{corev1.ResourceCPU: resource.MustParse("250m")},
 					},
+					LivenessProbe: livenessProbe,
 					ImagePullPolicy: corev1.PullIfNotPresent,
 					VolumeMounts: []corev1.VolumeMount{
 						{

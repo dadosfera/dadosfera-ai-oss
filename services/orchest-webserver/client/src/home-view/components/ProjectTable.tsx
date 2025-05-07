@@ -1,117 +1,179 @@
-import { useProjectsApi } from "@/api/projects/useProjectsApi";
-import { IconButton } from "@/components/common/IconButton";
 import { ProjectContextMenu } from "@/components/common/ProjectContextMenu";
+import { useConfirm } from "@/hooks/useConfirm";
 import { useNavigate } from "@/hooks/useCustomRoute";
 import { Project } from "@/types";
-import { paginate } from "@/utils/array";
-import MoreHorizOutlined from "@mui/icons-material/MoreHorizOutlined";
-import { Skeleton } from "@mui/material";
-import Box from "@mui/material/Box";
-import Pagination from "@mui/material/Pagination";
+import { MoreHorizOutlined, PlayArrow, Stop } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
+import { Box, IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import React from "react";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridRowParams,
+  GridRowSelectionModel,
+  GridRowsProp,
+} from "@mui/x-data-grid";
+import React, { useCallback, useMemo } from "react";
+import { useProjectActionsInLote } from "../hooks/useProjectActionsInLote";
 
-const ENTRIES_PER_PAGE = 10;
+type ProjectRow = {
+  id: string;
+  project: string;
+  sessions: number | undefined;
+  jobs: number | undefined;
+  environments: number;
+  actions: string;
+};
 
 export const ProjectTable = () => {
   const navigate = useNavigate();
-  const projectMap = useProjectsApi((api) => api.projects);
-  const hasData = projectMap !== undefined;
+
+  const {
+    projects,
+    loading,
+    activeSessions,
+    shoutdownSessions,
+  } = useProjectActionsInLote();
+  const hasData = projects.length > 0;
 
   const [menuAnchorEl, setMenuAnchorEl] = React.useState<HTMLElement>();
   const [selectedProject, setSelectedProject] = React.useState<Project>();
-  const [pageNumber, setPageNumber] = React.useState(1);
 
-  const { items, pageCount } = React.useMemo(
-    () =>
-      paginate(Object.values(projectMap ?? {}), pageNumber, ENTRIES_PER_PAGE),
-    [projectMap, pageNumber]
+  const [projectIds, setProjectIds] = React.useState<string[]>([]);
+
+  const renderCell = useCallback(
+    (params: GridRenderCellParams<any, Project>) => (
+      <IconButton
+        aria-label="project options"
+        onClick={(event) => {
+          event.stopPropagation();
+
+          setSelectedProject(params.row);
+          setMenuAnchorEl(event.target as HTMLElement);
+        }}
+      >
+        <MoreHorizOutlined />
+      </IconButton>
+    ),
+    []
   );
 
-  const openProject = (project: Project) => {
+  const openProject = (uuid: string) => {
     navigate({
       route: "pipeline",
       sticky: false,
-      query: { projectUuid: project.uuid },
+      query: { projectUuid: uuid },
     });
   };
 
+  const columns: GridColDef[] = useMemo(
+    () => [
+      {
+        field: "project",
+        headerName: "Project",
+        width: 300,
+      },
+      {
+        field: "sessions",
+        headerName: "Active sessions",
+        width: 150,
+      },
+      {
+        field: "jobs",
+        headerName: "Active Jobs",
+        width: 150,
+      },
+      {
+        field: "environments",
+        headerName: "Environments",
+        width: 150,
+      },
+      {
+        field: "actions",
+        headerName: "Actions",
+        width: 150,
+        renderCell,
+      },
+    ],
+    [renderCell]
+  );
+
+  const rows: GridRowsProp<ProjectRow> = projects.map((proj) => ({
+    id: proj.uuid,
+    project: proj.path,
+    sessions: proj.session_count,
+    jobs: proj.active_job_count,
+    environments: proj.environment_count,
+    actions: "",
+  }));
+
+  const shutdownSessionsSelected = useConfirm(
+    () => shoutdownSessions(projectIds),
+    {
+      title: `Shutdown ${projectIds.length} projects ?`,
+      content: "All the sessions of the selected projects will be closed",
+      cancelLabel: "cancel",
+      confirmLabel: "shutdown",
+      confirmButtonColor: "error",
+    }
+  );
+
+  const activeSessionsSelected = useConfirm(() => activeSessions(projectIds), {
+    title: `Active ${projectIds.length} projects ?`,
+    content: "All the sessions of the selected projects will initialized",
+    cancelLabel: "cancel",
+    confirmLabel: "active",
+    confirmButtonColor: "primary",
+  });
+
   return (
-    <Stack gap={2} alignItems="center" justifyContent="flex-start">
-      <Box height={625} width="100%">
-        <Table aria-label="project list" size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Project</TableCell>
-              <TableCell>Active sessions</TableCell>
-              <TableCell>Active jobs</TableCell>
-              <TableCell colSpan={2}>Environments</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {items.map((project) => (
-              <TableRow
-                hover
-                sx={{ cursor: "pointer" }}
-                onClick={() => openProject(project)}
-                key={project.uuid}
-              >
-                <TableCell>{project.path}</TableCell>
-                <TableCell>{project.session_count}</TableCell>
-                <TableCell>{project.active_job_count}</TableCell>
-                <TableCell>{project.environment_count}</TableCell>
-                <TableCell sx={{ textAlign: "right" }}>
-                  <IconButton
-                    aria-label="project options"
-                    onClick={(event) => {
-                      event.stopPropagation();
-
-                      setSelectedProject(project);
-                      setMenuAnchorEl(event.target as HTMLElement);
-                    }}
-                  >
-                    <MoreHorizOutlined />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            {!hasData &&
-              Array(3)
-                .fill(null)
-                .map((_, index) => (
-                  <TableRow key={index} sx={{ height: 53 }}>
-                    <TableCell>
-                      <Skeleton width={100 + Math.random() * 70} />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton width={24} />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton width={24} />
-                    </TableCell>
-                    <TableCell colSpan={2}>
-                      <Skeleton width={24} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
-        </Table>
-      </Box>
-
-      {pageCount > 1 && (
-        <Pagination
-          color="primary"
-          page={pageNumber}
-          count={pageCount}
-          onChange={(_, page) => setPageNumber(page)}
+    <Stack gap={2} alignItems="flex-start" justifyContent="flex-start">
+      <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+        <LoadingButton
+          size="small"
+          onClick={shutdownSessionsSelected}
+          disabled={projectIds.length === 0}
+          loading={loading}
+          startIcon={<Stop />}
+          loadingPosition="start"
+        >
+          <span>Shutdown Sessions</span>
+        </LoadingButton>
+        <LoadingButton
+          size="small"
+          onClick={activeSessionsSelected}
+          disabled={projectIds.length === 0}
+          loading={loading}
+          startIcon={<PlayArrow />}
+          loadingPosition="start"
+        >
+          <span>Spin-up Sessions</span>
+        </LoadingButton>
+      </Stack>
+      <Box height={625} width="100%" display="flex" flexDirection="column">
+        <DataGrid
+          checkboxSelection
+          columns={columns}
+          rows={rows}
+          loading={!hasData}
+          pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+                page: 0,
+              },
+            },
+          }}
+          onRowClick={(params: GridRowParams<ProjectRow>) => {
+            openProject(params.row.id);
+          }}
+          onRowSelectionModelChange={(rows: GridRowSelectionModel) => {
+            setProjectIds(rows as string[]);
+          }}
         />
-      )}
+      </Box>
 
       {selectedProject && (
         <ProjectContextMenu
