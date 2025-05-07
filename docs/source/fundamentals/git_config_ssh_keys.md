@@ -4,11 +4,11 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains information about how to configure git and ssh keys in Orchest.
+   :description: This page contains information about how to configure git and ssh keys in Dadosfera AI.
 ```
 
 In order to more seamlessly interact with repositories both private and
-public, Orchest allows each user to setup a git configuration (user
+public, Dadosfera AI allows each user to setup a git configuration (user
 name, email) and a number of private SSH keys. These will be injected in
 the context of git imports and interactive sessions ( `jupyter server`
 and `environment shells` ) automatically when said user imports a git
@@ -19,7 +19,7 @@ injected.
 ```{tip}
    There are numerous guides about creating SSH key pairs online, for example on
    [github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent). In pretty much all cases,
-   you will have to setup the *private* key in Orchest and the *public key* in the server
+   you will have to setup the *private* key in Dadosfera AI and the *public key* in the server
    or service where the repository resides. Moreover, the key must be created
    **without password**.
 ```
@@ -42,14 +42,14 @@ starting an interactive session and creating a jupyter terminal. This will lead 
 an environment shell where you can run `git config user.name` and `git config user.email`.
 
 After setting up a private SSH key you can test it by either importing a private repository
-through Orchest or by starting an interactive session, creating a jupyter terminal and
+through Dadosfera AI or by starting an interactive session, creating a jupyter terminal and
 attempting actions which would require authentication with the SSH key, like cloning a private
 repository of yours. Another alternative is to try to use the JupyterLab git import
 extensions that comes installed by default in the GUI.
 
 ```{warning}
-Orchest does not namespace projects, resources or anything else by user. This means that
-all users that can log in into the Orchest instance will have access to, for example,
+Dadosfera AI does not namespace projects, resources or anything else by user. This means that
+all users that can log in into the Dadosfera AI instance will have access to, for example,
 all projects and interactive sessions, which implies access to secrets, SSH keys included,
 for example by getting to an interactive session started by another user.
 ```

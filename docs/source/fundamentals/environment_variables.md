@@ -4,10 +4,10 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains information about how to use environment variables in Orchest.
+   :description: This page contains information about how to use environment variables in Dadosfera AI.
 ```
 
-Environment variables let you exclude sensitive data from the versioning system of your Orchest projects.
+Environment variables let you exclude sensitive data from the versioning system of your Dadosfera AI projects.
 
 Environment variables are injected in your Pipeline Steps, and can be natively retrieved with your chosen language.
 For example, in Python:
@@ -25,7 +25,7 @@ at the Pipeline level, the value of `MY_VAR` for an {term}`interactive pipeline 
 Changes to the `PATH` variable are ignored since they could break code execution.
 
 ```{warning}
-🚨 Environment variables are persisted within Orchest. Make sure only authorized users can acess
+🚨 Environment variables are persisted within Dadosfera AI. Make sure only authorized users can acess
 your instance. See how to setup authentication in the {ref}`settings <settings>` section.
 ```
 

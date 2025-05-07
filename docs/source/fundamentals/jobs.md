@@ -4,10 +4,10 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains information about how to run and schedule jobs in Orchest.
+   :description: This page contains information about how to run and schedule jobs in Dadosfera AI.
 ```
 
-Jobs are a way to schedule one-off or recurring {term}`pipelines <(data science) pipeline>` runs in Orchest.
+Jobs are a way to schedule one-off or recurring {term}`pipelines <(data science) pipeline>` runs in Dadosfera AI.
 
 A job can run multiple iterations of the same Pipeline over time
 or small variations by using different parameters as inputs.
@@ -17,12 +17,12 @@ but extracts data from a different data source for each Pipeline run.
 ```{figure} ../img/jobs-list.png
 :align: center
 :width: 768
-:alt: List of jobs for a given Orchest project
+:alt: List of jobs for a given Dadosfera AI project
 
-The list of jobs for a given Orchest project.
+The list of jobs for a given Dadosfera AI project.
 ```
 
-Jobs take a snapshot of your project directory when they are created. Each of the job’s pipeline
+Jobs take a snapshot of your project directory when they are created. Each of the job's pipeline
 runs copy the project directory snapshot and execute the files without changing the original
 snapshot. This means jobs run consistently throughout their entire lifetime.
 
@@ -44,9 +44,9 @@ not including them in the project directory snapshot. Alternatively, you can add
 
 (running-a-job)=
 
-## Running a job in Orchest
+## Running a job in Dadosfera AI
 
-To create and run a job in Orchest, follow these instructions:
+To create and run a job in Dadosfera AI, follow these instructions:
 
 1. Click on _Jobs_ in navigation bar.
 2. Click the _+ new job_ button to create a new job.
@@ -57,7 +57,7 @@ To inspect the result of your job; click on the job you just created, choose a s
 (the one you want to inspect) and click on _VIEW_. The Pipeline is now opened in {term}`read-only mode` giving you the opportunity to check the logs or to open the HTML version of you notebooks.
 
 ```{note}
-💡 Upon job creation, Orchest (under the hood) takes a snapshot of the required environments.
+💡 Upon job creation, Dadosfera AI (under the hood) takes a snapshot of the required environments.
 This way you can freely iterate on and update your existing environments without worrying about
 breaking your existing jobs.
 ```

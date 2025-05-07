@@ -4,20 +4,20 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains the installation instructions for Orchest.
+   :description: This page contains the installation instructions for Dadosfera AI.
 ```
 
-This page contains the installation instructions for self-hosting the open source version of Orchest.
+This page contains the installation instructions for self-hosting the open source version of Dadosfera AI.
 
-The easiest way to use Orchest is through our free [hosted version](https://cloud.orchest.io/signup). Get up and running with a fully configured Orchest instance in less than 2 minutes.
+The easiest way to use Dadosfera AI is through our free [hosted version](https://cloud.orchest.io/signup). Get up and running with a fully configured Dadosfera AI instance in less than 2 minutes.
 
 ```{note}
-Orchest is in beta.
+Dadosfera AI is in beta.
 ```
 
 ## Prerequisites
 
-To install Orchest you will need a running [Kubernetes (k8s) cluster](https://kubernetes.io/docs/setup/). You can either pick a managed
+To install Dadosfera AI you will need a running [Kubernetes (k8s) cluster](https://kubernetes.io/docs/setup/). You can either pick a managed
 service by one of the certified [cloud platforms](https://kubernetes.io/docs/setup/production-environment/turnkey-solutions/) or create a cluster
 yourself. For single node deployments, we recommend using at (the very) least 2 CPU and 8GB of RAM
 (see {ref}`CPU contention <cpu-contention-dns>`).
@@ -32,20 +32,20 @@ below. In case you have custom requirements, be sure to first check out the
 
 (regular-installation)=
 
-## Installing Orchest
+## Installing Dadosfera AI
 
-We recommend installing Orchest on a clean cluster to prevent clashes with existing cluster-level resources,
-even though installing Orchest on an existing cluster is fully supported.
-At this time we only support running Orchest on Linux (`x86_64`). Either through `minikube` on a Linux bare-metal/VM or on a Kubernetes cluster.
+We recommend installing Dadosfera AI on a clean cluster to prevent clashes with existing cluster-level resources,
+even though installing Dadosfera AI on an existing cluster is fully supported.
+At this time we only support running Dadosfera AI on Linux (`x86_64`). Either through `minikube` on a Linux bare-metal/VM or on a Kubernetes cluster.
 
 ```{raw} html
 :file: install_widget.html
 ```
 
-## Managing your Orchest installation
+## Managing your Dadosfera AI installation
 
-Your Orchest installation can be fully managed through the `orchest-cli`, check out the available
-commands in the {ref}`Orchest CLI reference <cli-reference>`.
+Your Dadosfera AI installation can be fully managed through the `orchest-cli`, check out the available
+commands in the {ref}`Dadosfera AI CLI reference <cli-reference>`.
 
 ```{note}
 Your Kubernetes cluster has to be up in order for the `orchest-cli` to be able to interact with it.
@@ -55,18 +55,18 @@ Your Kubernetes cluster has to be up in order for the `orchest-cli` to be able t
 
 ## Custom requirements
 
-If you have **custom requirements** (or preferences) for deploying Orchest on your Kubernetes
+If you have **custom requirements** (or preferences) for deploying Dadosfera AI on your Kubernetes
 cluster, then one of the following subsections might be helpful:
 
-- {ref}`Setting up an FQDN <install-fqdn>`: Reach Orchest using a Fully Qualified Domain Name
+- {ref}`Setting up an FQDN <install-fqdn>`: Reach Dadosfera AI using a Fully Qualified Domain Name
   (FQDN) instead of the cluster's IP directly.
-- {ref}`Installing without Argo Workflows <install-argo>`: Don't let Orchest manage Argo in case you
+- {ref}`Installing without Argo Workflows <install-argo>`: Don't let Dadosfera AI manage Argo in case you
   already have Argo Workflows installed on your Kubernetes cluster.
-- {ref}`Installing without Nginx Ingress Controller <install-nginx>`: Don't let Orchest manage
+- {ref}`Installing without Nginx Ingress Controller <install-nginx>`: Don't let Dadosfera AI manage
   nginx ingress controller if you already have it installed on your Kubernetes cluster.
 - {ref}`Installing using kubectl <install-kubectl>`: If you would rather use `kubectl` instead of
   the `orchest-cli`.
-- {ref}`Setting up a reverse proxy <reverse-proxy>`: Useful when installing Orchest in remote machines,
+- {ref}`Setting up a reverse proxy <reverse-proxy>`: Useful when installing Dadosfera AI in remote machines,
   such as AWS EC2 instances.
 - {ref}`Scarse (CPU) resources - tweak DNS settings <cpu-contention-dns>`: Increase DNS query
   timeout to prevent name resolution failing during time of CPU resource contention. Especially
@@ -76,31 +76,31 @@ cluster, then one of the following subsections might be helpful:
 
 ### Setting up an FQDN
 
-If you would rather reach Orchest using a Fully Qualified Domain Name (FQDN), e.g. by simply going
+If you would rather reach Dadosfera AI using a Fully Qualified Domain Name (FQDN), e.g. by simply going
 to `http://localorchest.io` in your browser, instead of using the cluster's IP directly, you can
-install Orchest using:
+install Dadosfera AI using:
 
 ```bash
 orchest install --fqdn="localorchest.io"
 ```
 
-% or, if you have already installed Orchest but would like to set up an FQDN
+% or, if you have already installed Dadosfera AI but would like to set up an FQDN
 
-For local Kubernetes clusters such as minikube, you can now make Orchest reachable through the
+For local Kubernetes clusters such as minikube, you can now make Dadosfera AI reachable through the
 FQDN by:
 
 `````{tab-set}
 ````{tab-item} Linux
 ```bash
 # Set up the default Fully Qualified Domain Name (FQDN) in your
-# /etc/hosts so that you can reach Orchest locally.
+# /etc/hosts so that you can reach Dadosfera AI locally.
 echo "$(minikube ip)\tlocalorchest.io" | sudo tee -a /etc/hosts
 ```
 ````
 ````{tab-item} macOS
 ```bash
 # Set up the default Fully Qualified Domain Name (FQDN) in your
-# /etc/hosts so that you can reach Orchest locally.
+# /etc/hosts so that you can reach Dadosfera AI locally.
 echo "127.0.0.1\tlocalorchest.io" | sudo tee -a /etc/hosts
 ```
 
@@ -110,10 +110,10 @@ And don't forget to also run `sudo minikube tunnel`.
 
 (install-argo)=
 
-### Installing Orchest without Argo Workflows
+### Installing Dadosfera AI without Argo Workflows
 
 If you already have [Argo Workflows](https://argoproj.github.io/argo-workflows/) installed globally
-(i.e. not namespaced) on your Kubernetes cluster, then you need to explicitly tell Orchest not to
+(i.e. not namespaced) on your Kubernetes cluster, then you need to explicitly tell Dadosfera AI not to
 install it again:
 
 ```bash
@@ -124,20 +124,20 @@ Since Argo Workflows creates cluster level resources, installing it again would 
 both Argo Workflow deployments managing Custom Resource Objects (most likely you don't want either
 of those things to happen).
 
-Now that you are using an Argo Workflows set-up that is not managed by the Orchest Controller, you
-need to make sure that the right set of permissions are configured for Orchest to work as expected.
-Check out the permissions that the Orchest Controller sets for Argo
+Now that you are using an Argo Workflows set-up that is not managed by the Dadosfera AI Controller, you
+need to make sure that the right set of permissions are configured for Dadosfera AI to work as expected.
+Check out the permissions that the Dadosfera AI Controller sets for Argo
 [here](https://github.com/orchest/orchest/tree/v2022.08.8/services/orchest-controller/deploy/thirdparty/argo-workflows).
-In addition, Orchest makes use of Argo's [`Container Set`](https://argoproj.github.io/argo-workflows/container-set-template/) in a single-node setting
+In addition, Dadosfera AI makes use of Argo's [`Container Set`](https://argoproj.github.io/argo-workflows/container-set-template/) in a single-node setting
 (i.e. you have `singleNode: true` in the `OrchestCluster` CR Object) which requires the use of the
 [`Emissary Executor`](https://argoproj.github.io/argo-workflows/workflow-executors/#emissary-emissary).
 
 (install-nginx)=
 
-### Installing Orchest without Nginx Ingress Controller
+### Installing Dadosfera AI without Nginx Ingress Controller
 
 If you already have [nginx ingress controller](https://kubernetes.github.io/ingress-nginx/deploy) deployed on your
-Kubernetes cluster, then you need to tell Orchest not to install it again:
+Kubernetes cluster, then you need to tell Dadosfera AI not to install it again:
 
 ```bash
 orchest install --no-nginx
@@ -150,28 +150,28 @@ and [GKE](https://kubernetes.github.io/ingress-nginx/deploy/#gce-gke) clusters.
 
 (install-kubectl)=
 
-### Installing Orchest using `kubectl`
+### Installing Dadosfera AI using `kubectl`
 
-The code snippet below will install Orchest in the `orchest` namespace. In case you want to
+The code snippet below will install Dadosfera AI in the `orchest` namespace. In case you want to
 install in another namespace you can use tools like [yq](https://github.com/mikefarah/yq) to
 change the specified namespace in `orchest-controller.yaml` and `example-orchestcluster.yaml`.
 
 ```bash
-# Get the latest available Orchest version
+# Get the latest available Dadosfera AI version
 export VERSION=$(curl \
    "https://update-info.orchest.io/api/orchest/update-info/v3?version=None&is_cloud=False" \
    | grep -oP "v\d+\.\d+\.\d+")
 
-# Create the namespace to install Orchest in
+# Create the namespace to install Dadosfera AI in
 kubectl create ns orchest
 
-# Deploy the Orchest Operator
+# Deploy the Dadosfera AI Operator
 kubectl apply \
   -f "https://github.com/orchest/orchest/releases/download/${VERSION}/orchest-controller.yaml"
 
 # Apply an OrchestCluster Custom Resource
 # NOTE: You can also first download the example manifest so that you
-# can tweak it to your liking. For example, preventing Orchest from
+# can tweak it to your liking. For example, preventing Dadosfera AI from
 # also deploying the Nginx controller (because you have already
 # configured ingress on your cluster) through the
 # `controller.orchest.io/deploy-ingress` annotation.
@@ -179,24 +179,24 @@ kubectl apply \
   -f "https://github.com/orchest/orchest/releases/download/${VERSION}/example-orchestcluster.yaml"
 ```
 
-In case you want to configure the Orchest Cluster, you can patch the created `OrchestCluster`.
+In case you want to configure the Dadosfera AI Cluster, you can patch the created `OrchestCluster`.
 
 (reverse-proxy)=
 
 ### Setting up a reverse proxy
 
-When installing Orchest in remote machines, such as AWS EC2 instances,
+When installing Dadosfera AI in remote machines, such as AWS EC2 instances,
 you will need to set up a reverse proxy that redirects traffic to the application appropriately.
 Here is an example on how to do it on an Ubuntu-based EC2 machine using [nginx]:
 
 ```bash
 sudo apt-get install -y nginx
 
-# Make Orchest accessible on the instance through localorchest.io
+# Make Dadosfera AI accessible on the instance through localorchest.io
 minikube ip | xargs printf "%s localorchest.io" | sudo tee -a  /etc/hosts
 
 # Set up a reverse proxy that listens on port 80 of the host
-# and routes traffic to Orchest
+# and routes traffic to Dadosfera AI
 sudo cat << EOF > /etc/nginx/sites-available/localorchest.io
 map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -247,7 +247,7 @@ its `readinessProbe` leading to `kube-proxy` updating `iptables` rules to stop r
 the pod ([k8s
 docs](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#types-of-probe)), for which
 it uses the `REJECT` target. This means that DNS queries will start failing immediately without the
-configured resolver timeout being respected (in Orchest we use a timeout of `10` seconds with `5`
+configured resolver timeout being respected (in Dadosfera AI we use a timeout of `10` seconds with `5`
 attempts). In order to respect the timeout instead of failing immediately, you can tweak the
 `readinessProbe` or simply remove it by editing the manifest of the `coredns` deployment:
 

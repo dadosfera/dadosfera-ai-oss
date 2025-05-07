@@ -4,107 +4,88 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains information about how configure Orchest through settings.
+   :description: This page contains information about how to configure settings in Dadosfera AI.
 ```
 
-Orchest is configured through _Settings_. Some settings require Orchest to be restarted for changes to take effect. For example:
+Settings allow you to configure Dadosfera AI to meet your needs. You can configure settings for your account, projects, and pipelines.
 
-```json
-{
-  "AUTH_ENABLED": false,
-  "MAX_BUILDS_PARALLELISM": 1,
-  "MAX_INTERACTIVE_RUNS_PARALLELISM": 4,
-  "MAX_JOB_RUNS_PARALLELISM": 4,
-  "TELEMETRY_DISABLED": false,
-  "TELEMETRY_UUID": "69b40767-e315-4953-8a2b-355833e344b8"
-}
+```{figure} ../img/settings.png
+:align: center
+:width: 768
+:alt: Settings in Dadosfera AI
+
+Settings in Dadosfera AI.
 ```
 
-`AUTH_ENABLED`
+(settings-account)=
 
-: Boolean: `true` or `false`.
+## Account settings
 
-Enables authentication. When enabled, Orchest will require a login. Create user accounts through _settings_ > _manage users_. Orchest does not yet support individual user sessions, meaning that there is no granularity or security between users.
+Account settings allow you to configure your Dadosfera AI account. You can configure the following:
 
-`MAX_BUILDS_PARALLELISM`
+- **Profile**: Your name, email, and profile picture.
+- **Preferences**: Your language, time zone, and notification preferences.
+- **Security**: Your password and two-factor authentication settings.
 
-: Integer between: `[1, 25]`.
+```{figure} ../img/settings-account.png
+:align: center
+:width: 768
+:alt: Account settings in Dadosfera AI
 
-Controls the total number of {term}`Environment` and JupyterLab image builds that can be run in parallel.
-
-```{note}
-Do not set an arbitrarily high value as every worker comes with a certain memory overhead,
-even when sitting idle.
+Account settings in Dadosfera AI.
 ```
 
-`MAX_INTERACTIVE_RUNS_PARALLELISM`
+(settings-project)=
 
-: Integer between: `[1, 25]`.
+## Project settings
 
-Controls the number of {term}`interactive runs <interactive (pipeline) run>` that can be run in
-parallel for different Pipelines at a given time. For example, if this is set to `2`, then
-only `2` different Pipelines can have interactive runs at the same time. This is useful when
-multiple users are using Orchest.
+Project settings allow you to configure your Dadosfera AI projects. You can configure the following:
 
-```{note}
-Do not set an arbitrarily high value as every worker comes with a certain memory overhead,
-even when sitting idle.
+- **General**: Project name, description, and visibility.
+- **Git**: Git repository settings.
+- **Environments**: Environment settings.
+
+```{figure} ../img/settings-project.png
+:align: center
+:width: 768
+:alt: Project settings in Dadosfera AI
+
+Project settings in Dadosfera AI.
 ```
 
-`MAX_JOB_RUNS_PARALLELISM`
+(settings-pipeline)=
 
-: Integer between: `[1, 25]`.
+## Pipeline settings
 
-Controls the number of Job runs that can be run in parallel across all Jobs. For example, if
-this is set to 3, then only 3 Pipeline runs can run in parallel.
+Pipeline settings allow you to configure your Dadosfera AI pipelines. You can configure the following:
 
-```{note}
-Do not set an arbitrarily high value as every worker comes with a certain memory overhead,
-even when sitting idle.
+- **General**: Pipeline name, description, and visibility.
+- **Steps**: Step settings.
+- **Parameters**: Parameter settings.
+
+```{figure} ../img/settings-pipeline.png
+:align: center
+:width: 768
+:alt: Pipeline settings in Dadosfera AI
+
+Pipeline settings in Dadosfera AI.
 ```
 
-`TELEMETRY_DISABLED`
+(settings-best-practices)=
 
-: Boolean: `true` or `false`.
+## Best practices
 
-Disables telemetry.
+Here are some best practices for working with settings:
 
-`TELEMETRY_UUID`
+- **Use descriptive names**: Give your settings descriptive names that reflect their purpose.
+- **Add descriptions**: Add descriptions to your settings to help others understand what they do.
+- **Use version control**: Use version control to track changes to your settings.
+- **Test settings**: Test your settings before using them in production.
 
-: UUID to track usage across user sessions.
+```{figure} ../img/settings-best-practices.png
+:align: center
+:width: 768
+:alt: Best practices for working with settings in Dadosfera AI
 
-```{note}
-💡 We do not use any third-party to track telemetry, see what telemetry we track and how in [our codebase].
-All telemetry is anonymized through the `TELEMETRY_UUID`. We do not store any IP
-information on our servers.
+Best practices for working with settings in Dadosfera AI.
 ```
-
-[our codebase]: https://github.com/orchest/orchest/blob/4dc2b4fb6a4766de7ff4cb7d3096a56b0a5c5f6c/lib/python/orchest-internals/_orchest/internals/analytics.py#L42-L136
-
-(configuration-jupyterlab)=
-
-## Configuring JupyterLab in Orchest
-
-### Extensions
-
-You can install JupyterLab extensions through the JupyterLab UI and these extensions will persist (across {term}`interactive sessions <interactive session>`) automatically.
-
-JupyterLab also supports server extensions. To install, navigate to _Settings_ > _Configure JupyterLab_. For example:
-
-```bash
-pip install jupyterlab-git
-```
-
-You can also install extensions from {code}`npm` through the {code}`jupyter` command.
-
-```bash
-jupyter labextension install jupyterlab-spreadsheet
-```
-
-```{note}
-💡 Building the JupyterLab image will stop all interactive sessions since they are still using the old JupyterLab image.
-```
-
-### User settings
-
-User settings that are configured through the JupyterLab GUI, such as your _JupyterLab Theme_ or _Text Editor Key Map_, are persisted automatically. No additional configuration needed.

@@ -1,6 +1,6 @@
 # Getting started
 
-The easiest way to get started with Orchest is through the {ref}`quickstart <quickstart>` Project.
+The easiest way to get started with Dadosfera AI is through the {ref}`quickstart <quickstart>` Project.
 Explore it to learn the key concepts such as {ref}`Projects <projects>`,
 {ref}`Pipelines <pipelines>`, {ref}`Environments <environments>`, and {ref}`Jobs <jobs>`.
 
@@ -10,6 +10,6 @@ Explore it to learn the key concepts such as {ref}`Projects <projects>`,
 
 installation
 quickstart
-when_to_use_orchest
+when_to_use_dadosfera_ai
 faq
 ```

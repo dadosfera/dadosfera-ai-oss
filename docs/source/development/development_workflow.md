@@ -4,19 +4,19 @@
 
 ### Required software
 
-You need the following installed to contribute to Orchest:
+You need the following installed to contribute to Dadosfera AI:
 
 - Python version `3.x`
-- [Go](https://go.dev/doc/install): Used by the `orchest-controller` and needed to run our
-  `scripts/build_container.sh` to build Orchest's images.
-- [Docker](https://docs.docker.com/get-docker/): To build Orchest's images.
-- [minikube](https://minikube.sigs.k8s.io/docs/start/): To deploy Orchest on a local cluster.
+- [Go](https://go.dev/doc/install): Used by the `dadosfera-controller` and needed to run our
+  `scripts/build_container.sh` to build Dadosfera AI's images.
+- [Docker](https://docs.docker.com/get-docker/): To build Dadosfera AI's images.
+- [minikube](https://minikube.sigs.k8s.io/docs/start/): To deploy Dadosfera AI on a local cluster.
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl): To manage k8s clusters.
 - [helm](https://helm.sh/docs/intro/install/): Needed to run our `scripts/build_container.sh` to
-  create the manifests to deploy the `orchest-controller`.
+  create the manifests to deploy the `dadosfera-controller`.
 - [pre-commit](https://pre-commit.com/#installation): Running pre-commit hooks, e.g. linters.
 - [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and
-  [pnpm](https://pnpm.io/installation#using-npm): To develop the front-end code of Orchest.
+  [pnpm](https://pnpm.io/installation#using-npm): To develop the front-end code of Dadosfera AI.
 - [Google Chrome](https://www.google.com/chrome/): Requirement to run integration tests locally.
 
 Optional, but highly recommended:
@@ -70,7 +70,6 @@ sudo npm install -g pnpm
 curl -L https://github.com/derailed/k9s/releases/download/v0.25.21/k9s_Linux_x86_64.tar.gz -o k9s.tar.gz
 tar -C ~/.local/bin -xzf k9s.tar.gz
 ```
-````
 
 ### Dependencies
 
@@ -78,7 +77,7 @@ After installing the required software, you need to configure the tools and inst
 dependencies.
 
 ```{note}
-Make sure you are inside the root of the `orchest` repository.
+Make sure you are inside the root of the `dadosfera` repository.
 ```
 
 ```bash
@@ -86,13 +85,13 @@ Make sure you are inside the root of the `orchest` repository.
 pre-commit install
 # Install frontend dependencies for local development:
 npm run setup --install && pnpm i
-# Install the Orchest CLI to manage the Orchest Cluster in k8s:
-python3 -m pip install -e orchest-cli
+# Install the Dadosfera AI CLI to manage the Dadosfera AI Cluster in k8s:
+python3 -m pip install -e dadosfera-cli
 # Install dependencies to build the docs:
 python3 -m pip install -r docs/requirements.txt
 ```
 
-Orchest's integration tests require a MySQL client to be installed:
+Dadosfera AI's integration tests require a MySQL client to be installed:
 
 For Linux:
 ```bash
@@ -106,12 +105,12 @@ brew install mysql
 
 ### Cluster for development
 
-Currently, the development tools assume that you have Orchest installed on a local minikube cluster.
-To get the best development experience, it is recommended to mount the Orchest repository in minikube
+Currently, the development tools assume that you have Dadosfera AI installed on a local minikube cluster.
+To get the best development experience, it is recommended to mount the Dadosfera AI repository in minikube
 which allows for incremental development.
 
 ```{note}
-Make sure you are inside the root of the `orchest` repository.
+Make sure you are inside the root of the `dadosfera` repository.
 ```
 
 ```bash
@@ -124,17 +123,17 @@ minikube start \
   --cpus max \
   --memory max \
   --addons ingress metrics-server \
-  --mount-string="$(pwd):/orchest-dev-repo" --mount
+  --mount-string="$(pwd):/dadosfera-dev-repo" --mount
 ```
 
-## Installing Orchest for development
+## Installing Dadosfera AI for development
 
-Now when all dependencies are installed and your cluster is set up, you can install Orchest!
+Now when all dependencies are installed and your cluster is set up, you can install Dadosfera AI!
 
 But before doing so, it is important to realize that the Docker daemon of your host is different from the Docker daemon
-of minikube. This means that you need to build Orchest's images on the minikube node in order for
+of minikube. This means that you need to build Dadosfera AI's images on the minikube node in order for
 minikube to be able to use them, otherwise it will pull the images from DockerHub. Note that
-DockerHub only contains images of Orchest releases and not active code changes from GitHub branches.
+DockerHub only contains images of Dadosfera AI releases and not active code changes from GitHub branches.
 Therefore it is important to configure your environment to use minikube's Docker daemon before
 building images.
 
@@ -147,10 +146,10 @@ The command below needs to be run in every terminal window you open!
 eval $(minikube -p minikube docker-env)
 ```
 
-Next, you can build Orchest's images. Again, there is an important realization to make here and that
-is that the images you build are given a specific _tag_. This tag is used by the Orchest Controller
-(`orchest-controller`) to manage the Orchest Cluster, thus if you build images with tag `X` but
-deploy the `orchest-controller` with tag `Y`, then the `orchest-controller` will start pulling the
+Next, you can build Dadosfera AI's images. Again, there is an important realization to make here and that
+is that the images you build are given a specific _tag_. This tag is used by the Dadosfera AI Controller
+(`dadosfera-controller`) to manage the Dadosfera AI Cluster, thus if you build images with tag `X` but
+deploy the `dadosfera-controller` with tag `Y`, then the `dadosfera-controller` will start pulling the
 images with tag `Y` from DockerHub (instead of using the locally built images with tag `X`). This
 will become important when {ref}`rebuilding images after making code changes <dev-rebuilding-images>`.
 
@@ -159,32 +158,32 @@ will become important when {ref}`rebuilding images after making code changes <de
 echo "$MINIKUBE_ACTIVE_DOCKERD"
 ```
 
-Let's build the minimal set of required images for Orchest to run:
+Let's build the minimal set of required images for Dadosfera AI to run:
 
 ```bash
-# Set the *tag* to the latest Orchest version available
-export TAG="$(orchest version --latest)"
+# Set the *tag* to the latest Dadosfera AI version available
+export TAG="$(dadosfera version --latest)"
 
-# Build the minimal set of images for Orchest to run
+# Build the minimal set of images for Dadosfera AI to run
 scripts/build_container.sh -M -t $TAG -o $TAG
 ```
 
 ```{dropdown} 💡 Additional notes on the "scripts/build_container.sh" script
 In this section we will quickly go over the most important options that can be passed to the
-`scripts/build_container.sh` script. Note that, because Orchest is a fully containerized
+`scripts/build_container.sh` script. Note that, because Dadosfera AI is a fully containerized
 application, the new images (the ones with your code changes) need to be build and used by the
 cluster in order to reflect your changes.
 
 - `-n`: Build the specified images but without using the existing Docker cache. Might be useful in
   case you are experiencing trouble building an image.
-- `-i`: Build a specific image, e.g. `... -i orchest-api`
+- `-i`: Build a specific image, e.g. `... -i dadosfera-api`
 - `-m`: Build a minified set of images, that is, all images except base Environment images.
   Environment images don't need to be explicitly build in case you didn't make any changes to them
   (see {ref}`making Environment base image changes <environment-base-images-changes>`) and instead
-  can be pulled in from DockerHub. Do note that the `$TAG` you are building Orchest with needs to be
-  a valid image tag that exists for the image on [Orchest's
-  DockerHub](https://hub.docker.com/u/orchest).
-- `-M`: Build the absolute minimal set of images required by Orchest to run. On top of the `-m`
+  can be pulled in from DockerHub. Do note that the `$TAG` you are building Dadosfera AI with needs to be
+  a valid image tag that exists for the image on [Dadosfera AI's
+  DockerHub](https://hub.docker.com/u/dadosfera).
+- `-M`: Build the absolute minimal set of images required by Dadosfera AI to run. On top of the `-m`
   option this also excludes all images for Sessions.
 - `-v`: Run the script in verbose mode (useful for debugging), which will also disable parallel
   building of the images.
@@ -194,24 +193,24 @@ Any number of these options can be passed to the script.
 Of course, all details about the script can be found by checking out its source code.
 ```
 
-And finally, install Orchest:
+And finally, install Dadosfera AI:
 
 ```bash
 # The --dev flag is used so that it doesn't pull in the release assets
 # from GitHub, but instead uses the manifests from the local filesystem
-# to deploy the Orchest Controller. NOTE: these manifests are automatically
+# to deploy the Dadosfera AI Controller. NOTE: these manifests are automatically
 # generated when running the above `build_container.sh` script ;)
-orchest install --dev
+dadosfera install --dev
 ```
 
-Take a look in [k9s](https://github.com/derailed/k9s) and see how Orchest is getting installed.
+Take a look in [k9s](https://github.com/derailed/k9s) and see how Dadosfera AI is getting installed.
 
-Once the installation is completed you can reach Orchest using one of the following approaches,
+Once the installation is completed you can reach Dadosfera AI using one of the following approaches,
 depending on your operating system:
 
 `````{tab-set}
 ````{tab-item} Linux
-Simply access the Orchest UI by browsing to the IP returned by:
+Simply access the Dadosfera AI UI by browsing to the IP returned by:
 ```bash
 minikube ip
 ```
@@ -224,16 +223,16 @@ sudo minikube tunnel
 
 Does everything look good? _Awesome!_ You're all set up and ready to start coding now! 🎉
 
-Have a look at our best practices and our [GitHub](https://github.com/orchest/orchest/issues)
+Have a look at our best practices and our [GitHub](https://github.com/dadosfera/dadosfera-ai-oss/issues)
 ````
 `````
 
 Does everything look good? _Awesome!_ You're all set up and ready to start coding now! 🎉
 
-Have a look at our {ref}`best practices <best practices>` and our [GitHub](https://github.com/orchest/orchest/issues)
+Have a look at our {ref}`best practices <best practices>` and our [GitHub](https://github.com/dadosfera/dadosfera-ai-oss/issues)
 to find interesting issues to work on.
 
-## Redeploying Orchest after code changes
+## Redeploying Dadosfera AI after code changes
 
 ```{warning}
 Running `minikube delete` is not recommend because it will lose the Docker cache on the minikube
@@ -241,30 +240,30 @@ node, making rebuilding images very slow. Luckily, it is unlikely you will need 
 `minikube delete`.
 ```
 
-In this section we will go over the three ways to "redeploy" Orchest to reflect your code changes.
+In this section we will go over the three ways to "redeploy" Dadosfera AI to reflect your code changes.
 Note that each approach is best used in specific circumstances.
 
 - _Using development mode to automatically reflect code changes._
   ({ref}`link <incremental-development>`)
   Best used when working on a PR and you would like to see your code changes immediately, especially
-  useful when developing the front-end (e.g. `orchest-webserver`).
+  useful when developing the front-end (e.g. `dadosfera-webserver`).
 - _Rebuilding and redeploying only the service's image that you made changes to._
   ({ref}`link <dev-rebuilding-images>`)
   Best used when you know the code changes affect only one service and you don't want to fully
-  re-install Orchest. For example, you want to test a PR that only changed the front-end and want to
+  re-install Dadosfera AI. For example, you want to test a PR that only changed the front-end and want to
   run in production mode instead of development mode.
-- _Completely uninstalling and installing Orchest again._
-  ({ref}`link <dev-reinstalling-orchest>`)
-  When making larger changes that touch different parts of Orchest, it is a good idea to fully
-  re-install Orchest. Do note that this should be rather fast because the Docker cache is used when
+- _Completely uninstalling and installing Dadosfera AI again._
+  ({ref}`link <dev-reinstalling-dadosfera>`)
+  When making larger changes that touch different parts of Dadosfera AI, it is a good idea to fully
+  re-install Dadosfera AI. Do note that this should be rather fast because the Docker cache is used when
   rebuilding images.
 
 ### Development mode (incremental development)
 
-For the next steps, we assume you already installed Orchest.
+For the next steps, we assume you already installed Dadosfera AI.
 
 To get "hot reloading", you need to make sure your minikube cluster was created using the above
-{ref}`mount command <cluster-mount>` and have Orchest serve files from your local filesystem (that
+{ref}`mount command <cluster-mount>` and have Dadosfera AI serve files from your local filesystem (that
 contains code changes) instead of the files baked into the Docker images. To achieve the latter,
 simply run:
 
@@ -280,16 +279,16 @@ pnpm i
 # files
 pnpm run dev
 
-# Get the Orchest Cluster to serve files from your local filesystem.
-orchest patch --dev
+# Get the Dadosfera AI Cluster to serve files from your local filesystem.
+dadosfera patch --dev
 ```
 
-**Note**: Your cluster will stay in `--dev` mode until you unpatch it (using `orchest patch --no-dev`).
+**Note**: Your cluster will stay in `--dev` mode until you unpatch it (using `dadosfera patch --no-dev`).
 
 The services that support incremental development are:
 
-- `orchest-webserver`
-- `orchest-api`
+- `dadosfera-webserver`
+- `dadosfera-api`
 - `auth-server`
 
 For changes to all other services, you need to redeploy the respective image as described in the
@@ -309,7 +308,7 @@ If at any point you want to disable incremental development, proceed as follows:
 kill $(pidof pnpm)
 
 # Revert the patch
-orchest patch --no-dev
+dadosfera patch --no-dev
 ```
 
 To stop the cluster, it's enough to call `minikube stop`, which will stop all the pods.
@@ -319,8 +318,8 @@ To stop the cluster, it's enough to call `minikube stop`, which will stop all th
 If you have a running development installation with hot reloading, every time you make a change to
 the code it will be automatically reloaded. However, when switching git branches that are very
 different, or if changes to certain core components were made, this procedure might produce
-inconsistent results. A safer way to proceed is to uninstall Orchest before making the switch, see
-{ref}`re-installing Orchest <dev-reinstalling-orchest>`.
+inconsistent results. A safer way to proceed is to uninstall Dadosfera AI before making the switch, see
+{ref}`re-installing Dadosfera AI <dev-reinstalling-dadosfera>`.
 
 (dev-rebuilding-images)=
 
@@ -336,7 +335,7 @@ Luckily, in the majority of cases you will be using a local single-node cluster 
 created in the previous steps).
 
 For the sake of simplicity (without loss of generality), let's assume you made changes to the
-`orchest-api`.
+`dadosfera-api`.
 
 `````{tab-set}
 ````{tab-item} Single node
@@ -353,27 +352,27 @@ Now you're ready to rebuild the images, to which you made changes, using the `bu
 script.
 
 **Note**: It is very important (otherwise your code changes will not be reflected) to use the *tag*
-equal to the currently running Orchest version.
+equal to the currently running Dadosfera AI version.
 
 ```bash
-export TAG="$(orchest version)"
+export TAG="$(dadosfera version)"
 
 # Rebuild the images that need it
-scripts/build_container.sh -i orchest-api -t $TAG -o $TAG
+scripts/build_container.sh -i dadosfera-api -t $TAG -o $TAG
 ```
 
 Alternatively, you can run `scripts/build_container.sh -M -t $TAG -o $TAG` to rebuild the absolute
 minimal required set of images instead of cherry picking. This is not a bad idea given that the
 Docker cache will be used and thus rebuilds of unchanged images is quick.
 
-Lastly, you need to make sure that your new `orchest-api` image is used by minikube. This can be
-done by deleting the respective `orchest-api` pod (which will automatically get replaced with a new
+Lastly, you need to make sure that your new `dadosfera-api` image is used by minikube. This can be
+done by deleting the respective `dadosfera-api` pod (which will automatically get replaced with a new
 pod serving your updated image thanks to Kubernetes deployments):
 
 ```bash
-# Kill the pods of the orchest-api, so that the new image gets used
+# Kill the pods of the dadosfera-api, so that the new image gets used
 # when new pod gets automatically deployed.
-kubectl delete pods -n orchest -l "app.kubernetes.io/name=orchest-api"
+kubectl delete pods -n dadosfera -l "app.kubernetes.io/name=dadosfera-api"
 ```
 
 Check out [k9s](https://github.com/derailed/k9s) if you want to use a visual interface instead
@@ -388,23 +387,23 @@ slightly more involved, we provide the following scripts:
 ```bash
 # Redeploy a service after building the image using the repo code.
 # This is the script that you will likely use the most. This script
-# assumes Orchest is installed and running, since it interacts with
-# an Orchest service.
-bash scripts/redeploy_orchest_service_on_minikube.sh orchest-api
+# assumes Dadosfera AI is installed and running, since it interacts with
+# a Dadosfera AI service.
+bash scripts/redeploy_dadosfera_service_on_minikube.sh dadosfera-api
 
 # Remove an image from minikube. Can be useful to force a pull from
 # a registry.
-bash scripts/remove_image_from_minikube.sh orchest/orchest-api
+bash scripts/remove_image_from_minikube.sh dadosfera/dadosfera-api
 
 # Build an image with a given tag, on all nodes.
-bash scripts/build_image_in_minikube.sh orchest-api v2022.03.7
+bash scripts/build_image_in_minikube.sh dadosfera-api v2022.03.7
 
 # Run arbitrary commands on all nodes.
 bash scripts/run_in_minikube.sh echo "hello"
 ```
 
 ```{warning}
-The redeploy and build_image scripts require the Orchest repository
+The redeploy and build_image scripts require the Dadosfera AI repository
 {ref}`to be mounted in minikube <cluster-mount>`.
 However, note that multi node mounting might not be supported by all minikube drivers.
 We have tested with docker, the default driver.
@@ -412,27 +411,27 @@ We have tested with docker, the default driver.
 ````
 `````
 
-(dev-reinstalling-orchest)=
+(dev-reinstalling-dadosfera)=
 
-### Re-installing Orchest
+### Re-installing Dadosfera AI
 
 When making larger changes or when wanting to check out a different branch for example, it is a good
-idea to re-install Orchest. Rest assured, this should be fairly quick!
+idea to re-install Dadosfera AI. Rest assured, this should be fairly quick!
 
 ```bash
-# Uninstall Orchest before proceeding
-orchest uninstall
+# Uninstall Dadosfera AI before proceeding
+dadosfera uninstall
 
 # Switch git branches if applicable
 git switch feature-branch
 
 # Rebuild containers, if needed
 eval $(minikube -p minikube docker-env)
-export TAG="$(orchest version --latest)"
+export TAG="$(dadosfera version --latest)"
 scripts/build_container.sh -M -t $TAG -o $TAG
 
-# Install Orchest again
-orchest install --dev
+# Install Dadosfera AI again
+dadosfera install --dev
 ```
 
 ## Making changes
@@ -506,8 +505,8 @@ schema change on update (since they can then be automatically migrated to the la
 
 ```sh
 # Depending on the service that requires schema changes.
-scripts/migration_manager.sh orchest-api migrate
-scripts/migration_manager.sh orchest-webserver migrate
+scripts/migration_manager.sh dadosfera-api migrate
+scripts/migration_manager.sh dadosfera-webserver migrate
 
 # For more options run:
 scripts/migration_manager.sh --help
@@ -553,16 +552,16 @@ scripts/run_tests.sh
 ```
 
 Next you can create a workspace file that sets up VS Code to use the right Python interpreters (do
-note that this won't include all the files defined in the Orchest repo), e.g.:
+note that this won't include all the files defined in the Dadosfera AI repo), e.g.:
 
 ```json
 {
   "folders": [
     {
-      "path": "services/orchest-api"
+      "path": "services/dadosfera-api"
     },
     {
-      "path": "services/orchest-webserver"
+      "path": "services/dadosfera-webserver"
     },
     {
       "path": "services/base-images/runnable-shared"
@@ -571,12 +570,12 @@ note that this won't include all the files defined in the Orchest repo), e.g.:
       "path": "services/session-sidecar"
     },
     {
-      "name": "orchest-sdk",
-      "path": "orchest-sdk/python"
+      "name": "dadosfera-sdk",
+      "path": "dadosfera-sdk/python"
     },
     {
       "name": "internal lib Python",
-      "path": "lib/python/orchest-internals/"
+      "path": "lib/python/dadosfera-internals/"
     }
   ],
   "settings": {}
@@ -593,7 +592,7 @@ note that this won't include all the files defined in the Orchest repo), e.g.:
 
 Unit tests are being ported to k8s, stay tuned :)!
 
-% The unit tests (in particular for the `orchest-api` and `orchest-webserver`) run against a real
+% The unit tests (in particular for the `dadosfera-api` and `dadosfera-webserver`) run against a real
 % database. This, together with additional setup, and the running of all unit tests is done using the
 % following script:
 %
@@ -636,8 +635,8 @@ Integration tests are being ported to k8s, stay tuned :)!
 %
 % Troubleshooting
 % """""""""""""""
-% The script takes care of starting Orchest if it isn't already. On the other hand, if Orchest is
-% already started, then the script expects Orchest to be running on its default port `8000`.
+% The script takes care of starting Dadosfera AI if it isn't already. On the other hand, if Dadosfera AI is
+% already started, then the script expects Dadosfera AI to be running on its default port `8000`.
 
 ## Manual testing
 
@@ -654,16 +653,16 @@ container runtime. Example:
 # Make changes to services/base-images/base-kernel-py/Dockerfile, then:
 eval $(minikube -p minikube docker-env)
 bash scripts/build_container.sh -o v2022.08.11 -t v2022.08.11  -i base-kernel-py
-# That's it, you can now build an environment image in Orchest using the
+# That's it, you can now build an environment image in Dadosfera AI using the
 # new python base image.
 ```
 
 Currently, this has only been tested with docker as the container runtime.
 
-### Test running Orchest on `containerd`
+### Test running Dadosfera AI on `containerd`
 
-To test running Orchest on `containerd`, we recommend [installing MicroK8s](https://microk8s.io/).
-Alternatively, you can also set up Orchest on GKE (see {ref}`installation <regular-installation>`)
+To test running Dadosfera AI on `containerd`, we recommend [installing MicroK8s](https://microk8s.io/).
+Alternatively, you can also set up Dadosfera AI on GKE (see {ref}`installation <regular-installation>`)
 or install MicroK8s in a VM (e.g. using [VirtualBox](https://www.virtualbox.org/)).
 
 Next, enable the following addons:
@@ -674,52 +673,52 @@ microk8s enable hostpath-storage \
     && microk8s enable ingress
 ```
 
-Now that MicroK8s is correctly configured we need to rebuild Orchest's images and save them to a
+Now that MicroK8s is correctly configured we need to rebuild Dadosfera AI's images and save them to a
 `.tar` file so that `containerd` can unpack the file and use the images.
 
 ```bash
 export TAG=v2022.06.4
 scripts/build_container.sh -M -t $TAG -o $TAG
 docker save \
-    $(docker images | awk '{if ($1 ~ /^orchest\//) new_var=sprintf("%s:%s", $1, $2); print new_var}' | grep $TAG | sort | uniq) \
-    -o orchest-images.tar
+    $(docker images | awk '{if ($1 ~ /^dadosfera\//) new_var=sprintf("%s:%s", $1, $2); print new_var}' | grep $TAG | sort | uniq) \
+    -o dadosfera-images.tar
 ```
 
 ````{dropdown} 👉 I didn't install MicroK8s on my host
 In case you didn't install MicroK8s on your host directly, you need to ship the images to the
 MicroK8s node:
 ```bash
-scp ./orchest-images.tar {your_user}@${microk8s node ip}:~/
+scp ./dadosfera-images.tar {your_user}@${microk8s node ip}:~/
 ```
 
-And set up the kubeconfig on your host so that you can use the `orchest-cli` like:
+And set up the kubeconfig on your host so that you can use the `dadosfera-cli` like:
 ```bash
-KUBECONFIG=/path/to/kubeconfig orchest install --dev
+KUBECONFIG=/path/to/kubeconfig dadosfera install --dev
 ```
 ````
 
 Next, inside the MicroK8s node (which can be your host), you can import the images using:
 
 ```bash
-microk8s ctr --namespace k8s.io --address /var/snap/microk8s/common/run/containerd.sock image import orchest-images.tar
+microk8s ctr --namespace k8s.io --address /var/snap/microk8s/common/run/containerd.sock image import dadosfera-images.tar
 
 # OR, requires ctr to be installed: https://github.com/containerd/containerd/releases
-sudo ctr -n k8s.io -a /var/snap/microk8s/common/run/containerd.sock i import orchest-images.tar
+sudo ctr -n k8s.io -a /var/snap/microk8s/common/run/containerd.sock i import dadosfera-images.tar
 ```
 
-Now you can install Orchest:
+Now you can install Dadosfera AI:
 
 ```bash
-orchest install --dev --socket-path=/var/snap/microk8s/common/run/containerd.sock
+dadosfera install --dev --socket-path=/var/snap/microk8s/common/run/containerd.sock
 ```
 
-### Run Orchest Controller locally
+### Run Dadosfera AI Controller locally
 
-For easier debugging it is possible to run the `orchest-controller` locally with a debugger. We
+For easier debugging it is possible to run the `dadosfera-controller` locally with a debugger. We
 will explain how to do so using VSCode. Make sure your cluster is set up and you've installed
 [Go](https://go.dev/doc/install), then follow the steps below:
 
-Run the `orchest-controller` with a debugger in VSCode, example `launch.json`:
+Run the `dadosfera-controller` with a debugger in VSCode, example `launch.json`:
 
 ```json
 {
@@ -744,23 +743,23 @@ Run the `orchest-controller` with a debugger in VSCode, example `launch.json`:
 }
 ```
 
-Next install Orchest and afterwards issue other commands to test the controller with:
+Next install Dadosfera AI and afterwards issue other commands to test the controller with:
 
 ```bash
-# Asuming you are in the root of the orchest git repository
-orchest install --dev
+# Asuming you are in the root of the dadosfera git repository
+dadosfera install --dev
 
-# Delete orchest-controller deployment so that the one started with
+# Delete dadosfera-controller deployment so that the one started with
 # the debugger does everything
-kubectl delete -n orchest deploy orchest-controller
+kubectl delete -n dadosfera deploy dadosfera-controller
 ```
 
-The Orchest Controller should now be running inside a debugger session.
+The Dadosfera AI Controller should now be running inside a debugger session.
 
 #### Without using VSCode
 
-Build the `orchest-controller` binary via the `Makefile` in `services/orchest-controller` and
-run the `orchest-controller` by passing the following command line arguments:
+Build the `dadosfera-controller` binary via the `Makefile` in `services/dadosfera-controller` and
+run the `dadosfera-controller` by passing the following command line arguments:
 
 ```bash
 # Asuming you have built the controller via "make controller" command
@@ -768,29 +767,29 @@ run the `orchest-controller` by passing the following command line arguments:
 --endpoint=:5000 --assetsDir=./deploy
 ```
 
-### Test updating Orchest
+### Test updating Dadosfera AI
 
 #### Through the CLI
 
 ```bash
-orchest uninstall
+dadosfera uninstall
 scripts/build_container.sh -M -t "v2022.04.4" -o "v2022.04.4"
-orchest install --dev
+dadosfera install --dev
 scripts/build_container.sh -M -t "v2022.04.5" -o "v2022.04.5"
-orchest update --dev --version=v2022.04.5
+dadosfera update --dev --version=v2022.04.5
 scripts/build_container.sh -M -t "v2022.04.6" -o "v2022.04.6"
-orchest update --dev --version=v2022.04.6
+dadosfera update --dev --version=v2022.04.6
 ```
 
 #### Through the UI
 
-For this to work you need to be running in dev mode and have the `orchest-dev-repo` mounted (as
+For this to work you need to be running in dev mode and have the `dadosfera-dev-repo` mounted (as
 per {ref}`setting up minikube for development <cluster-mount>`).
 
 ```bash
 # Start from a clean slate so that we know what version we are on
 # before invoking the update.
-orchest uninstall
+dadosfera uninstall
 
 # Build whatever version you like! In case you want to test out
 # the product after the update, build the X-1 latest release
@@ -798,21 +797,21 @@ orchest uninstall
 scripts/build_container.sh -m -t "v2022.04.4" -o "v2022.04.4"
 
 # Installing and making sure running in dev.
-orchest install --dev
-orchest patch --dev
+dadosfera install --dev
+dadosfera patch --dev
 pnpm run dev
 
 # Build the version to update to
 scripts/build_container.sh -M -t "v2022.04.5" -o "v2022.04.5"
 
 # Invoke the update through the UI go to:
-# http://localorchest.io/update
+# http://localdadosfera.io/update
 ...
 
 # In case you want to test it again
 scripts/build_container.sh -M -t "v2022.04.6" -o "v2022.04.6"
 # Invoke the update through the UI go to:
-# http://localorchest.io/update
+# http://localdadosfera.io/update
 ...
 
 # And repeat if you like.

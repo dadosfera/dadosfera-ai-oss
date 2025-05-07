@@ -5,7 +5,7 @@ detail how features work.
 
 ## Orchest Controller
 
-Let's quickly go through how the Orchest Controller "reacts" on the state of the Kubernetes cluster.
+Let's quickly go through how the Dadosfera AI Controller "reacts" on the state of the Kubernetes cluster.
 
 In `controller.go` a number of _Informers_ are set up. These _Informers_ (not written by us) store
 the applicable (depending on how you configure the informat) content from the k8s api in memory
@@ -15,8 +15,8 @@ implemented by us).
 
 Next, we add _event handlers_ on the informers to watch for particular events, e.g. the creation of
 a Pod. Whenever an event handler is triggered the respective event handler enqueues the task. This
-is where the `orchest-controller` comes in. The Orchest Controller consumes tasks from the respective
-queues and handles it accordingly. An important note to make is that the Orchest Controller will
+is where the `orchest-controller` comes in. The Dadosfera AI Controller consumes tasks from the respective
+queues and handles it accordingly. An important note to make is that the Dadosfera AI Controller will
 always make a deepcopy of objects as to not change the objects in the informer's cache.
 
 Note, that there is one go routine per queue as to not concurrently work on tasks from the same
@@ -28,7 +28,7 @@ queue.
 
 Details can be found here: [PR #1205](https://github.com/orchest/orchest/pull/1205).
 
-In short, a custom image can be specified for an Orchest service. This image can have a custom
+In short, a custom image can be specified for a Dadosfera AI service. This image can have a custom
 registry, name and/or tag. When the custom image is specified in the `OrchestCluster` CR on
 creation, then the `orchest-controller` will deploy the image to be used.
 
@@ -37,7 +37,7 @@ remain unchanged.
 
 ## Telemetry Events
 
-The Orchest shared library provides a module
+The Dadosfera AI shared library provides a module
 (`lib/python/orchest-internals/_orchest/internals/analytics.py`) which allows to send events to
 our telemetry backend. The caller of this module, needs, essentially, to provide an **already
 anonymized** payload (a dictionary) to the `send_event` function along with the event type to
@@ -114,12 +114,12 @@ See {ref}`Orchest-api Events <telemetry-orchest-api>` for a more in depth explan
 
 ## `orchest-api` events
 
-The `orchest-api` keeps track of a number of events happening in Orchest, in fact, a dedicated
+The `orchest-api` keeps track of a number of events happening in Dadosfera AI, in fact, a dedicated
 models module related to events exists, models implemented by the `orchest-api` can be found at
 `services/orchest-api/app/app/models/` .
 
 Events are used by the `orchest-api` for two reasons: to send them as telemetry events to the
-analytics backend, and to use them for user facing notifications. Orchest implements a simple
+analytics backend, and to use them for user facing notifications. Dadosfera AI implements a simple
 subscription system where subscribers can subscribe to a number of events. A possible subscriber is
 a "webhook", which users can use to get notified of particular events. An analytics subscriber
 subscribed automatically to all events exists, which will automatically send out telemetry
@@ -133,7 +133,7 @@ different delivery implementations.
 
 `orchest-api` events are implemented through a hierarchy of models backed by a single table
 through single table inheritance. Each one of those models must implement its own methods to be
-converted to a notification or telemetry payload. Given the nested nature of entities in Orchest,
+converted to a notification or telemetry payload. Given the nested nature of entities in Dadosfera AI,
 for example `project:job:pipeline_run`, what actually happens is that an event representing a
 specific layer of this hierarchy will call the parent class to generate a payload, then add it's own
 data to the payload, incrementally. See the events models for example.
@@ -180,7 +180,7 @@ in isoformat with timespec in seconds.
 
 When it comes to pipeline execution, each pipeline step is executed in its own environment. More
 particularly in its own container. Depending on how the code inside a pipeline step is executed a
-number of ENV variables are set by Orchest. The different ways to execute code as part of a pipeline
+number of ENV variables are set by Dadosfera AI. The different ways to execute code as part of a pipeline
 step are:
 
 - Running the cell of a Jupyter Notebook in JupyterLab,
@@ -254,7 +254,7 @@ Talking directly to the container runtime gives us flexibility but also the burd
 every quirk or leaky abstraction related to the particular runtime we are interfacing with. The
 points of interest in our logic, i.e. where changes related to container runtimes are likely to
 happen, are the `orchet-api` module in charge of building images and the `orchest-controller`, which
-might have to change some Orchest cluster level configuration based on the runtime.
+might have to change some Dadosfera AI cluster level configuration based on the runtime.
 
 #### Docker
 
@@ -278,16 +278,16 @@ built by issuing `buildctl` commands. To clarify, this means that the `buildkitd
 to the host through a volume mount, and is then "picked up" by the builder pod by mounting the same
 location from the host.
 
-## Pod scheduling in Orchest
+## Pod scheduling in Dadosfera AI
 
-In order to provide a better user experience, Orchest distinguishes activities between what could be
+In order to provide a better user experience, Dadosfera AI distinguishes activities between what could be
 called an "interactive scope" and a "non-interactive scope". The interactive scope includes any
 activity where the user is directly involved in waiting to continue its tasks. For example, an
 interactive pipeline run, a Jupyter kernel starting, waiting for an interactive session to be ready,
 etc. Obviously, we want to make events part of this scope happen as quickly as possible.
 
 Given this premise, and the fact that the `orchest-api` knows on which node(s) an environment image
-is, Orchest interacts with the scheduling of pods of interest in order to have the best user
+is, Dadosfera AI interacts with the scheduling of pods of interest in order to have the best user
 experience while balancing node pressure across the cluster. The entire logic can be found in the
 `pod_scheduling.py` module of the `orchest-api`, and it's, at the high level, pretty simple:
 anything that belongs to the **interactive scope** is scheduled to be **on any node that already

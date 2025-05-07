@@ -1,6 +1,113 @@
-(Pipelines)=
+(pipelines)=
 
 # Pipelines
+
+```{eval-rst}
+.. meta::
+   :description: This page contains information about how to create and manage pipelines in Dadosfera AI.
+```
+
+Pipelines are the core of Dadosfera AI. They allow you to create, run, and manage data science workflows.
+
+```{figure} ../img/pipelines-list.png
+:align: center
+:width: 768
+:alt: List of pipelines for a given Dadosfera AI project
+
+The list of pipelines for a given Dadosfera AI project.
+```
+
+(pipeline-creation)=
+
+## Creating a pipeline
+
+To create a new pipeline, follow these instructions:
+
+1. Click on _Pipelines_ in the navigation bar.
+2. Click the _+ new pipeline_ button to create a new pipeline.
+3. Configure the pipeline.
+4. Press _create pipeline_.
+
+```{figure} ../img/pipeline-creation.png
+:align: center
+:width: 768
+:alt: Creating a new pipeline in Dadosfera AI
+
+Creating a new pipeline in Dadosfera AI.
+```
+
+(pipeline-configuration)=
+
+## Pipeline configuration
+
+When creating a pipeline, you can configure the following:
+
+- **Name**: A unique name for your pipeline.
+- **Description**: A description of your pipeline.
+- **Steps**: The steps that make up your pipeline.
+
+```{figure} ../img/pipeline-configuration.png
+:align: center
+:width: 768
+:alt: Configuring a new pipeline in Dadosfera AI
+
+Configuring a new pipeline in Dadosfera AI.
+```
+
+(pipeline-management)=
+
+## Managing pipelines
+
+You can manage your pipelines in the following ways:
+
+- **Edit**: Click on the pipeline you want to edit and make your changes.
+- **Delete**: Click on the pipeline you want to delete and press the _delete_ button.
+- **Duplicate**: Click on the pipeline you want to duplicate and press the _duplicate_ button.
+
+```{figure} ../img/pipeline-management.png
+:align: center
+:width: 768
+:alt: Managing pipelines in Dadosfera AI
+
+Managing pipelines in Dadosfera AI.
+```
+
+(pipeline-usage)=
+
+## Using pipelines
+
+To use a pipeline, follow these instructions:
+
+1. Open the pipeline you want to run.
+2. Click on the _Run_ button.
+3. Wait for the pipeline to complete.
+
+```{figure} ../img/pipeline-usage.png
+:align: center
+:width: 768
+:alt: Using pipelines in Dadosfera AI
+
+Using pipelines in Dadosfera AI.
+```
+
+(pipeline-best-practices)=
+
+## Best practices
+
+Here are some best practices for working with pipelines:
+
+- **Use descriptive names**: Give your pipelines descriptive names that reflect their purpose.
+- **Add descriptions**: Add descriptions to your pipelines to help others understand what they do.
+- **Use version control**: Use version control to track changes to your pipelines.
+- **Test pipelines**: Test your pipelines before using them in production.
+
+```{figure} ../img/pipeline-best-practices.png
+:align: center
+:width: 768
+:alt: Best practices for working with pipelines in Dadosfera AI
+
+Best practices for working with pipelines in Dadosfera AI.
+```
 
 ```{eval-rst}
 .. meta::

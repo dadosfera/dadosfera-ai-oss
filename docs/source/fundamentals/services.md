@@ -4,7 +4,7 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains information about how to use services in Orchest.
+   :description: This page contains information about how to use services in Dadosfera AI.
 ```
 
 _Services_ allow you to run a service, e.g. a database, Redis instance or Tensorboard, as part of
@@ -15,7 +15,7 @@ reachable from your browser.
 ```{figure} ../img/services-pointer.png
 :align: center
 :width: 600
-:alt: List of running services from the Orchest pipeline editor
+:alt: List of running services from the Dadosfera AI pipeline editor
 ```
 
 ```{warning}
@@ -33,17 +33,17 @@ For ease of use, we provide some commonly used services as templates:
 ```{figure} ../img/services.png
 :align: center
 :width: 400
-:alt: Ready to go service templates in Orchest
+:alt: Ready to go service templates in Dadosfera AI
 ```
 
 Tensorboard, Streamlit and VSCode are set up to be reachable from your browser, the link will be
 available both in the pipeline editor under `services` and in the service configuration settings.
-Redis will only be reachable from within Orchest, i.e. from pipeline steps, notebooks
+Redis will only be reachable from within Dadosfera AI, i.e. from pipeline steps, notebooks
 and other services.
 
 (creating-service)=
 
-## Creating a service in Orchest
+## Creating a service in Dadosfera AI
 
 If none of the service templates work for you, you can create your own services.
 After going to `pipeline settings` > `services` > `add service`, you will
@@ -94,14 +94,14 @@ to read or write to the project directory. See the VS-Code template for an examp
 
 **data directory mount**
 
-: To bind a service file system path to the Orchest `/data` directory.
+: To bind a service file system path to the Dadosfera AI `/data` directory.
 
 **ports**
 
 : The ports that the service will be listening on when it comes to external connectivity. You
 don't have to add any port if you are only interested in a service being reachable by Notebooks
 and pipeline steps, which we refer to as internal connectivity. A service that has defined ports
-will be reachable from outside of Orchest through a special URL, **on all ports**. Currently,
+will be reachable from outside of Dadosfera AI through a special URL, **on all ports**. Currently,
 only the `http` protocol is supported. The URL(s) through which you can connect to an externally
 reachable service is shown in the service settings and the pipeline editor, through the
 `SERVICES` button.
@@ -149,15 +149,15 @@ host. In the `Tensorboard` template we solve this as follows:
 - setting the command as `bash`
 - setting the service args as `-c 'umask 002 && tensorboard --logdir /data --bind_all'`
 
-(orchest-environments-as-services)=
+(dadosfera-ai-environments-as-services)=
 
-## Orchest environments as services
+## Dadosfera AI environments as services
 
 It might be the case that a predefined image from DockerHub does not cover your needs. For example,
 you might need to install an additional package or set some configuration files. That is why we
-allow a service to be defined by an Orchest environment. This way you can iterate on and customize
+allow a service to be defined by a Dadosfera AI environment. This way you can iterate on and customize
 any service without the burden of interacting with Docker or pushing to an image repository.
-Everything can be done through the easy interface of Orchest.
+Everything can be done through the easy interface of Dadosfera AI.
 
 See the {ref}`environments <environments>` section for details on how to build an environment.
 

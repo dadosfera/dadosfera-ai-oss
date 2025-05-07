@@ -4,10 +4,10 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains information about how to receive notifications for job runs and other events in Orchest.
+   :description: This page contains information about how to receive notifications for job runs and other events in Dadosfera AI.
 ```
 
-You can receive webhook notifications when specific events happen in Orchest. For example, when a job fails. Whenever an events triggers, Orchest will send an HTTP request to your desired endpoint with a payload of information. For example:
+You can receive webhook notifications when specific events happen in Dadosfera AI. For example, when a job fails. Whenever an events triggers, Dadosfera AI will send an HTTP request to your desired endpoint with a payload of information. For example:
 
 ```json
 {
@@ -26,9 +26,9 @@ You can receive webhook notifications when specific events happen in Orchest. Fo
 }
 ```
 
-To create a webhook, navigate to "Notification settings" in {ref}`Orchest settings <settings>`. The webhook dialog will ask for the following:
+To create a webhook, navigate to "Notification settings" in {ref}`Dadosfera AI settings <settings>`. The webhook dialog will ask for the following:
 
-1. Webhook URL: Where Orchest sends the HTTP requests to. Activate incoming webhooks on your desired channel (for example: [Slack]) and verify the connection with the "Test" button.
+1. Webhook URL: Where Dadosfera AI sends the HTTP requests to. Activate incoming webhooks on your desired channel (for example: [Slack]) and verify the connection with the "Test" button.
 1. Content type: Either `application/json` (default) or `application/x-www-form-urlencoded`.
 1. Webhook name (optional): A custom name for your webhook. This is helpful when creating multiple webhooks with similar URLs.
 1. Secret (optional): A secret string that you can use to verify the origin of the request (see {ref}`below <secure_webhook>`).
@@ -43,7 +43,7 @@ To create a webhook, navigate to "Notification settings" in {ref}`Orchest settin
 
 ## Verifying the webhook
 
-The HTTP request of the webhook will contain additional headers that can verify the webhook is coming from Orchest.
+The HTTP request of the webhook will contain additional headers that can verify the webhook is coming from Dadosfera AI.
 
 `X-Orchest-Event`
 : The event type.

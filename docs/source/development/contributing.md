@@ -1,6 +1,6 @@
-# Contributing to Orchest
+# Contributing to Dadosfera AI
 
-Thank you so much for contributing to Orchest!
+Thank you so much for contributing to Dadosfera AI!
 
 To get started, check out the {ref}`development workflow <development-workflow>` section and pick up
 your favorite [GitHub issue](https://github.com/orchest/orchest/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22).
@@ -16,6 +16,6 @@ project contributions.
 Our CLA is an exact copy of the Apache CLA (apart from the names). The cla-assistant will
 automatically prompt you for an electron signature when creating a pull request.
 
-The CLA ensures that Orchest has clear ownership specification for all contributions, which in turns
+The CLA ensures that Dadosfera AI has clear ownership specification for all contributions, which in turns
 lets us guarantee to users that we have no "stray" intellectual property or differently-licensed
 material.

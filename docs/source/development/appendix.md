@@ -60,7 +60,7 @@ For an example pipeline definition, check out the `pipeline.orchest` file in our
 repo](https://github.com/orchest/quickstart/blob/main/california_housing.orchest).
 
 The full [JSON Schema](https://json-schema.org/) definition of {term}`pipelines <Pipeline definition>`
-in Orchest can be found below, alternatively you can see an example and interactive validator
+in Dadosfera AI can be found below, alternatively you can see an example and interactive validator
 [here](https://www.jsonschemavalidator.net/s/FfQDko01).
 
 ```json

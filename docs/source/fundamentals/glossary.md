@@ -7,7 +7,7 @@ DAG
     for data worflows:
 
     * It's a **graph** (in the mathematical sense) since it connects a set of steps
-      (in the case of Orchest, a {term}`Pipeline step`).
+      (in the case of Dadosfera AI, a {term}`Pipeline step`).
     * It's **directed** because those connections have a specific direction
       (from one step to the other). For example, a step loads the data, and hands it
       to the following step to process it.
@@ -22,7 +22,7 @@ Pipeline step
 
     * Has a one-to-one relationship with an executable file, which runs inside its own execution
       {term}`Environment`, powered through containerization. This executable
-      file can be edited through Orchest's JupyterLab integration.
+      file can be edited through Dadosfera AI's JupyterLab integration.
     * Is executed as part of a {term}`Pipeline run`.
     * Has an execution state, i.e. *READY*, *PENDING*, *RUNNING*, *COMPUTED*, *ABORTED* or *FAILURE*.
     * A step can have a set of parameters, all of which have to be given a default value. (The set
@@ -35,11 +35,11 @@ Pipeline step
     {term}`Pipeline definition`.
 
 Pipeline definition
-    A file with the ``.orchest`` extension inside the project directory. The pipeline editor you see
-    in Orchest is a UI handle to the file containing the pipeline definition.
+    A file with the ``.Dadosfera AI`` extension inside the project directory. The pipeline editor you see
+    in Dadosfera AI is a UI handle to the file containing the pipeline definition.
 
     * The JSON inside the file uniquely defines the {term}`pipeline <(Data science) pipeline>`.
-    * Every pipeline definition in a project is automatically detected and listed in the Orchest UI
+    * Every pipeline definition in a project is automatically detected and listed in the Dadosfera AI UI
       under *Pipelines*.
     * A full [JSON Schema](https://json-schema.org/) definition can be found
       {ref}`here <pipeline-json-schema>`.

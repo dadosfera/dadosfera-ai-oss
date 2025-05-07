@@ -43,9 +43,9 @@ import utils
 utils.transform(...)
 ```
 
-## How to minimize Orchest's disk size?
+## How to minimize Dadosfera AI's disk size?
 
-To keep Orchest's disk footprint to a minimal you can use the following best practices:
+To keep Dadosfera AI's disk footprint to a minimal you can use the following best practices:
 
 - Are you persisting data to disk? Then write it to the `/data` directory instead of the project
   directory. {ref}`Jobs <jobs>` create a snapshot (for reproducibility reasons) of your project
@@ -56,7 +56,7 @@ To keep Orchest's disk footprint to a minimal you can use the following best pra
   number of pipeline runs and automatically delete the older ones. Steps: (1) edit an existing job
   or create a new one, (2) go to _pipeline runs_, and (3) select _auto clean-up_.
 
-## How to use a GPU in Orchest?
+## How to use a GPU in Dadosfera AI?
 
 Currently GPU support is not yet available. Coming soon! See
 [#1280](https://github.com/orchest/orchest/issues/1280).
@@ -67,7 +67,7 @@ Currently GPU support is not yet available. Coming soon! See
 
 Notebooks facilitate an experimental workflow, meaning that there will be cells that should not be
 run when executing the notebook (from top to bottom). Since {term}`pipeline runs <pipeline run>`
-require your notebooks to be executable, Orchest provides an (pre-installed JupyterLab) extension
+require your notebooks to be executable, Dadosfera AI provides an (pre-installed JupyterLab) extension
 to skip those cells.
 
 To skip a cell during pipeline runs:
@@ -77,7 +77,7 @@ To skip a cell during pipeline runs:
 3. Select the cell you want to skip and give it a tag of: _skip_.
 
 The cells with the _skip_ tag are still runnable through JupyterLab, but when executing these
-notebooks as part of pipelines in Orchest they will not be run.
+notebooks as part of pipelines in Dadosfera AI they will not be run.
 
 ## I'm getting `ModuleNotFoundError: No module named` exceptions even after declaring my dependencies
 

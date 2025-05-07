@@ -4,103 +4,107 @@
 
 ```{eval-rst}
 .. meta::
-   :description: This page contains information about how to create and use projects in Orchest.
+   :description: This page contains information about how to create and manage projects in Dadosfera AI.
 ```
 
-A **project** is the main container for organizing related {ref}`pipelines <pipelines>`, {ref}`jobs <jobs>`, {ref}`environments <environments>` and code in Orchest.
+Projects are the top-level organizational unit in Dadosfera AI. They contain all the resources you need to build and run your data science workflows.
 
-A project is based on a `git` repository. For example, a Project might be organized like:
-
-```sh
-.
-├── .git/
-├── .orchest
-│   ├── environments/
-│   └── pipelines/
-├── california_housing.orchest
-├── collect-results.ipynb
-└── get-data.py
-```
-
-Projects also contain {ref}`jobs <jobs>`, however, these are not stored in the project filesystem.
-
-You can access project files in your code running inside {ref}`environments <environments>` using relative paths.
-For absolute paths, all files of a project are mounted to the `/project-dir` directory.
-
-## Getting started with projects in Orchest
-
-You can get started with Projects by:
-
-- Creating a new Project
-- Importing an existing Project
-- Importing Orchest curated or community contributed examples through the _Projects_ page.
-
-```{tip}
-👉 See {ref}`quickstart tutorial <quickstart>`.
-```
-
-(how-to-import-a-project)=
-
-## Importing a project
-
-To import an existing Project into Orchest: open the _Project_ dropdown menu and click the _import_ button.
-
-```{figure} ../img/project-import.png
+```{figure} ../img/projects-list.png
 :align: center
-:alt: Importing a project in Orchest.
-:width: 400
+:width: 768
+:alt: List of projects in Dadosfera AI
+
+The list of projects in Dadosfera AI.
 ```
 
-```{tip}
-👉 See video tutorial: [importing a project].
+(project-creation)=
+
+## Creating a project
+
+To create a new project, follow these instructions:
+
+1. Click on _Projects_ in the navigation bar.
+2. Click the _+ new project_ button to create a new project.
+3. Configure the project.
+4. Press _create project_.
+
+```{figure} ../img/project-creation.png
+:align: center
+:width: 768
+:alt: Creating a new project in Dadosfera AI
+
+Creating a new project in Dadosfera AI.
 ```
 
-[importing a project]: https://www.tella.tv/video/cknr7of9c000409jr5gx4efjy/view
+(project-configuration)=
 
-## Project versioning
+## Project configuration
 
-A Project's `.orchest` directory should be versioned since it defines the {ref}`Environments <environments>` the Project uses. This enables the Project to run on every machine.
+When creating a project, you can configure the following:
 
-The `/data` directory can be used to store data locally that is accessible by all Pipelines across
-all Projects, even by {ref}`Jobs <jobs>`.
+- **Name**: A unique name for your project.
+- **Description**: A description of your project.
+- **Git Repository**: The Git repository to use for your project.
 
-Secrets on te other hand, should be set with {ref}`environment variables <environment-variables>` to
-avoid them being versioned.
+```{figure} ../img/project-configuration.png
+:align: center
+:width: 768
+:alt: Configuring a new project in Dadosfera AI
 
-(git-inside-orchest)=
-
-## Using `git` inside Orchest projects
-
-```{tip}
-👉 See video tutorial: [versioning using git in Orchest](https://www.tella.tv/video/cknr9z9x0000709kz7vzh0wdx/view).
+Configuring a new project in Dadosfera AI.
 ```
 
-You can use `git` inside Orchest with the pre-installed [jupyterlab-git](https://github.com/jupyterlab/jupyterlab-git) extension.
-Get started by adding your `user.name` and `user.email` in {ref}`configure JupyterLab <configuration-jupyterlab>`. For example:
+(project-management)=
 
-```sh
-git config --global user.name "John Doe"
-git config --global user.email "john@example.org"
+## Managing projects
+
+You can manage your projects in the following ways:
+
+- **Edit**: Click on the project you want to edit and make your changes.
+- **Delete**: Click on the project you want to delete and press the _delete_ button.
+- **Duplicate**: Click on the project you want to duplicate and press the _duplicate_ button.
+
+```{figure} ../img/project-management.png
+:align: center
+:width: 768
+:alt: Managing projects in Dadosfera AI
+
+Managing projects in Dadosfera AI.
 ```
 
-Use the following command to add a private SSH key to your terminal session in JupyterLab:
+(project-usage)=
 
-```sh
-echo "chmod 400 /data/id_rsa" >> ~/.bashrc
-echo "ssh-add /data/id_rsa 2>/dev/null" >> ~/.bashrc
-echo "if [ -z \$SSH_AGENT_PID ]; then exec ssh-agent bash -c 'shellspawner; bash'; fi" >> ~/.bashrc
-mkdir -p ~/.ssh
-printf "%s\n" "Host github.com" " IdentityFile /data/id_rsa" >> ~/.ssh/config
-ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+## Using projects
+
+To use a project, follow these instructions:
+
+1. Open the project you want to work with.
+2. Create or open a pipeline.
+3. Run the pipeline.
+
+```{figure} ../img/project-usage.png
+:align: center
+:width: 768
+:alt: Using projects in Dadosfera AI
+
+Using projects in Dadosfera AI.
 ```
 
-Ensure the `id_rsa` private key file is uploaded through the pipeline file manager in the `data/` folder.
+(project-best-practices)=
 
-```{warning}
-🚨 Adding a private key file to the `/data` folder exposes it to everyone using your Orchest instance.
+## Best practices
+
+Here are some best practices for working with projects:
+
+- **Use descriptive names**: Give your projects descriptive names that reflect their purpose.
+- **Add descriptions**: Add descriptions to your projects to help others understand what they do.
+- **Use version control**: Use version control to track changes to your projects.
+- **Test projects**: Test your projects before using them in production.
+
+```{figure} ../img/project-best-practices.png
+:align: center
+:width: 768
+:alt: Best practices for working with projects in Dadosfera AI
+
+Best practices for working with projects in Dadosfera AI.
 ```
-
-You can then version using `git` using:
-
-- JupyterLab terminal.
-- JupyterLab git extension UI.
