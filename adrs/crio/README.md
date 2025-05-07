@@ -70,6 +70,7 @@ sequenceDiagram
     participant buildkitd Pod (CRI-O)
     participant podman
     participant node-agent
+    participant docker-registry
 
     User->>orchest-api: Request to build environment image
     orchest-api->>celery-worker: Queue image build task
@@ -77,6 +78,16 @@ sequenceDiagram
     buildkitd Pod (CRI-O)->>podman: Save image to tarball and load it
     podman->>node-agent: Store image under /var/lib/containers/storage
     node-agent-->>orchest-api: Image available on node
+    node-agent-->>docker-registry: Store image in Docker registry
+    
+    alt Image not anymore
+        orchest-api-->>node-agent: Mark image as marked_for_removal
+        node-agent-->>docker-registry: Remove the image from the docker-registry
+    end
+    
+    alt Image not present on node
+        node-agent->>docker-registry: Pull image from registry
+    end
 ```
 
 ## Related Commits / PRs
