@@ -7,6 +7,7 @@ import (
 	"github.com/orchest/orchest/services/orchest-controller/pkg/controller"
 	"github.com/orchest/orchest/services/orchest-controller/pkg/utils"
 	"golang.org/x/net/context"
+	"k8s.io/utils/pointer"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
@@ -56,6 +57,151 @@ func (reconciler *BuildKitDaemonReconciler) Uninstall(ctx context.Context, compo
 	return true, nil
 }
 
+func getBuildKitDaemonCrioDaemonset(
+    metadata metav1.ObjectMeta,
+    matchLabels map[string]string,
+    component *orchestv1alpha1.OrchestComponent,
+) (*appsv1.DaemonSet, error) {
+    env := component.Spec.Template.Env
+    socket := utils.GetKeyFromEnvVar(env, "CONTAINER_RUNTIME_SOCKET")
+
+    hostPathDirOrCreate := corev1.HostPathDirectoryOrCreate
+    bidir := corev1.MountPropagationBidirectional
+    privileged := true
+
+    runCrio := "/var/run/crio"
+    storageCrio := "/var/lib/containers/storage"
+
+    vols := []corev1.Volume{
+        {
+            Name: "runtime-socket",
+            VolumeSource: corev1.VolumeSource{
+                HostPath: &corev1.HostPathVolumeSource{
+                    Path: socket,
+                    Type: func() *corev1.HostPathType {
+                        t := corev1.HostPathSocket
+                        return &t
+                    }(),
+                },
+            },
+        },
+        {
+            Name: "run-containerd",
+            VolumeSource: corev1.VolumeSource{
+                HostPath: &corev1.HostPathVolumeSource{
+                    Path: runCrio,
+                    Type: &hostPathDirOrCreate,
+                },
+            },
+        },
+        {
+            Name: "var-lib-containerd",
+            VolumeSource: corev1.VolumeSource{
+                HostPath: &corev1.HostPathVolumeSource{
+                    Path: storageCrio,
+                    Type: &hostPathDirOrCreate,
+                },
+            },
+        },
+        {
+            Name: "run-orchest-buildkit",
+            VolumeSource: corev1.VolumeSource{
+                HostPath: &corev1.HostPathVolumeSource{
+                    Path: "/run/orchest_buildkit",
+                    Type: &hostPathDirOrCreate,
+                },
+            },
+        },
+        {
+            Name: "orchest-buildkit-storage",
+            VolumeSource: corev1.VolumeSource{
+                HostPath: &corev1.HostPathVolumeSource{
+                    Path: "/var/lib/orchest_buildkit",
+                    Type: &hostPathDirOrCreate,
+                },
+            },
+        },
+    }
+
+    mounts := []corev1.VolumeMount{
+        {Name: "runtime-socket", MountPath: socket},
+        {Name: "run-containerd", MountPath: runCrio},
+        {Name: "var-lib-containerd", MountPath: storageCrio},
+        {Name: "run-orchest-buildkit", MountPath: "/run/orchest_buildkit"},
+        {
+            Name:             "orchest-buildkit-storage",
+            MountPath:        "/var/lib/orchest_buildkit",
+            MountPropagation: &bidir,
+        },
+    }
+
+    container := corev1.Container{
+        Name:            controller.BuildKitDaemon,
+        Image:           component.Spec.Template.Image,
+        ImagePullPolicy: corev1.PullIfNotPresent,
+        Command:         []string{"/usr/bin/buildkitd"},
+        Args: []string{
+            "--debug",
+            "--root=/var/lib/orchest_buildkit",
+            "--addr=unix:///run/orchest_buildkit/buildkitd.sock",
+            "--oci-worker=true",
+            "--containerd-worker=false",
+        },
+        Env: append(env,
+            corev1.EnvVar{Name: "CONTAINER_RUNTIME", Value: "cri-o"},
+            corev1.EnvVar{Name: "CONTAINER_RUNTIME_SOCKET", Value: socket},
+            corev1.EnvVar{Name: "CONTAINERD_NAMESPACE", Value: "k8s.io"},
+        ),
+        SecurityContext: &corev1.SecurityContext{Privileged: &privileged},
+        VolumeMounts:    mounts,
+        ReadinessProbe: &corev1.Probe{
+            ProbeHandler: corev1.ProbeHandler{
+                Exec: &corev1.ExecAction{
+                    Command: []string{
+                        "buildctl", "--addr",
+                        "unix:///run/orchest_buildkit/buildkitd.sock",
+                        "debug", "workers",
+                    },
+                },
+            },
+            InitialDelaySeconds: 5,
+            PeriodSeconds:       30,
+            TimeoutSeconds:      1,
+        },
+        LivenessProbe: &corev1.Probe{
+            ProbeHandler: corev1.ProbeHandler{
+                Exec: &corev1.ExecAction{
+                    Command: []string{
+                        "buildctl", "--addr",
+                        "unix:///run/orchest_buildkit/buildkitd.sock",
+                        "debug", "workers",
+                    },
+                },
+            },
+            InitialDelaySeconds: 5,
+            PeriodSeconds:       30,
+            TimeoutSeconds:      1,
+        },
+    }
+
+    return &appsv1.DaemonSet{
+        ObjectMeta: metadata,
+        Spec: appsv1.DaemonSetSpec{
+            Selector: &metav1.LabelSelector{MatchLabels: matchLabels},
+            Template: corev1.PodTemplateSpec{
+                ObjectMeta: metav1.ObjectMeta{Labels: matchLabels},
+                Spec: corev1.PodSpec{
+                    TerminationGracePeriodSeconds: pointer.Int64Ptr(1),
+                    Volumes:                       vols,
+                    NodeSelector:                  component.Spec.Template.NodeSelector,
+                    Containers:                    []corev1.Container{container},
+                },
+            },
+        },
+    }, nil
+}
+
+
 func getBuildKitDaemonDaemonset(metadata metav1.ObjectMeta,
 	matchLabels map[string]string, component *orchestv1alpha1.OrchestComponent) (
 	*appsv1.DaemonSet, error) {
@@ -75,6 +221,8 @@ func getBuildKitDaemonDaemonset(metadata metav1.ObjectMeta,
 	} else if strings.Contains(socketPath, "k3s") {
 		runContainerdPath = "/var/run/k3s/containerd"
 		varLibContainerdPath = "/var/lib/rancher/k3s/agent/containerd"
+	} else if strings.Contains(socketPath, "crio") {
+		return getBuildKitDaemonCrioDaemonset(metadata, matchLabels, component)
 	}
 
 	volumes := []corev1.Volume{
@@ -179,14 +327,12 @@ func getBuildKitDaemonDaemonset(metadata metav1.ObjectMeta,
 		)
 	}
 
-	var var_one int64 = 1
-	var var_true bool = true
 	template := corev1.PodTemplateSpec{
 		ObjectMeta: metav1.ObjectMeta{
 			Labels: matchLabels,
 		},
 		Spec: corev1.PodSpec{
-			TerminationGracePeriodSeconds: &var_one,
+			TerminationGracePeriodSeconds: pointer.Int64Ptr(1),
 			Volumes:                       volumes,
 			NodeSelector:                  component.Spec.Template.NodeSelector,
 			Containers: []corev1.Container{
@@ -196,7 +342,7 @@ func getBuildKitDaemonDaemonset(metadata metav1.ObjectMeta,
 					Env:             component.Spec.Template.Env,
 					ImagePullPolicy: corev1.PullIfNotPresent,
 					SecurityContext: &corev1.SecurityContext{
-						Privileged: &var_true,
+						Privileged: pointer.BoolPtr(true),
 					},
 					// Probes from buildkitd k8s examples.
 					ReadinessProbe: &corev1.Probe{

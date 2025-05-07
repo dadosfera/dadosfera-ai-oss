@@ -13,6 +13,7 @@ import aiodocker
 class RuntimeType(Enum):
     Docker = "docker"
     Containerd = "containerd"
+    Crio = "cri-o"
 
 
 class ImagePushError(Exception):
@@ -75,7 +76,7 @@ class ContainerRuntime(object):
             if self._aclient is not None:
                 await self._aclient.close()
                 self._aclient = None
-        elif self.container_runtime == RuntimeType.Containerd:
+        elif self.container_runtime in [RuntimeType.Containerd, RuntimeType.Crio]:
             pass
 
     async def execute_cmd(self, **kwargs) -> Tuple[bool, Optional[str], Optional[str]]:
@@ -126,6 +127,12 @@ class ContainerRuntime(object):
             cmd = (
                 f"crictl -r unix://{self.container_runtime_socket} "
                 f"inspecti -q {image_name}"
+            )
+            result, _, _ = await self.execute_cmd(cmd=cmd)
+        elif self.container_runtime == RuntimeType.Crio:
+            cmd = (
+                f"crictl -r unix://{self.container_runtime_socket} "
+                f"inspect -q {image_name}"
             )
             result, _, _ = await self.execute_cmd(cmd=cmd)
 
@@ -210,10 +217,16 @@ class ContainerRuntime(object):
                     "timeout exceeded" in e.message.lower()
                 ):
                     result = await self._pull_image_for_docker_with_buildah(image_name)
-        elif self.container_runtime == RuntimeType.Containerd:
+        elif self.container_runtime in [RuntimeType.Containerd]:
             cmd = (
                 f"ctr -n k8s.io -a {self.container_runtime_socket} "
                 f"i pull {image_name} --skip-verify "
+            )
+            result, _, _ = await self.execute_cmd(cmd=cmd)
+        elif self.container_runtime in [RuntimeType.Crio]:
+            cmd = (
+                f"crictl -r unix://{self.container_runtime_socket} "
+                f"pull {image_name} --skip-verify "
             )
             result, _, _ = await self.execute_cmd(cmd=cmd)
 

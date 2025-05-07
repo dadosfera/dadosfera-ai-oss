@@ -125,10 +125,11 @@ class OrchestImagesToPrePull(Resource):
             _config.CONTAINER_RUNTIME_IMAGE,
             f"docker.io/orchest/base-kernel-py:{CONFIG_CLASS.ORCHEST_VERSION}",
             f"docker.io/orchest/jupyter-enterprise-gateway:{CONFIG_CLASS.ORCHEST_VERSION}",  # noqa
-            f"docker.io/orchest/session-sidecar:{CONFIG_CLASS.ORCHEST_VERSION}",
+            f"docker.io/orchest/session-sidecar:{CONFIG_CLASS.ORCHEST_VERSION}"
         ]
 
         pre_pull_orchest_images.append(self._get_jupyter_image_name())
+        pre_pull_orchest_images = {"pre_pull_images": pre_pull_orchest_images}
 
         return pre_pull_orchest_images, 200
 

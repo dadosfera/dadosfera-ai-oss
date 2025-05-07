@@ -907,7 +907,7 @@ func (occ *OrchestClusterController) manageOrchestCluster(ctx context.Context, o
 		// Do not create the buildkit-daemon when not needed.
 		if componentName == controller.BuildKitDaemon {
 			containerRuntime, _, _ := detectContainerRuntime(ctx, occ.Client(), orchest)
-			if containerRuntime != "containerd" {
+			if containerRuntime != "containerd" && containerRuntime != "cri-o" {
 				continue
 			}
 		}
