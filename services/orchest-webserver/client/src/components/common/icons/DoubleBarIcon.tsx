@@ -5,14 +5,15 @@ export const DoubleBarIcon = (props: SvgIconProps & { collapsed?: boolean }) => 
   const { collapsed = false, ...rest } = props;
 
   return (
-    <SvgIcon {...rest}>
+    <SvgIcon viewBox="0 0 24 24" {...rest}>
       <line 
         x1="6" 
         y1="6" 
         x2="6" 
         y2="20" 
-        stroke="currentColor" 
+        stroke="#262322" 
         strokeWidth="2"
+        strokeLinecap="round"
       />
 
       <line
@@ -20,8 +21,9 @@ export const DoubleBarIcon = (props: SvgIconProps & { collapsed?: boolean }) => 
         y1="10"
         x2="12"
         y2="16"
-        stroke="currentColor"
+        stroke="#262322"
         strokeWidth="2"
+        strokeLinecap="round"
       />
     </SvgIcon>
   );

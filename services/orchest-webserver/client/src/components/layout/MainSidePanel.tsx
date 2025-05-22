@@ -53,15 +53,15 @@ export const MainSidePanel: React.FC = ({ children }) => {
       <IconButton
         onClick={handleToggleCollapse}
         size="small"
+        disableRipple
+        disableFocusRipple
+        disableTouchRipple
         sx={{
           position: "absolute",
           top: "50%",
           transform: "translateY(-50%)",
           left: collapsed ? 5 : `calc(${mainSidePanelWidth}px)`,
           zIndex: 10,
-          opacity: 0.5,
-          transition: 'opacity 0.2s ease',
-          "&:hover": { backgroundColor: "#fff", opacity: 1 },
         }}
       >
         <DoubleBarIcon collapsed={collapsed} />
