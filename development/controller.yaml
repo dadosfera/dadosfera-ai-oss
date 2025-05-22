@@ -1687,7 +1687,7 @@ spec:
       serviceAccountName: orchest-controller
       containers:
       - name: orchest-controller
-        image: "docker.io/orchest/orchest-controller:v2023.04.2"
+        image: "docker.io/dadosfera/orchest-controller:v2023.04.2"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80

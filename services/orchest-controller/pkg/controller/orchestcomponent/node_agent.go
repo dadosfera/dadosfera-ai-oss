@@ -73,10 +73,8 @@ func getNodeAgentDaemonset(registryIP string, metadata metav1.ObjectMeta,
 	*appsv1.DaemonSet, error) {
 
 	image := component.Spec.Template.Image
-	extraEnvVars := []corev1.EnvVar{}
 
 
-	envMap := utils.GetMapFromEnvVar(component.Spec.Template.Env, extraEnvVars)
 	socketPath := utils.GetKeyFromEnvVar(component.Spec.Template.Env, "CONTAINER_RUNTIME_SOCKET")
 	// Apparently needed for old/existing clusters?
 	socketPath = strings.Replace(socketPath, "unix://", "", -1)
@@ -198,14 +196,6 @@ func getNodeAgentDaemonset(registryIP string, metadata metav1.ObjectMeta,
 				},
 			},
 		)
-
-	
-		devMod := isDevelopmentEnabled(envMap)
-		if devMod {
-			devVolumes, devVolumeMounts := getDevVolumes(controller.NodeAgent, true, false, true)
-			template.Spec.Volumes = append(template.Spec.Volumes, devVolumes...)
-			template.Spec.Containers[0].VolumeMounts = append(template.Spec.Containers[0].VolumeMounts, devVolumeMounts...)
-		}
 
 		// And the secret needs to be mounted into the container
 		template.Spec.Containers[0].VolumeMounts = append(template.Spec.Containers[0].VolumeMounts,

@@ -179,7 +179,7 @@ def prepare_build_context(task_uuid):
         # Create empty shell script if no setup_script exists.
         os.system(f'touch "{snapshot_setup_script_path}"')
 
-    base_image = f"orchest/jupyter-server:{CONFIG_CLASS.ORCHEST_VERSION}"
+    base_image = f"dadosfera/jupyter-server:{CONFIG_CLASS.ORCHEST_VERSION}"
 
     # Copy the settings into the context to make them available during
     # build. It's done in this "simple" manner to be compatible with all

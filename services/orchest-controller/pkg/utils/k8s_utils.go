@@ -262,10 +262,10 @@ func GetFullImageName(registry, imageName, tag string) string {
 		tag = "latest"
 	}
 	if registry != "" {
-		return fmt.Sprintf("%s/orchest/%s:%s", registry, imageName, tag)
+		return fmt.Sprintf("%s/dadosfera/%s:%s", registry, imageName, tag)
 	}
 
-	return fmt.Sprintf("orchest/%s:%s", imageName, tag)
+	return fmt.Sprintf("dadosfera/%s:%s", imageName, tag)
 }
 
 func GetPatchData(oldObj, newObj interface{}) ([]byte, error) {

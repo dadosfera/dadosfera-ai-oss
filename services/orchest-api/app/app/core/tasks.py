@@ -539,7 +539,7 @@ def _get_git_import_pod_manifest(
             "containers": [
                 {
                     "name": "git-import",
-                    "image": f"orchest/celery-worker:{_config.ORCHEST_VERSION}",
+                    "image": f"dadosfera/celery-worker:{_config.ORCHEST_VERSION}",
                     "command": ["/bin/sh", "-c"],
                     "args": [args],
                     "env": [],

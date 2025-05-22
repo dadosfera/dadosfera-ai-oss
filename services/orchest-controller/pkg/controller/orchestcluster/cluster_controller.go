@@ -79,10 +79,10 @@ func NewDefaultControllerConfig() ControllerConfig {
 		PostgresDefaultImage:          "postgres:13.1",
 		RabbitmqDefaultImage:          "rabbitmq:3",
 		OrchestDefaultVersion:         version.Version,
-		CeleryWorkerImageName:         "orchest/celery-worker",
-		OrchestApiImageName:           "orchest/orchest-api",
-		OrchestWebserverImageName:     "orchest/orchest-webserver",
-		AuthServerImageName:           "orchest/auth-server",
+		CeleryWorkerImageName:         "dadosfera/celery-worker",
+		OrchestApiImageName:           "dadosfera/orchest-api",
+		OrchestWebserverImageName:     "dadosfera/orchest-webserver",
+		AuthServerImageName:           "dadosfera/auth-server",
 		UserdirDefaultVolumeSize:      "50Gi",
 		OrchestStateDefaultVolumeSize: "5Gi",
 		BuilddirDefaultVolumeSize:     "25Gi",
@@ -94,7 +94,7 @@ func NewDefaultControllerConfig() ControllerConfig {
 		OrchestApiDefaultEnvVars: map[string]string{
 			"ORCHEST_GPU_ENABLED_INSTANCE": "FALSE",
 			"FLASK_ENV":                    "production",
-			"JUPYTER_SERVER_IMAGE":         "docker.io/orchest/jupyter-server",
+			"JUPYTER_SERVER_IMAGE":         "docker.io/dadosfera/jupyter-server",
 		},
 		OrchestWebserverDefaultEnvVars: map[string]string{
 			"ORCHEST_GPU_ENABLED_INSTANCE": "FALSE",

@@ -251,7 +251,7 @@ do
 
         build_ctx=$DIR/../services/jupyter-server
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/jupyter-server:$BUILD_TAG" \
+            -t "dadosfera/jupyter-server:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/jupyter-server/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -265,7 +265,7 @@ do
 
         build_ctx=$DIR/../services/jupyter-enterprise-gateway
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/jupyter-enterprise-gateway:$BUILD_TAG" \
+            -t "dadosfera/jupyter-enterprise-gateway:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/jupyter-enterprise-gateway/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -277,7 +277,7 @@ do
 
         build_ctx=$DIR/../services/orchest-api
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/celery-worker:$BUILD_TAG" \
+            -t "dadosfera/celery-worker:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/orchest-api/Dockerfile_celery \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -291,7 +291,7 @@ do
 
         build_ctx=$DIR/../services/base-images
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/base-kernel-py:$BUILD_TAG" \
+            -t "dadosfera/base-kernel-py:$BUILD_TAG" \
             -f $DIR/../services/base-images/base-kernel-py/Dockerfile \
             --no-cache=$NO_CACHE \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -303,7 +303,7 @@ do
 
         build_ctx=$DIR/../services/base-images
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/base-kernel-julia:$BUILD_TAG" \
+            -t "dadosfera/base-kernel-julia:$BUILD_TAG" \
             -f $DIR/../services/base-images/base-kernel-julia/Dockerfile \
             --no-cache=$NO_CACHE \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -315,7 +315,7 @@ do
 
         build_ctx=$DIR/../services/base-images
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/base-kernel-javascript:$BUILD_TAG" \
+            -t "dadosfera/base-kernel-javascript:$BUILD_TAG" \
             -f $DIR/../services/base-images/base-kernel-javascript/Dockerfile \
             --no-cache=$NO_CACHE \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -327,7 +327,7 @@ do
 
         build_ctx=$DIR/../services/base-images
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/base-kernel-r:$BUILD_TAG" \
+            -t "dadosfera/base-kernel-r:$BUILD_TAG" \
             -f $DIR/../services/base-images/base-kernel-r/Dockerfile \
             --no-cache=$NO_CACHE \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -339,7 +339,7 @@ do
 
         build_ctx=$DIR/../services/orchest-api
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/orchest-api:$BUILD_TAG" \
+            -t "dadosfera/orchest-api:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/orchest-api/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -350,7 +350,7 @@ do
 
         build_ctx=$DIR/../services/node-agent
         build=(docker build --progress=plain \
-            -t "orchest/node-agent:$BUILD_TAG" \
+            -t "dadosfera/node-agent:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/node-agent/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -361,7 +361,7 @@ do
 
         build_ctx=$DIR/../services/orchest-webserver
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/orchest-webserver:$BUILD_TAG" \
+            -t "dadosfera/orchest-webserver:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/orchest-webserver/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -372,7 +372,7 @@ do
 
         build_ctx=$DIR/../services/auth-server
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/auth-server:$BUILD_TAG" \
+            -t "dadosfera/auth-server:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/auth-server/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -383,7 +383,7 @@ do
 
         build_ctx=$DIR/../services/orchest-controller
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/orchest-controller:$BUILD_TAG" \
+            -t "dadosfera/orchest-controller:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/orchest-controller/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -404,7 +404,7 @@ do
     if [ $IMG == "session-sidecar" ]; then
         build_ctx=$DIR/../services/session-sidecar
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/session-sidecar:$BUILD_TAG" \
+            -t "dadosfera/session-sidecar:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/session-sidecar/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -415,7 +415,7 @@ do
     if [ $IMG == "image-puller" ]; then
         build_ctx=$DIR/../utility-containers/image-puller
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/image-puller:$BUILD_TAG" \
+            -t "dadosfera/image-puller:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../utility-containers/image-puller/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -425,7 +425,7 @@ do
     if [ $IMG == "image-builder-buildx" ]; then
         build_ctx=$DIR/../utility-containers/image-builder-buildx
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/image-builder-buildx:$BUILD_TAG" \
+            -t "dadosfera/image-builder-buildx:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../utility-containers/image-builder-buildx/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -435,7 +435,7 @@ do
     if [ $IMG == "image-builder-buildkit" ]; then
         build_ctx=$DIR/../utility-containers/image-builder-buildkit
         build=(docker build --platform linux/amd64 --progress=plain \
-            -t "orchest/image-builder-buildkit:$BUILD_TAG" \
+            -t "dadosfera/image-builder-buildkit:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../utility-containers/image-builder-buildkit/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"
@@ -446,7 +446,7 @@ do
 
         build_ctx=$DIR/../services/buildkit-daemon
         build=(docker build --progress=plain \
-            -t "orchest/buildkit-daemon:$BUILD_TAG" \
+            -t "dadosfera/buildkit-daemon:$BUILD_TAG" \
             --no-cache=$NO_CACHE \
             -f $DIR/../services/buildkit-daemon/Dockerfile \
             --build-arg ORCHEST_VERSION="$ORCHEST_VERSION"

@@ -38,7 +38,7 @@ GPU_ENABLED_INSTANCE = os.environ.get("ORCHEST_GPU_ENABLED_INSTANCE") == "True"
 # CPU SHARES.
 USER_CONTAINERS_CPU_SHARES = "1m"
 SINGLE_NODE = os.environ.get("SINGLE_NODE", True)
-USER_CONTAINERS_MEMORY_SHARES = None if SINGLE_NODE == "TRUE" else "100Mi"
+USER_CONTAINERS_MEMORY_SHARES = None if SINGLE_NODE == "TRUE" else os.environ.get("USER_CONTAINER_MEMORY_SHARES", "65Mi")
 
 REGISTRY = "docker-registry"
 # NOTE: The DNS resolver will not treat this as an FQDN perse (depending
@@ -130,7 +130,7 @@ DEFAULT_SETUP_SCRIPT = """#!/bin/bash
 DEFAULT_ENVIRONMENTS = [
     {
         "name": "Python 3",
-        "base_image": "orchest/base-kernel-py",
+        "base_image": "dadosfera/base-kernel-py",
         "language": "python",
         "setup_script": DEFAULT_SETUP_SCRIPT,
         "gpu_support": False,
@@ -139,4 +139,4 @@ DEFAULT_ENVIRONMENTS = [
 
 SIDECAR_PORT = 1111
 
-ORCHEST_UPDATE_INFO_URL = "https://api.github.com/repos/orchest/orchest/releases/latest"
+ORCHEST_UPDATE_INFO_URL = "https://api.github.com/repos/dadosfera/dadosfera-ai-oss/releases/latest"

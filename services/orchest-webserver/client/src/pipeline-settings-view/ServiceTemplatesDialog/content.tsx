@@ -37,7 +37,7 @@ export const templates: ServiceTemplates = {
         "/data": "/data",
         "/project-dir": "/project-dir",
       },
-      args: "-c 'umask 002 && streamlit run /project-dir/src/Home.py'",
+      args: "-c 'umask 002 && mkdir -p /project-dir/src && touch /project-dir/src/Home.py && streamlit run /project-dir/src/Home.py'",
       command: "bash",
       env_variables: {
         STREAMLIT_SERVER_BASE_URL_PATH: "$BASE_PATH_PREFIX_8501",

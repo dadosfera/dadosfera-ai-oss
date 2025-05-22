@@ -32,8 +32,7 @@ class Config:
     # Whether Orchest is running on single-node. This in turn determines
     # how pipeline runs are executed; in 1 pod or 1 pod per step.
     SINGLE_NODE = os.environ.get("SINGLE_NODE") == "TRUE"
-    ORCHEST_VERSION = os.environ["ORCHEST_VERSION"].split("-")[0]
-    ORCHEST_DADOSFERA_VERSION = os.environ["ORCHEST_VERSION"]
+    ORCHEST_VERSION = os.environ["ORCHEST_VERSION"]
     # must be uppercase
     SQLALCHEMY_DATABASE_URI = "postgresql://postgres@orchest-database/orchest_api"
 
@@ -65,15 +64,15 @@ class Config:
     _RUNTIME_TO_IMAGE_BUILDER = {
         "docker": os.environ.get(
             "DOCKER_IMAGE_BUILDER_IMAGE",
-            f"docker.io/orchest/image-builder-buildx:{ORCHEST_VERSION}",
+            f"docker.io/dadosfera/image-builder-buildx:{ORCHEST_VERSION}",
         ),
         "containerd": os.environ.get(
             "CONTAINERD_IMAGE_BUILDER_IMAGE",
-            f"docker.io/orchest/image-builder-buildkit:{ORCHEST_VERSION}",
+            f"docker.io/dadosfera/image-builder-buildkit:{ORCHEST_VERSION}",
         ),
         "cri-o": os.environ.get(
             "CRIO_IMAGE_BUILDER_IMAGE",
-            f"docker.io/orchest/image-builder-buildkit:{ORCHEST_VERSION}",
+            f"docker.io/dadosfera/image-builder-buildkit:{ORCHEST_VERSION}",
         ),
     }
     IMAGE_BUILDER_IMAGE = _RUNTIME_TO_IMAGE_BUILDER[_config.CONTAINER_RUNTIME]
@@ -81,7 +80,7 @@ class Config:
     BUILD_IMAGE_LOG_FLAG = "_ORCHEST_RESERVED_LOG_FLAG_"
     BUILD_IMAGE_ERROR_FLAG = "_ORCHEST_RESERVED_ERROR_FLAG_"
     JUPYTER_SERVER_IMAGE = os.environ.get(
-        "JUPYTER_SERVER_IMAGE", "docker.io/orchest/jupyter-server"
+        "JUPYTER_SERVER_IMAGE", "docker.io/dadosfera/jupyter-server"
     )
     # ---- Celery configurations ----
     # NOTE: the configurations have to be lowercase.
