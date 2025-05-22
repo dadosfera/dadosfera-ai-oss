@@ -104,6 +104,7 @@ def _get_formatted_active_environment_imgs(
         stored_in_registry=stored_in_registry, in_node=in_node, not_in_node=not_in_node
     )
 
+    logger.info(f"Active Env Images: {active_env_images}")
     active_env_images_names = []
     registry_ip = utils.get_registry_ip()
     for img in active_env_images:
@@ -115,6 +116,8 @@ def _get_formatted_active_environment_imgs(
             + str(img.tag)
         )
         active_env_images_names.append(f"{registry_ip}/{image}")
+    logger.info(f"Active Env Images With Name: \n{active_env_images_names}")
+
     return active_env_images_names
 
 
@@ -155,6 +158,7 @@ class ActiveEnvironmentImagesToPush(Resource):
             in_node=request.args.get("in_node"),
         )
 
+        logger.info(f"/to-push - Active Images: {active_env_images}")
         # This to avoid image pushes running concurrently with a
         # registry GC, we avoid the race condition by having the
         # PROCESS_IMAGE_DELETION task status be updated and then having
@@ -163,7 +167,12 @@ class ActiveEnvironmentImagesToPush(Resource):
         # makes it so that no concurrent pushes and GCs are going to
         # run. Also, this call Should be after the images are fetched to
         # avoid a - very improbable - race condition.
-        if scheduler.is_running(scheduler.SchedulerJobType.PROCESS_IMAGES_FOR_DELETION):
+
+        scheduler_is_deleting_images = scheduler.is_running(
+            scheduler.SchedulerJobType.PROCESS_IMAGES_FOR_DELETION
+        )
+        logger.info(f"Scheduler is running: {scheduler_is_deleting_images}")
+        if scheduler_is_deleting_images:
             active_env_images = []
 
         return {"active_environment_images": active_env_images}, 200

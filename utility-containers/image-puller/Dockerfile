@@ -17,10 +17,10 @@ ENV DOCKER_DOWNLOAD_URL="https://download.docker.com/linux/static/stable/x86_64/
 RUN curl -L $DOCKER_DOWNLOAD_URL | tar -xz -C /tmp/download \
     && mv /tmp/download/docker/docker /bin/
 
- 
+
 RUN rm -rf /tmp/download \
     && apk del curl \
-    && rm -rf /var/cache/apk/* 
+    && rm -rf /var/cache/apk/*
 
 ###############################################################################
 FROM ubuntu:22.04

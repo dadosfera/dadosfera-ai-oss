@@ -907,7 +907,7 @@ func (occ *OrchestClusterController) manageOrchestCluster(ctx context.Context, o
 		// Do not create the buildkit-daemon when not needed.
 		if componentName == controller.BuildKitDaemon {
 			containerRuntime, _, _ := detectContainerRuntime(ctx, occ.Client(), orchest)
-			if containerRuntime != "containerd" {
+			if containerRuntime != "containerd" && containerRuntime != "cri-o" {
 				continue
 			}
 		}
@@ -1035,10 +1035,10 @@ func (occ *OrchestClusterController) ensureRbacs(ctx context.Context, hash strin
 	objects := make([]client.Object, 0, 6)
 	apiMetadata := controller.GetMetadata(controller.OrchestApi, hash, orchest, OrchestClusterKind)
 	// Get the rbac manifest
-	objects = append(objects, controller.GetRbacManifest(apiMetadata)...)
+	objects = append(objects, controller.GetNamespacedRbacManifest(apiMetadata)...)
 
 	celeryMetadata := controller.GetMetadata(controller.CeleryWorker, hash, orchest, OrchestClusterKind)
-	objects = append(objects, controller.GetRbacManifest(celeryMetadata)...)
+	objects = append(objects, controller.GetNamespacedRbacManifest(celeryMetadata)...)
 
 	for _, obj := range objects {
 		err := controller.UpsertObject(ctx, occ.gClient, obj)

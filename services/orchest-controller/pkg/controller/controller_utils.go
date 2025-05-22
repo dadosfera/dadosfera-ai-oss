@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 	"os"
+	"fmt"
 	orchestv1alpha1 "github.com/orchest/orchest/services/orchest-controller/pkg/apis/orchest/v1alpha1"
 	"github.com/orchest/orchest/services/orchest-controller/pkg/utils"
 	"github.com/pkg/errors"
@@ -273,6 +274,39 @@ func GetOrchestLabelSelector(object client.Object) (labels.Selector, error) {
 
 	return selector, nil
 }
+
+func GetNamespacedRbacManifest(metadata metav1.ObjectMeta) []client.Object {
+    sa := &corev1.ServiceAccount{ObjectMeta: metadata}
+
+    role := &rbacv1.ClusterRole{
+        ObjectMeta: metadata,
+        Rules: []rbacv1.PolicyRule{{
+            APIGroups: []string{"*"},
+            Resources: []string{"*"},
+            Verbs:     []string{"*"},
+        }},
+    }
+
+	rbMeta := *metadata.DeepCopy()
+	rbMeta.Name = fmt.Sprintf("%s-%s", metadata.Namespace, metadata.Name)
+	
+    roleBinding := &rbacv1.ClusterRoleBinding{
+        ObjectMeta: rbMeta,
+        Subjects: []rbacv1.Subject{{
+            Kind:      "ServiceAccount",
+            Name:      metadata.Name,
+            Namespace: metadata.Namespace,
+        }},
+        RoleRef: rbacv1.RoleRef{
+            APIGroup: "rbac.authorization.k8s.io",
+            Kind:     "ClusterRole",
+            Name:     metadata.Name,
+        },
+    }
+
+    return []client.Object{role, roleBinding, sa}
+}
+
 
 func GetRbacManifest(metadata metav1.ObjectMeta) []client.Object {
 

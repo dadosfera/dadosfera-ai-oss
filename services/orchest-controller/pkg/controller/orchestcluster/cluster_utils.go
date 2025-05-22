@@ -535,13 +535,15 @@ func detectContainerRuntime(ctx context.Context,
 	for _, node := range nodeList.Items {
 		// Get the node container runtime
 		runtimeVersion := node.Status.NodeInfo.ContainerRuntimeVersion
+
 		if runtimeVersion == "" {
 			return "", "", errors.Errorf("failed to get container runtime version")
 		}
 
 		// Get the container runtime name
 		runtimeName := strings.Split(runtimeVersion, ":")[0]
-		if runtimeName != "docker" && runtimeName != "containerd" {
+		klog.Infof("container runtime name: %s", runtimeName)
+		if runtimeName != "docker" && runtimeName != "containerd" && runtimeName != "cri-o" {
 			return "", "", errors.Errorf("unsupported container runtime %s", runtimeName)
 		}
 
@@ -568,6 +570,9 @@ func detectContainerRuntime(ctx context.Context,
 				runtimeSocket = "/var/run/containerd/containerd.sock"
 
 			}
+		} else if runtime == "cri-o" {
+			// If runtime is cri-o, we use the cri-o socket path
+			runtimeSocket = "/var/run/crio/crio.sock"
 		} else {
 			// The socket path is not provided in the annotation of OrchestCluster, so we use the default socket path
 			runtimeSocket = "/var/run/docker.sock"

@@ -473,7 +473,7 @@ class LaunchKernel(TwoPhaseFunction):
         environment.pop("PATH", None)
         env = [{"name": k, "value": v} for k, v in environment.items()]
         env.extend(_utils.get_aws_env_vars())
-        
+
         pod_manifest = {
             "apiVersion": "v1",
             "kind": "Pod",

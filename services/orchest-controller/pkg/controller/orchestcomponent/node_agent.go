@@ -8,6 +8,7 @@ import (
 	orchestv1alpha1 "github.com/orchest/orchest/services/orchest-controller/pkg/apis/orchest/v1alpha1"
 	"github.com/orchest/orchest/services/orchest-controller/pkg/controller"
 	"github.com/orchest/orchest/services/orchest-controller/pkg/utils"
+	"k8s.io/utils/pointer"
 	"golang.org/x/net/context"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -72,9 +73,10 @@ func getNodeAgentDaemonset(registryIP string, metadata metav1.ObjectMeta,
 	*appsv1.DaemonSet, error) {
 
 	image := component.Spec.Template.Image
+	extraEnvVars := []corev1.EnvVar{}
 
-	var one int64 = 1
 
+	envMap := utils.GetMapFromEnvVar(component.Spec.Template.Env, extraEnvVars)
 	socketPath := utils.GetKeyFromEnvVar(component.Spec.Template.Env, "CONTAINER_RUNTIME_SOCKET")
 	// Apparently needed for old/existing clusters?
 	socketPath = strings.Replace(socketPath, "unix://", "", -1)
@@ -99,7 +101,7 @@ func getNodeAgentDaemonset(registryIP string, metadata metav1.ObjectMeta,
 			Labels: matchLabels,
 		},
 		Spec: corev1.PodSpec{
-			TerminationGracePeriodSeconds: &one,
+			TerminationGracePeriodSeconds: pointer.Int64Ptr(1),
 			NodeSelector:                  component.Spec.Template.NodeSelector,
 			Volumes: []corev1.Volume{
 				{
@@ -196,6 +198,14 @@ func getNodeAgentDaemonset(registryIP string, metadata metav1.ObjectMeta,
 				},
 			},
 		)
+
+	
+		devMod := isDevelopmentEnabled(envMap)
+		if devMod {
+			devVolumes, devVolumeMounts := getDevVolumes(controller.NodeAgent, true, false, true)
+			template.Spec.Volumes = append(template.Spec.Volumes, devVolumes...)
+			template.Spec.Containers[0].VolumeMounts = append(template.Spec.Containers[0].VolumeMounts, devVolumeMounts...)
+		}
 
 		// And the secret needs to be mounted into the container
 		template.Spec.Containers[0].VolumeMounts = append(template.Spec.Containers[0].VolumeMounts,
