@@ -16,7 +16,7 @@ USER root
 #     apt-get clean && \
 #     && rm -rf /var/lib/apt/lists/*
 RUN apt-get update \
-    && apt-get install -yq --no-install-recommends curl openssh-server git default-libmysqlclient-dev libkrb5-dev libxcb1 \
+    && apt-get install -yq --no-install-recommends cmake curl openssh-server git default-libmysqlclient-dev libkrb5-dev libxcb1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN passwd -d $NB_USER \
@@ -38,16 +38,20 @@ RUN wget https://github.com/jupyter-server/enterprise_gateway/releases/download/
     && chown -R jovyan:users /usr/local/bin/kernel-launchers
 
 # Install Enterprise Gateway requirements.
-RUN mamba install --quiet --yes \
+
+RUN mamba create -y -n py311 python=3.11 future
+RUN mamba install -n py311 --quiet --yes \
     cffi \
     ipykernel \
     ipython \
     'jupyter_client<7' \
     future \
-    pycryptodomex && \
+    pycryptodome \
+    ipython_genutils && \
     mamba clean --all -f -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
+
 
 # Get all Orchest requirements in place.
 COPY ./runnable-shared/runner/requirements* /orchest/services/base-images/runnable-shared/runner/
@@ -64,19 +68,24 @@ WORKDIR /orchest/services/base-images/runnable-shared/runner
 # Install user requirements to be able to use Orchest. Install them in
 # the `base` conda environment as it is default environment.
 # NOTE: Use `pip` so we can install from local sources.
-RUN pip install -r requirements-user.txt --no-cache
+RUN pip install uv
+RUN uv pip install -r requirements-user.txt --no-cache --system
 
 # Install Orchest dependencies in our own environment so they are
 # completely isolated from user dependencies. Use a venv instead
 # of conda environment because it is much smaller.
 RUN python -m venv /home/$NB_USER/venv \
     && source /home/$NB_USER/venv/bin/activate \
-    && pip install -r requirements.txt --no-cache \
+    && uv pip install -r requirements.txt --no-cache --system \
     && deactivate
 
 # Empty configuration file for kernel initialization
-RUN touch /home/jovyan/.orchestrc && \
+RUN touch ~/.orchestrc && \
     echo "export PS1='\${ENVIRONMENT_SHELL_NAME:+(\$ENVIRONMENT_SHELL_NAME)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '" >> ~/.bashrc
+
+RUN echo "export JUPYTER_PATH=/opt/conda/envs/py311/share/jupyter" >> ~/.orchestrc
+RUN echo "export PATH='/opt/conda/envs/py311/bin/:$PATH'" >> ~/.orchestrc
+RUN echo "export CONDA_ENV=py311" >> ~/.orchestrc
 
 # Copy application files as late as possible to avoid cache busting.
 COPY ./runnable-shared/runner* /orchest/services/base-images/runnable-shared/runner

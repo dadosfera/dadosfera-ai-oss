@@ -523,7 +523,3 @@ def build_image(
             return "FAILURE"
 
         return "SUCCESS"
-
-if __name__ == "__main__":
-
-    _get_image_builder_manifest("teste","orchest/base_kernel","latest","a","a")

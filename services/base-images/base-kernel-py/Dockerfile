@@ -2,10 +2,6 @@
 FROM jupyter/base-notebook:2022-03-09
 LABEL maintainer="Orchest B.V. https://www.orchest.io"
 
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_SECRET_ACCESS_KEY
-ARG AWS_DEFAULT_REGION
-
 USER root
 
 # defailt-libmysqlclient-dev : Orchest dependency
@@ -22,7 +18,6 @@ RUN passwd -d $NB_USER \
     && echo "Defaults env_keep += \"DEBIAN_FRONTEND\"" | tee --append /etc/sudoers.d/$NB_USER \
     # All files in this directory should be mode 0440.
     && chmod 0440 /etc/sudoers.d/$NB_USER
-
 
 # Get Enterprise Gateway kernel files.
 WORKDIR /usr/local/bin
@@ -85,13 +80,6 @@ ENV HOME=/home/$NB_USER
 ENV BASH_ENV=/home/jovyan/.orchestrc
 
 
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_SECRET_ACCESS_KEY
-ARG AWS_DEFAULT_REGION
-
-RUN mamba run pip install awscli
-RUN aws codeartifact login --tool pip --domain dadosfera --domain-owner 611330257153 --region us-east-1 --repository dadosfera-pip && \
-    mamba run pip install brain==2.0.0a11
 # Orchest related environment variable that can be set to specify the
 # conda environment to use to start Jupyter kernels.
 ENV CONDA_ENV="base"

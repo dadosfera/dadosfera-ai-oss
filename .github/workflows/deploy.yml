@@ -1,5 +1,12 @@
 name: Deploy
 on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to deploy"
+        required: true
+        default: "beta"
+        type: string
   push:
     branches:
       - main
@@ -20,43 +27,49 @@ jobs:
           fi
         id: extract_environment
 
-  semantic_release:
+  calver_release:
     runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/oracle-compatibility')) || github.event_name == 'workflow_dispatch' }}
     outputs:
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+      new_release_published: ${{ steps.create_release.outputs.url != '' }}
+      new_release_version: ${{ steps.calver.outputs.next_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
-        id: semantic
+      - name: CalVer
+        id: calver
+        uses: energostack/calver-action@v1
         with:
-          semantic_version: 19
-          extra_plugins: |
-            @saithodev/semantic-release-backmerge@2
-            conventional-changelog-eslint@4.0.0
-          branches: |
-            [
-              'main',
-              {
-                name: 'alpha',
-                prerelease: true
-              },
-              {
-                name: 'beta',
-                prerelease: true
-              }
-            ]
+          prerelease: false
+
+      - name: Get Version
+        id: get_version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKFLOW_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
+          BETA_BRANCH: ${{ github.ref == 'refs/heads/oracle-compatibility' }}
+          REF: ${{ github.ref }}
+          NEXT_VERSION: ${{ steps.calver.outputs.next_version }}
+        run: |
+          if [ ${WORKFLOW_DISPATCH} == "true" ] || [ ${BETA_BRANCH} == "true" ]; then
+            echo "tag_name=${NEXT_VERSION}.${REF}" >> $GITHUB_OUTPUT
+          else
+            echo "tag_name=${NEXT_VERSION}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        id: create_release
+        with:
+          tag_name: ${{ steps.get_version.outputs.tag_name }}
+          generate_release_notes: true
+          prerelease: ${{ github.event_name == 'workflow_dispatch' }} || ${{ github.ref == 'refs/heads/oracle-compatibility' }}
 
   deploy_webserver:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -74,7 +87,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: orchest-webserver
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-webserver
         run: |
           cp .dockerignore $BUILD_CTX
@@ -96,10 +109,10 @@ jobs:
           docker system df
 
   deploy_auth_server:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -117,7 +130,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: auth-server
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/auth-server/
         run: |
           cp .dockerignore $BUILD_CTX
@@ -140,10 +153,10 @@ jobs:
 
 
   deploy_api:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -161,7 +174,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: orchest-api
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-api
         run: |
           cp .dockerignore $BUILD_CTX
@@ -179,10 +192,10 @@ jobs:
           docker system df
 
   deploy_celery:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -200,7 +213,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: celery-worker
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-api
         run: |
           cp .dockerignore $BUILD_CTX
@@ -211,10 +224,10 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   deploy_node_agent:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -232,7 +245,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: node-agent
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/node-agent
         run: |
           cp .dockerignore $BUILD_CTX
@@ -250,10 +263,10 @@ jobs:
           docker system df
 
   deploy_orchest_controller:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -271,7 +284,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: orchest-controller
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-controller
         run: |
           cp .dockerignore $BUILD_CTX
@@ -286,10 +299,10 @@ jobs:
           docker system df
 
   deploy_jupyter_server:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -307,7 +320,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: jupyter-server
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/jupyter-server
         run: |
           cp .dockerignore $BUILD_CTX
@@ -317,10 +330,10 @@ jobs:
 
 
   deploy_image_builder_buildkitd:
-    needs: [semantic_release, extract_environment]
+    needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
-    if: needs.semantic_release.outputs.new_release_published == 'true'
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -338,7 +351,7 @@ jobs:
         env:
           REGISTRY: dadosfera
           REPOSITORY: image-builder-buildkit
-          IMAGE_TAG: v2023.04.2-${{ needs.semantic_release.outputs.new_release_version }}
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: utility-containers/image-builder-buildkit
         run: |
           cp .dockerignore $BUILD_CTX
@@ -351,3 +364,338 @@ jobs:
         run: |
           docker system prune --volumes -a -f
           docker system df
+
+  deploy_image_puller:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: image-puller
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: utility-containers/image-puller
+        run: |
+          cp .dockerignore $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_jupyter_enterprise_gateway:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: jupyter-enterprise-gateway
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: services/jupyter-enterprise-gateway
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  # deploy_base_kernel_py:
+  #   needs: [calver_release, extract_environment]
+  #   runs-on: ubuntu-latest
+  #   environment: prd
+  #   if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
+
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  #     - name: Build, Tag, and Push Image to Dockerhub
+  #       env:
+  #         REGISTRY: dadosfera
+  #         REPOSITORY: base-kernel-py
+  #         IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+  #         BUILD_CTX: services/base-images
+  #       run: |
+  #         cp .dockerignore $BUILD_CTX
+  #         cp -r lib/ $BUILD_CTX
+  #         cp -r orchest-sdk/ $BUILD_CTX
+  #         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-py/Dockerfile $BUILD_CTX
+  #         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  #     - name: Cleanup Docker's Leftovers
+  #       if: always()
+  #       continue-on-error: true
+  #       run: |
+  #         docker system prune --volumes -a -f
+  #         docker system df
+
+  deploy_base_kernel_r:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: base-kernel-r
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: services/base-images
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-r/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_base_kernel_julia:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: base-kernel-julia
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: services/base-images
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-julia/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_base_kernel_javascript:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: base-kernel-javascript
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: services/base-images
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          cp -r orchest-sdk/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-javascript/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_session_sidecar:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: session-sidecar
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: services/session-sidecar
+        run: |
+          cp .dockerignore $BUILD_CTX
+          cp -r lib/ $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_image_builder_buildx:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: image-builder-buildx
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: utility-containers/image-builder-buildx
+        run: |
+          cp .dockerignore $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+
+  deploy_buildkit_daemon:
+    needs: [calver_release, extract_environment]
+    runs-on: ubuntu-latest
+    environment: prd
+    if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build, Tag, and Push Image to Dockerhub
+        env:
+          REGISTRY: dadosfera
+          REPOSITORY: buildkit-daemon
+          IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
+          BUILD_CTX: services/buildkit-daemon
+        run: |
+          cp .dockerignore $BUILD_CTX
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
+        
