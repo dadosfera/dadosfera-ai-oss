@@ -82,6 +82,7 @@ class Config:
     JUPYTER_SERVER_IMAGE = os.environ.get(
         "JUPYTER_SERVER_IMAGE", "docker.io/dadosfera/jupyter-server"
     )
+    DOCKERHUB_SECRET_NAME = os.environ.get("DOCKERHUB_SECRET_NAME")
     # ---- Celery configurations ----
     # NOTE: the configurations have to be lowercase.
     # NOTE: Flask will not configure lowercase variables. Therefore the

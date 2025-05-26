@@ -82,6 +82,9 @@ func getNodeAgentDaemonset(registryIP string, metadata metav1.ObjectMeta,
 
 	containerRuntime := utils.GetKeyFromEnvVar(component.Spec.Template.Env, "CONTAINER_RUNTIME")
 
+
+	dockerhubSecretName := utils.GetKeyFromEnvVar(component.Spec.Template.Env, "DOCKERHUB_SECRET_NAME")
+
 	// Necessary because the logic currently handling environment
 	// variables does not support "ValueFrom" env variables. TO_DO fix
 	// this.
@@ -144,7 +147,28 @@ func getNodeAgentDaemonset(registryIP string, metadata metav1.ObjectMeta,
 		template.Spec.PriorityClassName = component.Spec.Template.CorePriorityClassName
 	}
 
+	if dockerhubSecretName != "" {
+		template.Spec.Volumes = append(template.Spec.Volumes, corev1.Volume{
+			Name: "dockerhub-secret",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: dockerhubSecretName,
+					Items: []corev1.KeyToPath{
+						{
+							Key:  ".dockerconfigjson",
+							Path: "config.json",
+						},
+					},
+				},
+			},
+		})
 
+		template.Spec.Containers[0].VolumeMounts = append(template.Spec.Containers[0].VolumeMounts, corev1.VolumeMount{
+			Name:      "dockerhub-secret",
+			MountPath: "/root/.docker",
+			ReadOnly:  true,
+		})
+	}
 	// If container runtime is docker add required volumes to inject the certificates with lifecycle hooks
 	if containerRuntime == "docker" {
 		certificateDirectory := fmt.Sprintf("/etc/docker/certs.d/%s/", registryIP)

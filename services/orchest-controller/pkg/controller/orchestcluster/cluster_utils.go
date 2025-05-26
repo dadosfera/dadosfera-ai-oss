@@ -270,6 +270,13 @@ func getOrchestComponent(name, hash string,
 			}})
 		}
 
+		if orchest.Spec.DockerhubSecretName != "" {
+			template.Env = utils.MergeEnvVars(template.Env, []corev1.EnvVar{{
+				Name:  "DOCKERHUB_SECRET_NAME",
+				Value: orchest.Spec.DockerhubSecretName,
+			}})
+		}
+
 	case controller.Rabbitmq:
 		template.NodeSelector = orchest.Spec.ControlNodeSelector
 		template.StateVolumeName = orchestStateVolumeName
@@ -288,6 +295,13 @@ func getOrchestComponent(name, hash string,
 				Value: string(jsonStr),
 			}})
 		}
+
+		if orchest.Spec.DockerhubSecretName != "" {
+			template.Env = utils.MergeEnvVars(template.Env, []corev1.EnvVar{{
+				Name:  "DOCKERHUB_SECRET_NAME",
+				Value: orchest.Spec.DockerhubSecretName,
+			}})
+		}
 	case controller.AuthServer:
 		template.NodeSelector = orchest.Spec.ControlNodeSelector
 	case controller.OrchestWebserver:
@@ -295,6 +309,12 @@ func getOrchestComponent(name, hash string,
 		template.StateVolumeName = controller.UserDirName
 	case controller.NodeAgent:
 		template.NodeSelector = orchest.Spec.WorkerNodeSelector
+		if orchest.Spec.DockerhubSecretName != "" {
+			template.Env = utils.MergeEnvVars(template.Env, []corev1.EnvVar{{
+				Name:  "DOCKERHUB_SECRET_NAME",
+				Value: orchest.Spec.DockerhubSecretName,
+			}})
+		}
 	case controller.BuildKitDaemon:
 		template.NodeSelector = orchest.Spec.WorkerNodeSelector
 	default:

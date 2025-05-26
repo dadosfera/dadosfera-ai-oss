@@ -86,15 +86,40 @@ _RUNTIME_TO_IMAGE_BUILDER_VOLUMES = {
     ],
 }
 
+
 _IMAGE_BUILDER_VOLUME_MOUNTS = _RUNTIME_TO_IMAGE_BUILDER_VOLUME_MOUNTS[
     _config.CONTAINER_RUNTIME
 ] + _utils.get_temp_aws_volume_mounts()
+
 _IMAGE_BUILDER_VOLUMES = (
     _RUNTIME_TO_IMAGE_BUILDER_VOLUMES[_config.CONTAINER_RUNTIME] +
     _utils.get_temp_aws_volumes()
 )
 
 
+if CONFIG_CLASS.DOCKERHUB_SECRET_NAME:
+    _IMAGE_BUILDER_VOLUME_MOUNTS = _IMAGE_BUILDER_VOLUME_MOUNTS + [
+        {
+            "name": "dockerhub-secret",
+            "mountPath": "/root/.docker",
+            "readOnly": True,
+        }
+    ]
+
+    _IMAGE_BUILDER_VOLUMES = _IMAGE_BUILDER_VOLUMES + [
+        {
+            "name": "dockerhub-secret",
+            "secret": {
+                "secretName": CONFIG_CLASS.DOCKERHUB_SECRET_NAME,
+                "items": [
+                    {
+                        "key": ".dockerconfigjson",
+                        "path": "config.json",
+                    }
+                ],
+            },
+        }
+    ]
 
 def _get_image_builder_manifest(
     workflow_name,
