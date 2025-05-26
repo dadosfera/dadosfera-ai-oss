@@ -14,7 +14,7 @@ ENV CONTAINERD_DOWNLOAD_URL="https://github.com/containerd/containerd/releases/d
 # injection did not fix the issue, like in kubernetes for docker for
 # desktop.
 RUN apt-get update \
-    && apt-get install -yq --no-install-recommends buildah podman \
+    && apt-get install -yq --no-install-recommends buildah podman fuse-overlayfs \
     && buildah version \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
