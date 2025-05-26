@@ -72,6 +72,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -85,12 +89,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: orchest-webserver
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-webserver
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
@@ -101,6 +113,8 @@ jobs:
           cp package.json $BUILD_CTX/pnpm_files/
           cp tsconfig.json $BUILD_CTX/pnpm_files/
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -115,6 +129,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -128,12 +146,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: auth-server
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/auth-server/
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
@@ -144,6 +170,8 @@ jobs:
           cp package.json $BUILD_CTX/pnpm_files/
           cp tsconfig.json $BUILD_CTX/pnpm_files/
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -159,6 +187,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -172,18 +204,28 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: orchest-api
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-api
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           cp -r orchest-cli/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -198,6 +240,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -210,6 +256,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
 
       - name: Build, Tag, and Push Image to Dockerhub
         env:
@@ -217,6 +269,8 @@ jobs:
           REPOSITORY: celery-worker
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-api
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
@@ -224,12 +278,18 @@ jobs:
           cp -r orchest-cli/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile_celery $BUILD_CTX
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   deploy_node_agent:
     needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -243,18 +303,28 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: node-agent
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/node-agent
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           cp -r orchest-cli/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -269,6 +339,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -282,15 +356,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: orchest-controller
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/orchest-controller
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -305,6 +389,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -317,6 +405,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
 
       - name: Build, Tag, and Push Image to Dockerhub
         env:
@@ -324,18 +418,32 @@ jobs:
           REPOSITORY: jupyter-server
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/jupyter-server
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
+      - name: Cleanup Docker's Leftovers
+        if: always()
+        continue-on-error: true
+        run: |
+          docker system prune --volumes -a -f
+          docker system df
 
   deploy_image_builder_buildkitd:
     needs: [calver_release, extract_environment]
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -349,15 +457,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: image-builder-buildkit
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: utility-containers/image-builder-buildkit
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -372,6 +490,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -385,8 +507,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
           REGISTRY: dadosfera
           REPOSITORY: image-puller
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
@@ -394,7 +524,9 @@ jobs:
         run: |
           cp .dockerignore $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
         if: always()
@@ -408,6 +540,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -421,16 +557,26 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: jupyter-enterprise-gateway
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/jupyter-enterprise-gateway
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -445,6 +591,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -458,17 +608,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: base-kernel-py
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/base-images
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-py/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -483,6 +643,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -496,17 +660,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: base-kernel-r
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/base-images
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-r/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -521,6 +695,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -534,17 +712,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: base-kernel-julia
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/base-images
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-julia/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -559,6 +747,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -572,17 +764,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: base-kernel-javascript
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/base-images
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           cp -r orchest-sdk/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/base-kernel-javascript/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -597,6 +799,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -610,16 +816,26 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: session-sidecar
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/session-sidecar
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           cp -r lib/ $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -634,6 +850,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -647,15 +867,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: image-builder-buildx
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: utility-containers/image-builder-buildx
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -670,6 +900,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prd
     if: ${{ needs.calver_release.outputs.new_release_published == 'true' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -683,15 +917,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Login to AWS ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - name: Build, Tag, and Push Image to Dockerhub
         env:
           REGISTRY: dadosfera
           REPOSITORY: buildkit-daemon
           IMAGE_TAG: ${{ needs.calver_release.outputs.new_release_version }}
           BUILD_CTX: services/buildkit-daemon
+          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
+          ECR_REGISTRY_ALIAS: u5k1d2l0
         run: |
           cp .dockerignore $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
@@ -700,4 +944,3 @@ jobs:
         run: |
           docker system prune --volumes -a -f
           docker system df
-        
