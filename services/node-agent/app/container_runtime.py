@@ -225,8 +225,7 @@ class ContainerRuntime(object):
             result, _, _ = await self.execute_cmd(cmd=cmd)
         elif self.container_runtime in [RuntimeType.Crio]:
             cmd = (
-                f"crictl -r unix://{self.container_runtime_socket} "
-                f"pull {image_name} --skip-verify "
+                f"podman pull {image_name} --tls-verify=false"
             )
             result, _, _ = await self.execute_cmd(cmd=cmd)
 
