@@ -29,7 +29,7 @@ jobs:
 
   calver_release:
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/oracle-compatibility')) || github.event_name == 'workflow_dispatch' }}
+    if: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')) || github.event_name == 'workflow_dispatch' }}
     outputs:
       new_release_published: ${{ steps.create_release.outputs.url != '' }}
       new_release_version: ${{ steps.get_version.outputs.tag_name }}
@@ -48,7 +48,7 @@ jobs:
         id: get_version
         env:
           WORKFLOW_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
-          BETA_BRANCH: ${{ github.ref == 'refs/heads/oracle-compatibility' }}
+          BETA_BRANCH: ${{ github.ref == 'refs/heads/beta' }}
           REF: ${{ github.ref }}
           NEXT_VERSION: ${{ steps.calver.outputs.next_version }}
         run: |
