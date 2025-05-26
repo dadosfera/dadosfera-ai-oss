@@ -124,13 +124,12 @@ def _is_jupyter_image_in_registry(tag: Union[int, str]) -> bool:
 
 
 def _get_node_affinity_to_random_node(node_names: List[str]) -> Dict[str, Any]:
-    # Need to set a specific node at the application level:
-    # https://github.com/kubernetes/kubernetes/issues/78238.
     return {
         "nodeAffinity": {
-            "requiredDuringSchedulingIgnoredDuringExecution": {
-                "nodeSelectorTerms": [
-                    {
+            "preferredDuringSchedulingIgnoredDuringExecution": [
+                {
+                    "weight": 100,
+                    "preference": {
                         "matchFields": [
                             {
                                 "key": "metadata.name",
@@ -139,8 +138,8 @@ def _get_node_affinity_to_random_node(node_names: List[str]) -> Dict[str, Any]:
                             }
                         ]
                     }
-                ],
-            }
+                }
+            ]
         }
     }
 
