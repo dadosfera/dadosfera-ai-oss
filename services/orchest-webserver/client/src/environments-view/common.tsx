@@ -130,28 +130,28 @@ export const DEFAULT_BASE_IMAGES: (CustomImage & {
   unavailable?: boolean;
 })[] = [
   {
-    base_image: "orchest/base-kernel-py",
+    base_image: "dadosfera/base-kernel-py",
     img_src: "/image/python_logo.svg",
     language: "python",
     gpu_support: false,
     label: "Python",
   },
   {
-    base_image: "orchest/base-kernel-r",
+    base_image: "dadosfera/base-kernel-r",
     img_src: "/image/r_logo.svg",
     language: "r",
     gpu_support: false,
     label: "R",
   },
   {
-    base_image: "orchest/base-kernel-julia",
+    base_image: "dadosfera/base-kernel-julia",
     img_src: "/image/julia_logo.svg",
     language: "julia",
     gpu_support: false,
     label: "Julia",
   },
   {
-    base_image: "orchest/base-kernel-javascript",
+    base_image: "dadosfera/base-kernel-javascript",
     img_src: "/image/javascript_logo.svg",
     language: "javascript",
     gpu_support: false,

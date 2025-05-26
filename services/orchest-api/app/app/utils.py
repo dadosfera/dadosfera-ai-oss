@@ -331,9 +331,7 @@ def get_jupyter_server_image_to_use() -> str:
         registry_ip = get_registry_ip()
         return f"{registry_ip}/{_config.JUPYTER_IMAGE_NAME}:{custom_image.tag}"
     else:
-        if CONFIG_CLASS.JUPYTER_SERVER_IMAGE == "docker.io/orchest/jupyter-server":
-            return f"docker.io/orchest/jupyter-server:{CONFIG_CLASS.ORCHEST_VERSION}"
-        return f"{CONFIG_CLASS.JUPYTER_SERVER_IMAGE}:{CONFIG_CLASS.ORCHEST_DADOSFERA_VERSION}"
+        return f"{CONFIG_CLASS.JUPYTER_SERVER_IMAGE}:{CONFIG_CLASS.ORCHEST_VERSION}"
 
 def get_registry_ip() -> str:
     return k8s_core_api.read_namespaced_service(

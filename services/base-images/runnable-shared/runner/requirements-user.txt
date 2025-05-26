@@ -3,4 +3,5 @@
 # Pin version to avoid breaking coupling with jupyterlab_widgets,
 # see https://github.com/jupyter-widgets/ipywidgets/issues/3577
 ipywidgets>=7.0,<8
+pyarrow==7.0.0
 -e ../../../../orchest-sdk/python/

@@ -254,6 +254,8 @@ type OrchestClusterSpec struct {
 	WorkerNodeSelector map[string]string `json:"workerNodeSelector,omitempty"`
 
 	CorePriorityClassName string `json:"corePriorityClassName,omitempty"`
+
+	DockerhubSecretName string `json:"dockerhubSecretName,omitempty"`
 }
 
 type Condition struct {

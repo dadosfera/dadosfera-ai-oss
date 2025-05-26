@@ -1,0 +1,47 @@
+name: Test CalVer
+on:
+  push:
+    branches:
+      - main
+      - beta
+
+jobs:
+  calver_release:
+    runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/oracle-compatibility')) || github.event_name == 'workflow_dispatch' }}
+    outputs:
+      new_release_published: ${{ steps.create_release.outputs.url != '' }}
+      new_release_version: ${{ steps.get_version.outputs.tag_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: CalVer
+        id: calver
+        uses: energostack/calver-action@v1
+        with:
+          date_format: '%Y.%m.%-d'
+          prerelease: false
+
+      - name: Get Version
+        id: get_version
+        env:
+          WORKFLOW_DISPATCH: ${{ github.event_name == 'workflow_dispatch' }}
+          BETA_BRANCH: ${{ github.ref == 'refs/heads/oracle-compatibility' }}
+          REF: ${{ github.ref }}
+          NEXT_VERSION: ${{ steps.calver.outputs.next_version }}
+        run: |
+          if [ "${WORKFLOW_DISPATCH}" == "true" ] || [ "${BETA_BRANCH}" == "true" ]; then
+            BRANCH_NAME=$(echo "${REF}" | sed 's|refs/heads/||')
+            echo "tag_name=v${NEXT_VERSION}.${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          else
+            echo "tag_name=v${NEXT_VERSION}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        id: create_release
+        with:
+          tag_name: ${{ steps.get_version.outputs.tag_name }}
+          generate_release_notes: true
+          prerelease: ${{ github.event_name == 'workflow_dispatch' }} || ${{ github.ref == 'refs/heads/oracle-compatibility' }}

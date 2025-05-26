@@ -17,6 +17,9 @@ ENV DOCKER_DOWNLOAD_URL="https://download.docker.com/linux/static/stable/x86_64/
 RUN curl -L $DOCKER_DOWNLOAD_URL | tar -xz -C /tmp/download \
     && mv /tmp/download/docker/docker /bin/
 
+RUN curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.24.1/crictl-v1.24.1-linux-amd64.tar.gz --output crictl-v1.24.1-linux-amd64.tar.gz \
+    && tar -xzf crictl-v1.24.1-linux-amd64.tar.gz -C /usr/local/bin
+
 
 RUN rm -rf /tmp/download \
     && apk del curl \
@@ -29,6 +32,7 @@ LABEL maintainer="Orchest B.V. https://www.orchest.io"
 
 COPY --from=base /bin/ctr /bin/ctr
 COPY --from=base /bin/docker /bin/docker
+COPY --from=base /usr/local/bin/crictl /usr/local/bin/crictl
 
 RUN apt-get update && apt-get install -y buildah && buildah version && \
     apt-get clean

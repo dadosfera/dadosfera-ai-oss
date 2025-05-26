@@ -4,7 +4,7 @@ metadata:
   name: cluster-1
   namespace: orchest
   annotations:
-    controller.orchest.io/deploy-ingress: "false"
+    controller.orchest.io/deploy-ingress: "true"
 spec:
   singleNode: true
   orchest:
@@ -45,6 +45,8 @@ spec:
       env:
         - name: ORCHEST_LOG_LEVEL
           value: DEBUG
+        - name: NODE_ENV
+          value: development
     env:
       - name: CLOUD_ENVIRONMENT
         value: "local"

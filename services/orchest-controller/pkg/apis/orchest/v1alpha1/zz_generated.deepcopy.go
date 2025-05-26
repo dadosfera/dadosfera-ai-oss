@@ -219,6 +219,9 @@ func (in *OrchestClusterSpec) DeepCopyInto(out *OrchestClusterSpec) {
 		}
 	}
 	out.CorePriorityClassName = in.CorePriorityClassName
+	if in.DockerhubSecretName != "" {
+		out.DockerhubSecretName = in.DockerhubSecretName
+	}
 	return
 }
 
