@@ -17,7 +17,7 @@ ENV DOCKER_DOWNLOAD_URL="https://download.docker.com/linux/static/stable/x86_64/
 RUN curl -L $DOCKER_DOWNLOAD_URL | tar -xz -C /tmp/download \
     && mv /tmp/download/docker/docker /bin/
 
-RUN curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.25.0/crictl-v1.25.0-linux-amd64.tar.gz --output crictl-v1.25.0-linux-amd64.tar.gz \
+RUN curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.24.1/crictl-v1.24.1-linux-amd64.tar.gz --output crictl-v1.24.1-linux-amd64.tar.gz \
     && tar -xzf crictl-v1.24.1-linux-amd64.tar.gz -C /usr/local/bin
 
 
