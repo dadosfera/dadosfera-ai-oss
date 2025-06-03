@@ -34,8 +34,13 @@ jobs:
       new_release_published: ${{ steps.create_release.outputs.url != '' }}
       new_release_version: ${{ steps.get_version.outputs.tag_name }}
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all tags
+        run: git fetch --tags --force
 
       - name: CalVer
         id: calver
@@ -528,7 +533,7 @@ jobs:
           docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
-      - name: Cleanup Docker's Leftovers
+      - name: Cleanup Docker's Leftoversjupyter-eg-998045c3-f1ea-4ca6c5119730-6d62-4420-7f95b8d686sfdfl
         if: always()
         continue-on-error: true
         run: |
