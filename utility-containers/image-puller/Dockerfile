@@ -23,7 +23,7 @@ RUN curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.24
 
 RUN rm -rf /tmp/download \
     && apk del curl \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/
 
 ###############################################################################
 FROM ubuntu:22.04
