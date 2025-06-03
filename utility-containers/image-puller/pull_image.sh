@@ -34,7 +34,7 @@ elif [ "$CONTAINER_RUNTIME" = cri-o ]; then
         echo "Image ${IMAGE_TO_PULL} exists, skip pulling."
         exit 0
     fi
-    crictl -r unix:///var/run/runtime.sock pull "${IMAGE_TO_PULL}" --skip-verify
+    podman image pull "${IMAGE_TO_PULL}" --tls-verify=false
 else
     echo "Container runtime is not supported"
     exit 1
