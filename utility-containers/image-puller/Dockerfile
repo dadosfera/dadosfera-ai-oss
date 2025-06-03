@@ -34,7 +34,7 @@ COPY --from=base /bin/ctr /bin/ctr
 COPY --from=base /bin/docker /bin/docker
 COPY --from=base /usr/local/bin/crictl /usr/local/bin/crictl
 
-RUN apt-get update && apt-get install -y buildah && buildah version && \
+RUN apt-get update && apt-get install -y podman buildah && buildah version && \
     apt-get clean
 
 COPY ./pull_image.sh /pull_image.sh
