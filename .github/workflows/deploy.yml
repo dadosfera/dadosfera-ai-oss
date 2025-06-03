@@ -37,12 +37,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
-          fetch-tags: true
+          fetch-depth: 0
+          
+      - name: Fetch only 2025+ tags
+        run: |
+          git ls-remote --tags origin | awk '{print $2}' | grep -E '^refs/tags/v20(2[5-9]|[3-9][0-9])\.' | sed 's|refs/tags/||' | xargs -I {} git fetch origin tag {}
 
-
-      - name: Fetch all tags
-        run: git fetch --tags --force
 
       - name: CalVer
         id: calver
