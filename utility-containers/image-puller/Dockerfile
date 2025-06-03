@@ -18,8 +18,7 @@ RUN curl -L $DOCKER_DOWNLOAD_URL | tar -xz -C /tmp/download \
     && mv /tmp/download/docker/docker /bin/
 
 RUN rm -rf /tmp/download \
-    && apk del curl \
-    && rm -rf /var/cache/apk/*ambiente
+    && apk del curl
 
 ###############################################################################
 FROM ubuntu:22.04
