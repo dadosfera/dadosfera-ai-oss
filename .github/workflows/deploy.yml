@@ -524,8 +524,8 @@ jobs:
         run: |
           cp .dockerignore $BUILD_CTX
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ORCHEST_VERSION=$IMAGE_TAG -f $BUILD_CTX/Dockerfile $BUILD_CTX
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
       - name: Cleanup Docker's Leftovers
