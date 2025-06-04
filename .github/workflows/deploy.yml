@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Fetch only 2025+ tags
         run: |
           git ls-remote --tags origin | awk '{print $2}' | grep -E '^refs/tags/v20(2[5-9]|[3-9][0-9])\.' | sed 's|refs/tags/||' | xargs -I {} git fetch origin tag {}
@@ -535,7 +535,7 @@ jobs:
           docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
-      - name: Cleanup Docker's Leftoversjupyter-eg-998045c3-f1ea-4ca6c5119730-6d62-4420-7f95b8d686sfdfl
+      - name: Cleanup Docker's Leftovers
         if: always()
         continue-on-error: true
         run: |
