@@ -35,6 +35,9 @@
 :maxdepth: 1
 
 getting_started/index
+fundamentals/quickstart
+fundamentals/terminology
+fundamentals/versioning
 ```
 
 ```{toctree}

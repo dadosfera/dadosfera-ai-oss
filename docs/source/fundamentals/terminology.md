@@ -34,7 +34,7 @@ parameter
 
 ```
 
-```{figure} ../img/terminology.png
+```{figure} ../img/concepts/Pipeline.png
 :align: center
 :width: 768
 :alt: Terminology in Dadosfera AI

@@ -3,6 +3,19 @@
 Data passing
 ============
 
+.. _how-to-import-a-project:
+
+How to import a project
+----------------------
+
+To import a project, follow these steps:
+
+1. Click on the "Import" button in the projects list
+2. Enter the Git repository URL
+3. Click "Import"
+
+The project will be cloned and available in your workspace.
+
 .. meta::
    :description: This page contains information about how data passing works in Orchest, and how to pass data between steps in Orchest.
 
@@ -19,7 +32,7 @@ The data can be either named or unnamed, as seen below.
 
 Using the following pipeline:
 
-.. figure:: ../img/pipeline.png
+.. figure:: ../img/concepts/Pipeline.png
    :width: 400
    :alt: Orchest Pipeline defined as three Steps, where both step 1 and 2 send output to step 3
    :align: center

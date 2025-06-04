@@ -9,7 +9,7 @@
 
 This guide will help you get started with Dadosfera AI. You'll learn how to create a project, create a pipeline, and run it.
 
-```{figure} ../img/quickstart.png
+```{figure} ../img/quickstart/final-pipeline.png
 :align: center
 :width: 768
 :alt: Getting started with Dadosfera AI
@@ -37,7 +37,7 @@ To create a new project, follow these instructions:
 3. Configure the project.
 4. Press _create project_.
 
-```{figure} ../img/quickstart-create-project.png
+```{figure} ../img/quickstart/project-creation.png
 :align: center
 :width: 768
 :alt: Creating a new project in Dadosfera AI
@@ -56,7 +56,7 @@ To create a new pipeline, follow these instructions:
 3. Configure the pipeline.
 4. Press _create pipeline_.
 
-```{figure} ../img/quickstart-create-pipeline.png
+```{figure} ../img/quickstart/pipeline-two-steps.png
 :align: center
 :width: 768
 :alt: Creating a new pipeline in Dadosfera AI
@@ -74,7 +74,7 @@ To run a pipeline, follow these instructions:
 2. Click on the _Run_ button.
 3. Wait for the pipeline to complete.
 
-```{figure} ../img/quickstart-run-pipeline.png
+```{figure} ../img/quickstart/final-pipeline-completed.png
 :align: center
 :width: 768
 :alt: Running a pipeline in Dadosfera AI
@@ -93,7 +93,7 @@ Now that you've created a project, created a pipeline, and run it, you can:
 - Learn more about {ref}`environments <environments>`
 - Learn more about {ref}`jobs <jobs>`
 
-```{figure} ../img/quickstart-next-steps.png
+```{figure} ../img/quickstart/step-logs.png
 :align: center
 :width: 768
 :alt: Next steps in Dadosfera AI

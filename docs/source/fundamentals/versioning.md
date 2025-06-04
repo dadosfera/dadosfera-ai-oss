@@ -9,7 +9,7 @@
 
 Versioning is an important part of any software development process. Dadosfera AI provides several ways to version your code.
 
-```{figure} ../img/versioning.png
+```{figure} ../img/concepts/Files.png
 :align: center
 :width: 768
 :alt: Versioning in Dadosfera AI
@@ -27,7 +27,7 @@ Dadosfera AI integrates with Git to provide version control for your projects. Y
 - Collaborate with others
 - Roll back changes if needed
 
-```{figure} ../img/versioning-git.png
+```{figure} ../img/concepts/Project.png
 :align: center
 :width: 768
 :alt: Git versioning in Dadosfera AI
@@ -45,7 +45,7 @@ Dadosfera AI provides versioning for your pipelines. You can:
 - Roll back changes if needed
 - Compare different versions of your pipelines
 
-```{figure} ../img/versioning-pipelines.png
+```{figure} ../img/concepts/Pipeline.png
 :align: center
 :width: 768
 :alt: Pipeline versioning in Dadosfera AI
@@ -63,7 +63,7 @@ Dadosfera AI provides versioning for your environments. You can:
 - Roll back changes if needed
 - Compare different versions of your environments
 
-```{figure} ../img/versioning-environments.png
+```{figure} ../img/concepts/Environments.png
 :align: center
 :width: 768
 :alt: Environment versioning in Dadosfera AI
@@ -82,7 +82,7 @@ Here are some best practices for versioning in Dadosfera AI:
 - **Use branches**: Use branches to work on new features or bug fixes.
 - **Review changes**: Review your changes before committing them.
 
-```{figure} ../img/versioning-best-practices.png
+```{figure} ../img/concepts/Step.png
 :align: center
 :width: 768
 :alt: Best practices for versioning in Dadosfera AI

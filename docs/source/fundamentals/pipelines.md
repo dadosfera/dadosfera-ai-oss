@@ -9,7 +9,7 @@
 
 Pipelines are the core of Dadosfera AI. They allow you to create, run, and manage data science workflows.
 
-```{figure} ../img/pipelines-list.png
+```{figure} ../img/concepts/Pipeline.png
 :align: center
 :width: 768
 :alt: List of pipelines for a given Dadosfera AI project
@@ -28,7 +28,7 @@ To create a new pipeline, follow these instructions:
 3. Configure the pipeline.
 4. Press _create pipeline_.
 
-```{figure} ../img/pipeline-creation.png
+```{figure} ../img/concepts/Pipeline.png
 :align: center
 :width: 768
 :alt: Creating a new pipeline in Dadosfera AI
@@ -46,7 +46,7 @@ When creating a pipeline, you can configure the following:
 - **Description**: A description of your pipeline.
 - **Steps**: The steps that make up your pipeline.
 
-```{figure} ../img/pipeline-configuration.png
+```{figure} ../img/concepts/Pipeline.png
 :align: center
 :width: 768
 :alt: Configuring a new pipeline in Dadosfera AI
@@ -64,7 +64,7 @@ You can manage your pipelines in the following ways:
 - **Delete**: Click on the pipeline you want to delete and press the _delete_ button.
 - **Duplicate**: Click on the pipeline you want to duplicate and press the _duplicate_ button.
 
-```{figure} ../img/pipeline-management.png
+```{figure} ../img/concepts/Pipeline.png
 :align: center
 :width: 768
 :alt: Managing pipelines in Dadosfera AI
@@ -82,7 +82,7 @@ To use a pipeline, follow these instructions:
 2. Click on the _Run_ button.
 3. Wait for the pipeline to complete.
 
-```{figure} ../img/pipeline-usage.png
+```{figure} ../img/concepts/Pipeline.png
 :align: center
 :width: 768
 :alt: Using pipelines in Dadosfera AI
@@ -101,7 +101,7 @@ Here are some best practices for working with pipelines:
 - **Use version control**: Use version control to track changes to your pipelines.
 - **Test pipelines**: Test your pipelines before using them in production.
 
-```{figure} ../img/pipeline-best-practices.png
+```{figure} ../img/concepts/Step.png
 :align: center
 :width: 768
 :alt: Best practices for working with pipelines in Dadosfera AI

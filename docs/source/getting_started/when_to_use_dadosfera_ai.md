@@ -1,5 +1,19 @@
 # When to use Dadosfera AI
 
+.. _languages:
+
+Supported Languages
+------------------
+
+Dadosfera AI supports the following programming languages:
+
+- Python
+- R
+- Julia
+- JavaScript
+
+Each language has its own SDK for data passing and integration with Dadosfera AI.
+
 ```{eval-rst}
 .. meta::
    :description: This page contains advice on when to use Dadosfera AI, who is Dadosfera AI good for, and when you might want to look for alternatives.

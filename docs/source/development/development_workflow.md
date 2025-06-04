@@ -1,5 +1,7 @@
 # Development workflow
 
+(development-prerequisites)=
+
 ## Prerequisites
 
 ### Required software
@@ -69,7 +71,6 @@ sudo npm install -g pnpm
 # k9s
 curl -L https://github.com/derailed/k9s/releases/download/v0.25.21/k9s_Linux_x86_64.tar.gz -o k9s.tar.gz
 tar -C ~/.local/bin -xzf k9s.tar.gz
-```
 
 ### Dependencies
 
@@ -102,6 +103,8 @@ For macOS:
 ```bash
 brew install mysql
 ```
+
+(cluster-mount)=
 
 ### Cluster for development
 
@@ -208,24 +211,20 @@ Take a look in [k9s](https://github.com/derailed/k9s) and see how Dadosfera AI i
 Once the installation is completed you can reach Dadosfera AI using one of the following approaches,
 depending on your operating system:
 
-`````{tab-set}
-````{tab-item} Linux
+```{tab-set}
+```{tab-item} Linux
 Simply access the Dadosfera AI UI by browsing to the IP returned by:
 ```bash
 minikube ip
 ```
-````
-````{tab-item} macOS
+```
+
+```{tab-item} macOS
 Run the tunnel daemon and browse to [localhost](http://localhost).
 ```bash
 sudo minikube tunnel
 ```
-
-Does everything look good? _Awesome!_ You're all set up and ready to start coding now! 🎉
-
-Have a look at our best practices and our [GitHub](https://github.com/dadosfera/dadosfera-ai-oss/issues)
-````
-`````
+```
 
 Does everything look good? _Awesome!_ You're all set up and ready to start coding now! 🎉
 
@@ -257,6 +256,8 @@ Note that each approach is best used in specific circumstances.
   When making larger changes that touch different parts of Dadosfera AI, it is a good idea to fully
   re-install Dadosfera AI. Do note that this should be rather fast because the Docker cache is used when
   rebuilding images.
+
+(incremental-development)=
 
 ### Development mode (incremental development)
 
@@ -337,8 +338,8 @@ created in the previous steps).
 For the sake of simplicity (without loss of generality), let's assume you made changes to the
 `dadosfera-api`.
 
-`````{tab-set}
-````{tab-item} Single node
+```{tab-set}
+```{tab-item} Single node
 
 Generally, single node deployments make it far easier to test changes. First of all, configure your
 environment to use minikube's Docker daemon if you haven't already:
@@ -378,8 +379,7 @@ kubectl delete pods -n dadosfera -l "app.kubernetes.io/name=dadosfera-api"
 Check out [k9s](https://github.com/derailed/k9s) if you want to use a visual interface instead
 (highly recommended!).
 
-
-````{tab-item} Multi node
+```{tab-item} Multi node
 
 The procedure for single-node is not possible in multi node deployments though. Since this is
 slightly more involved, we provide the following scripts:
@@ -408,8 +408,7 @@ The redeploy and build_image scripts require the Dadosfera AI repository
 However, note that multi node mounting might not be supported by all minikube drivers.
 We have tested with docker, the default driver.
 ```
-````
-`````
+```
 
 (dev-reinstalling-dadosfera)=
 
@@ -486,7 +485,7 @@ unless there are known incompatibilities.
 In addition, avoid manually editing `requirements.txt` files,
 since they will be automatically generated.
 
-````{warning}
+```{warning}
 A [bug in pip-tools](https://github.com/jazzband/pip-tools/issues/1505) affects local
 dependencies. Older versions are not affected, but they are not compatible with modern pip.
 At the time of writing, the best way forward is to install this fork
@@ -495,7 +494,7 @@ At the time of writing, the best way forward is to install this fork
 ```
 pip install -U "pip-tools @ git+https://github.com/richafrank/pip-tools.git@combine-without-copy"
 ```
-````
+```
 
 ### Database schema migrations
 
@@ -526,14 +525,14 @@ cd docs
 make html
 ```
 
-````{tip}
+```{tip}
 👉 If you didn't follow the {ref}`prerequisites <development-prerequisites>`, then make sure
 you've installed the needed requirements to builds the docs:
 
 ```sh
 python3 -m pip install -r docs/requirements.txt
 ```
-````
+```
 
 ## Example VS Code monorepo set-up
 
@@ -684,7 +683,7 @@ docker save \
     -o dadosfera-images.tar
 ```
 
-````{dropdown} 👉 I didn't install MicroK8s on my host
+```{dropdown} 👉 I didn't install MicroK8s on my host
 In case you didn't install MicroK8s on your host directly, you need to ship the images to the
 MicroK8s node:
 ```bash
@@ -695,7 +694,7 @@ And set up the kubeconfig on your host so that you can use the `dadosfera-cli` l
 ```bash
 KUBECONFIG=/path/to/kubeconfig dadosfera install --dev
 ```
-````
+```
 
 Next, inside the MicroK8s node (which can be your host), you can import the images using:
 
