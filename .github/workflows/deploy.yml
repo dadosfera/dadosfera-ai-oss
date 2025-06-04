@@ -34,8 +34,15 @@ jobs:
       new_release_published: ${{ steps.create_release.outputs.url != '' }}
       new_release_version: ${{ steps.get_version.outputs.tag_name }}
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch only 2025+ tags
+        run: |
+          git ls-remote --tags origin | awk '{print $2}' | grep -E '^refs/tags/v20(2[5-9]|[3-9][0-9])\.' | sed 's|refs/tags/||' | xargs -I {} git fetch origin tag {}
+
 
       - name: CalVer
         id: calver
