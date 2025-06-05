@@ -76,18 +76,36 @@ def launch_environment_shell(
         "Creating deployment %s"
         % (environment_shell_deployment_manifest["metadata"]["name"],)
     )
-    k8s_apps_api.create_namespaced_deployment(
-        ns,
-        environment_shell_deployment_manifest,
-    )
+
+    try:
+        k8s_apps_api.create_namespaced_deployment(
+            ns,
+            environment_shell_deployment_manifest,
+        )
+    except Exception as e:
+        logger.error(
+            "Failed to create environment shell deployment for session UUID %s"
+            % session_uuid
+        )
+        logger.error("Error %s [%s]" % (e, type(e)))
+        raise e
 
     logger.info(
         f'Creating service {environment_shell_service_manifest["metadata"]["name"]}'
     )
-    k8s_core_api.create_namespaced_service(
-        ns,
-        environment_shell_service_manifest,
-    )
+
+    try:
+        k8s_core_api.create_namespaced_service(
+            ns,
+            environment_shell_service_manifest,
+        )
+    except Exception as e:
+        logger.error(
+            "Failed to create environment shell service for session UUID %s"
+            % session_uuid
+        )
+        logger.error("Error %s [%s]" % (e, type(e)))
+        raise e
 
     logger.info("Waiting for environment shell service deployment to be ready.")
     deployment_name = environment_shell_deployment_manifest["metadata"]["name"]
