@@ -304,6 +304,19 @@ def _get_required_affinity(
 def _get_pre_pull_init_container_manifest(
     image: str,
 ) -> Dict[str, Any]:
+    
+    volume_mounts = [{
+        "name": "container-runtime-socket",
+        "mountPath": "/var/run/runtime.sock",
+    }]
+    if _config.CONTAINER_RUNTIME == 'cri-o':
+        volume_mounts.append({
+            "name": "containers-storage",
+            "mountPath": "/var/lib/containers/storage",
+        })
+
+
+
     return {
         "name": "image-puller",
         "image": _config.CONTAINER_RUNTIME_IMAGE,
@@ -322,12 +335,7 @@ def _get_pre_pull_init_container_manifest(
             },
         ],
         "command": ["/pull_image.sh"],
-        "volumeMounts": [
-            {
-                "name": "container-runtime-socket",
-                "mountPath": "/var/run/runtime.sock",
-            },
-        ],
+        "volumeMounts": volume_mounts
     }
 
 

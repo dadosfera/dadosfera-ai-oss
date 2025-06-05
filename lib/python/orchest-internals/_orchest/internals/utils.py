@@ -126,6 +126,16 @@ def get_step_and_kernel_volumes_and_volume_mounts(
         }
     )
 
+    if _config.CONTAINER_RUNTIME:
+        volumes.append(
+            {
+                "name": "containers-storage",
+                "hostPath": {
+                    "path": "/var/lib/containers/storage",
+                },
+            }
+        )
+
     volume_mounts.append(
         {"name": "userdir-pvc", "mountPath": "/data", "subPath": "data"}
     )
