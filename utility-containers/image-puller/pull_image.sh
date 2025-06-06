@@ -28,7 +28,13 @@ elif [ "$CONTAINER_RUNTIME" = docker ]; then
         ln -s /var/run/runtime.sock /var/run/docker.sock
         buildah push --disable-compression "${IMAGE_TO_PULL}" "docker-daemon:${IMAGE_TO_PULL}"
     fi
-
+elif [ "$CONTAINER_RUNTIME" = cri-o ]; then
+    image_exist=$(crictl -r unix:///var/run/runtime.sock images -q "${IMAGE_TO_PULL}")
+    if [ -n "${image_exist}" ]; then
+        echo "Image ${IMAGE_TO_PULL} exists, skip pulling."
+        exit 0
+    fi
+    podman image pull "${IMAGE_TO_PULL}" --tls-verify=false
 else
     echo "Container runtime is not supported"
     exit 1

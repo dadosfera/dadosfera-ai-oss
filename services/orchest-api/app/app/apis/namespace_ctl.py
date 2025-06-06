@@ -112,9 +112,7 @@ class ListPods(Resource):
 class OrchestImagesToPrePull(Resource):
 
     def _get_jupyter_image_name(self):
-        if CONFIG_CLASS.JUPYTER_SERVER_IMAGE == "docker.io/orchest/jupyter-server":
-            return f"docker.io/orchest/jupyter-server:{CONFIG_CLASS.ORCHEST_VERSION}"
-        return f"{CONFIG_CLASS.JUPYTER_SERVER_IMAGE}:{CONFIG_CLASS.ORCHEST_DADOSFERA_VERSION}"
+        return f"{CONFIG_CLASS.JUPYTER_SERVER_IMAGE}:{CONFIG_CLASS.ORCHEST_VERSION}"
 
     @api.doc("orchest_images_to_pre_pull")
     def get(self):
@@ -123,9 +121,9 @@ class OrchestImagesToPrePull(Resource):
             CONFIG_CLASS.IMAGE_BUILDER_IMAGE,
             _config.ARGO_EXECUTOR_IMAGE,
             _config.CONTAINER_RUNTIME_IMAGE,
-            f"docker.io/orchest/base-kernel-py:{CONFIG_CLASS.ORCHEST_VERSION}",
-            f"docker.io/orchest/jupyter-enterprise-gateway:{CONFIG_CLASS.ORCHEST_VERSION}",  # noqa
-            f"docker.io/orchest/session-sidecar:{CONFIG_CLASS.ORCHEST_VERSION}"
+            f"docker.io/dadosfera/base-kernel-py:{CONFIG_CLASS.ORCHEST_VERSION}",
+            f"docker.io/dadosfera/jupyter-enterprise-gateway:{CONFIG_CLASS.ORCHEST_VERSION}",  # noqa
+            f"docker.io/dadosfera/session-sidecar:{CONFIG_CLASS.ORCHEST_VERSION}"
         ]
 
         pre_pull_orchest_images.append(self._get_jupyter_image_name())

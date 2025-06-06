@@ -30,7 +30,6 @@ _RUNTIME_TO_IMAGE_BUILDER_CMD = {
         "--local dockerfile=. --opt filename=./{dockerfile_path} "
         "--progress=plain "
         "--output type=docker,name={full_image_name},dest=/tmp/output.tar "
-        "&& podman load -i /tmp/output.tar"
     ),
     "containerd": (
         "buildctl build --frontend=dockerfile.v0 --local context=. "
@@ -86,15 +85,40 @@ _RUNTIME_TO_IMAGE_BUILDER_VOLUMES = {
     ],
 }
 
+
 _IMAGE_BUILDER_VOLUME_MOUNTS = _RUNTIME_TO_IMAGE_BUILDER_VOLUME_MOUNTS[
     _config.CONTAINER_RUNTIME
 ] + _utils.get_temp_aws_volume_mounts()
+
 _IMAGE_BUILDER_VOLUMES = (
     _RUNTIME_TO_IMAGE_BUILDER_VOLUMES[_config.CONTAINER_RUNTIME] +
     _utils.get_temp_aws_volumes()
 )
 
 
+if CONFIG_CLASS.DOCKERHUB_SECRET_NAME:
+    _IMAGE_BUILDER_VOLUME_MOUNTS = _IMAGE_BUILDER_VOLUME_MOUNTS + [
+        {
+            "name": "dockerhub-secret",
+            "mountPath": "/root/.docker",
+            "readOnly": True,
+        }
+    ]
+
+    _IMAGE_BUILDER_VOLUMES = _IMAGE_BUILDER_VOLUMES + [
+        {
+            "name": "dockerhub-secret",
+            "secret": {
+                "secretName": CONFIG_CLASS.DOCKERHUB_SECRET_NAME,
+                "items": [
+                    {
+                        "key": ".dockerconfigjson",
+                        "path": "config.json",
+                    }
+                ],
+            },
+        }
+    ]
 
 def _get_image_builder_manifest(
     workflow_name,
@@ -199,6 +223,13 @@ def _get_image_builder_manifest(
         
         elif _config.CONTAINER_RUNTIME == "docker":
             args = f"{args} --secret id=aws_secrets,src=/tmp/.aws/credentials --secret id=aws_config,src=/tmp/.aws/config --no-cache"
+        container["args"] = [args]
+
+
+
+    if _config.CONTAINER_RUNTIME == "cri-o":
+        args = container["args"][0]
+        args += f" && podman load -i /tmp/output.tar"
         container["args"] = [args]
 
     # Some jupyter extensions might require write access to settings
@@ -523,7 +554,3 @@ def build_image(
             return "FAILURE"
 
         return "SUCCESS"
-
-if __name__ == "__main__":
-
-    _get_image_builder_manifest("teste","orchest/base_kernel","latest","a","a")

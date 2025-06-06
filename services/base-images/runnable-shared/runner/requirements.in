@@ -3,4 +3,5 @@ ipykernel>=6.0.0
 ipython
 nbconvert
 nbformat
+ipython_genutils
 -e file:../../../../lib/python/orchest-internals

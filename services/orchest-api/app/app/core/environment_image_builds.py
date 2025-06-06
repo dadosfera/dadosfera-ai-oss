@@ -92,6 +92,7 @@ def write_environment_dockerfile(
     else:
         full_basename = f"docker.io/{base_image}"
 
+
     statements.append(f"FROM {full_basename}")
     statements.append(f"LABEL _orchest_project_uuid={project_uuid}")
     statements.append(f"LABEL _orchest_environment_uuid={env_uuid}")
@@ -304,8 +305,12 @@ def prepare_build_context(task_uuid, project_uuid, environment_uuid, project_pat
         environment_properties = json.load(json_file)
         base_image: str = environment_properties["base_image"]
         # Workaround for common.tsx not using the orchest version.
+
         if "orchest/" in base_image:
-            if ":" not in base_image.split("orchest/")[1]:
+            base_image = base_image.replace("orchest/", "dadosfera/")
+
+        if "dadosfera/" in base_image:
+            if ":" not in base_image.split("dadosfera/")[1]:
                 base_image = f"{base_image}:{CONFIG_CLASS.ORCHEST_VERSION}"
 
     # Use the task_uuid to avoid clashing with user stuff.

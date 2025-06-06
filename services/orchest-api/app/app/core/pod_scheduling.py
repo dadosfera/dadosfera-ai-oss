@@ -124,13 +124,12 @@ def _is_jupyter_image_in_registry(tag: Union[int, str]) -> bool:
 
 
 def _get_node_affinity_to_random_node(node_names: List[str]) -> Dict[str, Any]:
-    # Need to set a specific node at the application level:
-    # https://github.com/kubernetes/kubernetes/issues/78238.
     return {
         "nodeAffinity": {
-            "requiredDuringSchedulingIgnoredDuringExecution": {
-                "nodeSelectorTerms": [
-                    {
+            "preferredDuringSchedulingIgnoredDuringExecution": [
+                {
+                    "weight": 100,
+                    "preference": {
                         "matchFields": [
                             {
                                 "key": "metadata.name",
@@ -139,8 +138,8 @@ def _get_node_affinity_to_random_node(node_names: List[str]) -> Dict[str, Any]:
                             }
                         ]
                     }
-                ],
-            }
+                }
+            ]
         }
     }
 
@@ -305,6 +304,19 @@ def _get_required_affinity(
 def _get_pre_pull_init_container_manifest(
     image: str,
 ) -> Dict[str, Any]:
+    
+    volume_mounts = [{
+        "name": "container-runtime-socket",
+        "mountPath": "/var/run/runtime.sock",
+    }]
+    if _config.CONTAINER_RUNTIME == 'cri-o':
+        volume_mounts.append({
+            "name": "containers-storage",
+            "mountPath": "/var/lib/containers/storage",
+        })
+
+
+
     return {
         "name": "image-puller",
         "image": _config.CONTAINER_RUNTIME_IMAGE,
@@ -323,12 +335,7 @@ def _get_pre_pull_init_container_manifest(
             },
         ],
         "command": ["/pull_image.sh"],
-        "volumeMounts": [
-            {
-                "name": "container-runtime-socket",
-                "mountPath": "/var/run/runtime.sock",
-            },
-        ],
+        "volumeMounts": volume_mounts
     }
 
 

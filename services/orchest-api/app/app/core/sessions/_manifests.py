@@ -46,6 +46,14 @@ def _get_common_volumes_and_volume_mounts(
         "hostPath": {"path": container_runtime_socket, "type": "Socket"},
     }
 
+    if _config.CONTAINER_RUNTIME == 'cri-o':
+        volumes['containers-storage'] = {
+            "name": "containers-storage",
+            "hostPath": {
+                "path": "/var/lib/containers/storage"
+            }
+        }
+
     volume_mounts["data"] = {
         "name": "userdir-pvc",
         "mountPath": container_data_dir,
@@ -253,7 +261,7 @@ def _get_session_sidecar_deployment_manifest(
                         {
                             "name": metadata["name"],
                             "image": (
-                                "orchest/session-sidecar:"
+                                "dadosfera/session-sidecar:"
                                 + CONFIG_CLASS.ORCHEST_VERSION
                             ),
                             # NOTE: It would be a good idea to increase
@@ -373,6 +381,16 @@ def _get_environment_shell_deployment_service_manifest(
     if auth_user_uuid is not None:
         args = utils.get_auth_user_git_config_setup_script(auth_user_uuid) + args
 
+
+    volumes = [
+        volumes_dict["userdir-pvc"],
+        volumes_dict["container-runtime-socket"],
+        volumes_dict["known-hosts"]
+    ]
+
+    if _config.CONTAINER_RUNTIME == 'cri-o':
+        volumes.append(volumes_dict['containers-storage'])
+
     deployment_manifest = {
         "apiVersion": "apps/v1",
         "kind": "Deployment",
@@ -395,11 +413,7 @@ def _get_environment_shell_deployment_service_manifest(
                             {"name": "attempts", "value": "5"},  # 5 is max
                         ],
                     },
-                    "volumes": [
-                        volumes_dict["userdir-pvc"],
-                        volumes_dict["container-runtime-socket"],
-                        volumes_dict["known-hosts"],
-                    ],
+                    "volumes": volumes,
                     "containers": [
                         {
                             "name": metadata["name"],
@@ -422,10 +436,10 @@ def _get_environment_shell_deployment_service_manifest(
                             },
                             "startupProbe": {
                                 "exec": {
-                                    "command": ["echo", "1"],
-                                    "initialDelaySeconds": 1,
-                                    "periodSeconds": 1,
-                                }
+                                    "command": ["echo", "1"]
+                                },
+                                "initialDelaySeconds": 1,
+                                "periodSeconds": 1
                             },
                             "ports": [{"containerPort": 22}],
                         }
@@ -447,6 +461,7 @@ def _get_environment_shell_deployment_service_manifest(
         },
     }
 
+    logger.debug(f"Deployment Manifest:\n: {deployment_manifest}")
     return deployment_manifest, service_manifest
 
 
@@ -807,7 +822,7 @@ def _get_jupyter_enterprise_gateway_deployment_service_manifest(
                         {
                             "name": metadata["name"],
                             "image": (
-                                "orchest/jupyter-enterprise-gateway:"
+                                "dadosfera/jupyter-enterprise-gateway:"
                                 + CONFIG_CLASS.ORCHEST_VERSION
                             ),
                             "resources": {
@@ -944,6 +959,9 @@ def _get_user_service_deployment_service_manifest(
 
     # Volume for init container puller image
     volumes.append(volumes_dict["container-runtime-socket"])
+
+    if _config.CONTAINER_RUNTIME == 'cri-o':
+        volumes.append(volumes_dict['containers-storage'])
 
     # To support orchest environments as services.
     image = service_config["image"]
