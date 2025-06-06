@@ -30,7 +30,6 @@ _RUNTIME_TO_IMAGE_BUILDER_CMD = {
         "--local dockerfile=. --opt filename=./{dockerfile_path} "
         "--progress=plain "
         "--output type=docker,name={full_image_name},dest=/tmp/output.tar "
-        "&& podman load -i /tmp/output.tar"
     ),
     "containerd": (
         "buildctl build --frontend=dockerfile.v0 --local context=. "
@@ -224,6 +223,13 @@ def _get_image_builder_manifest(
         
         elif _config.CONTAINER_RUNTIME == "docker":
             args = f"{args} --secret id=aws_secrets,src=/tmp/.aws/credentials --secret id=aws_config,src=/tmp/.aws/config --no-cache"
+        container["args"] = [args]
+
+
+
+    if _config.CONTAINER_RUNTIME == "cri-o":
+        args = container["args"][0]
+        args += f" && podman load -i /tmp/output.tar"
         container["args"] = [args]
 
     # Some jupyter extensions might require write access to settings

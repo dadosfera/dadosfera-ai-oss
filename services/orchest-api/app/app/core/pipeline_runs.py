@@ -423,6 +423,13 @@ def run_pipeline_workflow(
                 api_exception.status == 409 and "AlreadyExists" in api_exception.body
             ):
                 raise api_exception
+        except Exception as e:
+            logger.error(
+                f"Failed to create Argo workflow for task {task_id} in namespace"
+                f" {namespace}."
+            )
+            logger.error(f"Error: {e}")
+            raise e
 
         while steps_to_finish:
             resp = k8s_custom_obj_api.get_namespaced_custom_object(

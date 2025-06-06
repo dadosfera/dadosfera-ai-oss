@@ -436,10 +436,10 @@ def _get_environment_shell_deployment_service_manifest(
                             },
                             "startupProbe": {
                                 "exec": {
-                                    "command": ["echo", "1"],
-                                    "initialDelaySeconds": 1,
-                                    "periodSeconds": 1,
-                                }
+                                    "command": ["echo", "1"]
+                                },
+                                "initialDelaySeconds": 1,
+                                "periodSeconds": 1
                             },
                             "ports": [{"containerPort": 22}],
                         }
@@ -959,6 +959,9 @@ def _get_user_service_deployment_service_manifest(
 
     # Volume for init container puller image
     volumes.append(volumes_dict["container-runtime-socket"])
+
+    if _config.CONTAINER_RUNTIME == 'cri-o':
+        volumes.append(volumes_dict['containers-storage'])
 
     # To support orchest environments as services.
     image = service_config["image"]
