@@ -436,10 +436,10 @@ def _get_environment_shell_deployment_service_manifest(
                             },
                             "startupProbe": {
                                 "exec": {
-                                    "command": ["echo", "1"],
-                                    "initialDelaySeconds": 1,
-                                    "periodSeconds": 1,
-                                }
+                                    "command": ["echo", "1"]
+                                },
+                                "initialDelaySeconds": 1,
+                                "periodSeconds": 1
                             },
                             "ports": [{"containerPort": 22}],
                         }
