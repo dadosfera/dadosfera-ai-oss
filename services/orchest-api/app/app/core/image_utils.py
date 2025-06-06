@@ -229,7 +229,7 @@ def _get_image_builder_manifest(
 
     if _config.CONTAINER_RUNTIME == "cri-o":
         args = container["args"][0]
-        args = f" && podman load -i /tmp/output.tar"
+        args += f" && podman load -i /tmp/output.tar"
         container["args"] = [args]
 
     # Some jupyter extensions might require write access to settings
