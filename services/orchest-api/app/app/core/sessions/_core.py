@@ -129,66 +129,129 @@ def launch(
 
     logger.info("Creating session RBAC roles.")
     for manifest in session_rbac_roles:
-        logger.info(f'Creating role {manifest["metadata"]["name"]}')
-        k8s_rbac_api.create_namespaced_role(ns, manifest)
+        try:
+            logger.info(f'Creating role {manifest["metadata"]["name"]}')
+            k8s_rbac_api.create_namespaced_role(ns, manifest)
+        except Exception as e:
+            logger.error(
+                f"Failed to create role {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating session RBAC service accounts.")
     for manifest in session_rbac_service_accounts:
-        logger.info(f'Creating service account {manifest["metadata"]["name"]}')
-        k8s_core_api.create_namespaced_service_account(ns, manifest)
+        try:
+            logger.info(f'Creating service account {manifest["metadata"]["name"]}')
+            k8s_core_api.create_namespaced_service_account(ns, manifest)
+        except Exception as e:
+            logger.error(
+                f"Failed to create service account {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating session RBAC role bindings.")
     for manifest in session_rbac_rolebindings:
-        logger.info(f'Creating role binding {manifest["metadata"]["name"]}')
-        k8s_rbac_api.create_namespaced_role_binding(ns, manifest)
+        try:
+            logger.info(f'Creating role binding {manifest["metadata"]["name"]}')
+            k8s_rbac_api.create_namespaced_role_binding(ns, manifest)
+        except Exception as e:
+            logger.error(
+                f"Failed to create role binding {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating Orchest session services deployments.")
     for manifest in orchest_session_service_k8s_deployment_manifests:
-        logger.info(f'Creating deployment {manifest["metadata"]["name"]}')
-        k8s_apps_api.create_namespaced_deployment(
-            ns,
-            manifest,
-        )
+        try:
+            logger.info(f'Creating deployment {manifest["metadata"]["name"]}')
+            k8s_apps_api.create_namespaced_deployment(
+                ns,
+                manifest,
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create deployment {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating Orchest session services k8s services.")
     for manifest in orchest_session_service_k8s_service_manifests:
-        logger.info(f'Creating service {manifest["metadata"]["name"]}')
-        k8s_core_api.create_namespaced_service(
-            ns,
-            manifest,
-        )
+        try:
+            logger.info(f'Creating service {manifest["metadata"]["name"]}')
+            k8s_core_api.create_namespaced_service(
+                ns,
+                manifest,
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create service {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating Orchest session services k8s ingresses.")
     for manifest in orchest_session_service_k8s_ingress_manifests:
-        logger.info(f'Creating ingress {manifest["metadata"]["name"]}')
-        k8s_networking_api.create_namespaced_ingress(
-            ns,
-            manifest,
-        )
+        try:
+            logger.info(f'Creating ingress {manifest["metadata"]["name"]}')
+            k8s_networking_api.create_namespaced_ingress(
+                ns,
+                manifest,
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create ingress {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating user session services deployments.")
     for manifest in user_session_service_k8s_deployment_manifests:
-        logger.info(f'Creating deployment {manifest["metadata"]["name"]}')
-        k8s_apps_api.create_namespaced_deployment(
-            ns,
-            manifest,
-        )
+        try:
+            logger.info(f'Creating deployment {manifest["metadata"]["name"]}')
+            k8s_apps_api.create_namespaced_deployment(
+                ns,
+                manifest,
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create deployment {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating user session services k8s services.")
     for manifest in user_session_service_k8s_service_manifests:
-        logger.info(f'Creating service {manifest["metadata"]["name"]}')
-        k8s_core_api.create_namespaced_service(
-            ns,
-            manifest,
-        )
+        try:
+            logger.info(f'Creating service {manifest["metadata"]["name"]}')
+            k8s_core_api.create_namespaced_service(
+                ns,
+                manifest,
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create service {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Creating user session services k8s ingresses.")
     for manifest in user_session_service_k8s_ingress_manifests:
-        logger.info(f'Creating ingress {manifest["metadata"]["name"]}')
-        k8s_networking_api.create_namespaced_ingress(
-            ns,
-            manifest,
-        )
+        try:
+            logger.info(f'Creating ingress {manifest["metadata"]["name"]}')
+            k8s_networking_api.create_namespaced_ingress(
+                ns,
+                manifest,
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create ingress {manifest['metadata']['name']} for session UUID {session_uuid}"
+            )
+            logger.error(f"Error {e} [{type(e)}]")
+            raise e
 
     logger.info("Waiting for user and orchest session service deployments to be ready.")
     for manifest in (
